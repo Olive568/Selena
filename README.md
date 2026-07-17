@@ -1,6 +1,6 @@
-# finance-ai
+# Selena
 
-finance-ai is a Next.js + Supabase personal finance dashboard for tracking income, expenses, and transfers. It includes authentication, transaction filtering, category and account management, and summary charts for a quick view of cash flow.
+Selena is a Next.js + Supabase personal finance dashboard for tracking income, expenses, and transfers. It includes authentication, transaction filtering, category and account management, and summary charts for a quick view of cash flow.
 
 ## Features
 
