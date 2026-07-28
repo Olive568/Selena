@@ -49,6 +49,8 @@ function DialogContent({
           "fixed left-1/2 top-1/2 z-50 grid w-[calc(100vw-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 gap-4 rounded-3xl border border-border bg-card p-6 text-card-foreground shadow-2xl outline-none sm:w-full sm:max-h-[calc(100vh-2rem)] sm:overflow-y-auto",
           className
         )}
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
         {...props}
       >
         {children}

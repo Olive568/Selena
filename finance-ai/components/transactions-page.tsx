@@ -427,6 +427,30 @@ export function TransactionsPage({
           throw new Error(transferError.message);
         }
 
+        const transferMerchant = `Transfer: ${sourceAccount?.name ?? "Source"} → ${destinationAccount?.name ?? "Destination"}`;
+        const transferNotes = [
+          `From: ${sourceAccount?.name ?? "Source account"}`,
+          `To: ${destinationAccount?.name ?? "Destination account"}`,
+          values.notes.trim(),
+        ]
+          .filter(Boolean)
+          .join(" | ");
+
+        const { error: txError } = await supabase.from("transactions").insert({
+          user_id: userId,
+          merchant: transferMerchant,
+          amount: values.amount,
+          date: values.date || getTodayInputValue(),
+          notes: transferNotes || null,
+          transaction_type: "transfer",
+          category: "Transfer",
+          payment_method: `${sourceAccount?.name ?? "Source"} → ${destinationAccount?.name ?? "Destination"}`,
+        });
+
+        if (txError) {
+          throw new Error(txError.message);
+        }
+
         await reloadTransactions();
         setBanner({
           kind: "success",
@@ -456,7 +480,8 @@ export function TransactionsPage({
         category: isTransfer ? "Transfer" : category?.name ?? categoryName ?? "Uncategorized",
         amount: values.amount,
         date: values.date || getTodayInputValue(),
-        description: transferNotes || null,
+        notes: transferNotes || null,
+        payment_method: sourceAccount?.name ?? null,
         transaction_type: values.transactionType,
       };
 

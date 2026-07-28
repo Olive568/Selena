@@ -154,26 +154,21 @@ export function TransactionDialog({
         setError("Source and destination accounts must be different.");
         return;
       }
-    }
-
-    if (isTransfer) {
-      if (!sourceAccount || !destinationAccount) {
-        setError("Choose both a source account and a destination account.");
+    } else {
+      if (!sourceAccount) {
+        setError(form.transactionType === "income" ? "Select the account you received money into." : "Select the account you paid from.");
         return;
       }
 
-      if (sourceAccount.id === destinationAccount.id) {
-        setError("Source and destination accounts must be different.");
+      if (!merchant) {
+        setError(form.transactionType === "income" ? "Income source is required." : "Merchant is required.");
         return;
       }
-    } else if (!merchant) {
-      setError(form.transactionType === "income" ? "Income source is required." : "Merchant is required.");
-      return;
-    }
 
-    if (form.transactionType === "expense" && !category) {
-      setError("Category is required for expenses.");
-      return;
+      if (form.transactionType === "expense" && !category) {
+        setError("Category is required for expenses.");
+        return;
+      }
     }
 
     try {
@@ -418,6 +413,32 @@ export function TransactionDialog({
 
           {!isTransfer && (
             <>
+              <div className="grid gap-2">
+                <Label htmlFor="income-expense-account">
+                  {form.transactionType === "income" ? "Received to" : "Paid from"}
+                </Label>
+                <Select
+                  value={form.sourceAccountId || undefined}
+                  onValueChange={(value) =>
+                    setForm((current) => ({
+                      ...current,
+                      sourceAccountId: value,
+                    }))
+                  }
+                >
+                  <SelectTrigger id="income-expense-account">
+                    <SelectValue placeholder="Select account" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accountOptions.map((account) => (
+                      <SelectItem key={account.id} value={account.id}>
+                        {account.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="category">Category</Label>
                 <Select

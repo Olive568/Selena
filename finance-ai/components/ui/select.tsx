@@ -30,6 +30,7 @@ function SelectTrigger({
         "flex h-9 w-full items-center justify-between rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus:ring-3 focus:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
+
       {...props}
     >
       {children}
@@ -51,7 +52,7 @@ function SelectContent({
       <SelectPrimitive.Content
         data-slot="select-content"
       className={cn(
-          "relative z-50 min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-lg",
+          "relative z-[60] min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-lg",
           position === "popper" && "translate-y-1",
           className
         )}

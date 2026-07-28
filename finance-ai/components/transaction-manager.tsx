@@ -4,8 +4,10 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Info, LogOut, Plus } from "lucide-react";
 
+import { AccountCards } from "@/components/account-cards";
 import { DashboardChartsShell } from "@/components/dashboard-charts-shell";
 import { MonthlySummary } from "@/components/monthly-summary";
+import { NewUserOnboarding } from "@/components/new-user-onboarding";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -96,6 +98,10 @@ export function TransactionManager({
   const [transactionToDelete, setTransactionToDelete] = useState<DashboardTransaction | null>(null);
   const [banner, setBanner] = useState<BannerState>(null);
   const [dialogVersion, setDialogVersion] = useState(0);
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return initialTransactions.length === 0 && !localStorage.getItem("selena-onboarding-done");
+  });
 
   const sortedTransactions = useMemo(
     () =>
@@ -398,6 +404,30 @@ export function TransactionManager({
           throw new Error(transferError.message);
         }
 
+        const transferMerchant = `Transfer: ${sourceAccount?.name ?? "Source"} → ${destinationAccount?.name ?? "Destination"}`;
+        const transferNotes = [
+          `From: ${sourceAccount?.name ?? "Source account"}`,
+          `To: ${destinationAccount?.name ?? "Destination account"}`,
+          values.notes.trim(),
+        ]
+          .filter(Boolean)
+          .join(" | ");
+
+        const { error: txError } = await supabase.from("transactions").insert({
+          user_id: userId,
+          merchant: transferMerchant,
+          amount: values.amount,
+          date: values.date || getTodayInputValue(),
+          notes: transferNotes || null,
+          transaction_type: "transfer",
+          category: "Transfer",
+          payment_method: `${sourceAccount?.name ?? "Source"} → ${destinationAccount?.name ?? "Destination"}`,
+        });
+
+        if (txError) {
+          throw new Error(txError.message);
+        }
+
         await loadDashboardData(activeFilter);
         setBanner({
           kind: "success",
@@ -427,7 +457,8 @@ export function TransactionManager({
         category: isTransfer ? "Transfer" : category?.name ?? categoryName ?? "Uncategorized",
         amount: values.amount,
         date: values.date || getTodayInputValue(),
-        description: transferNotes || null,
+        notes: transferNotes || null,
+        payment_method: sourceAccount?.name ?? null,
         transaction_type: values.transactionType,
       };
 
@@ -558,6 +589,8 @@ export function TransactionManager({
           </div>
         )}
 
+        <AccountCards accounts={visibleAccounts} userId={userId} />
+
         <MonthlySummary userId={userId} />
 
         <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
@@ -663,6 +696,15 @@ export function TransactionManager({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {showOnboarding && (
+        <NewUserOnboarding
+          accounts={visibleAccounts.filter((a) => a.userId === userId)}
+          userId={userId}
+          onAddTransaction={openCreateExpense}
+          onDismiss={() => setShowOnboarding(false)}
+        />
+      )}
     </main>
   );
 }
