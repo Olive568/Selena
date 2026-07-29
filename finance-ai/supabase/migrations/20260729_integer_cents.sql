@@ -21,7 +21,7 @@ alter table public.transactions drop constraint if exists transactions_amount_fi
 alter table public.transfers drop constraint if exists transfers_amount_positive;
 
 -- Recreate RPCs with bigint parameters
-create or replace function public.create_transfer(
+create or replace function create_transfer(
   p_user_id uuid,
   p_from_account_id uuid,
   p_to_account_id uuid,

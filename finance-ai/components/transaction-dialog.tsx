@@ -188,8 +188,8 @@ export function TransactionDialog({
 
     try {
       await onSubmit({
-        merchant: "",
-        category: "",
+        merchant: form.merchant.trim(),
+        category: form.category.trim(),
         notes,
         amount,
         date: form.date || getTodayInputValue(),
