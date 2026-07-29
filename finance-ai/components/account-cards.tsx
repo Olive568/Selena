@@ -22,7 +22,7 @@ type AccountBalance = {
 async function fetchAccountBalances(userId: string, accounts: DashboardAccount[]): Promise<AccountBalance[]> {
   const [transfersResult, txResult] = await Promise.all([
     supabase.from("transfers").select("from_account_id, to_account_id, amount").eq("user_id", userId),
-    supabase.from("transactions").select("amount, transaction_type, payment_method").eq("user_id", userId),
+    supabase.from("transactions").select("amount, transaction_type, account_id").eq("user_id", userId),
   ]);
 
   const balanceMap = new Map<string, number>();
@@ -40,13 +40,13 @@ async function fetchAccountBalances(userId: string, accounts: DashboardAccount[]
 
   if (!txResult.error && txResult.data) {
     for (const t of txResult.data) {
-      const method = t.payment_method?.trim().toLowerCase();
-      if (!method) continue;
+      const accountId = t.account_id?.trim();
+      if (!accountId) continue;
 
       if (t.transaction_type === "income") {
-        balanceMap.set(method, (balanceMap.get(method) ?? 0) + Number(t.amount));
+        balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) + Number(t.amount));
       } else if (t.transaction_type === "expense") {
-        balanceMap.set(method, (balanceMap.get(method) ?? 0) - Number(t.amount));
+        balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) - Number(t.amount));
       }
     }
   }

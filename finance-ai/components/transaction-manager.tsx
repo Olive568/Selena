@@ -37,7 +37,7 @@ import {
   type TransactionRow,
   type TransactionType,
 } from "@/lib/finance";
-import { supabase } from "@/lib/supabase";
+import { redirectIfAuthError, sanitizeError, supabase } from "@/lib/supabase";
 import { TransactionDialog, type TransactionFormValues } from "@/components/transaction-dialog";
 
 type TransactionManagerProps = {
@@ -186,9 +186,10 @@ export function TransactionManager({
       setCategories((categoriesResult.data ?? []).map((row, index) => normalizeCategory(row, index)));
       setAccounts((accountsResult.data ?? []).map((row, index) => normalizeAccount(row, index)));
     } catch (error) {
+      redirectIfAuthError(error);
       setBanner({
         kind: "error",
-        message: error instanceof Error ? error.message : "Could not refresh dashboard data.",
+        message: error instanceof Error ? sanitizeError(error.message) : "Could not refresh dashboard data.",
       });
     } finally {
       setIsDashboardLoading(false);
@@ -209,20 +210,21 @@ export function TransactionManager({
       return existing;
     }
 
-    const { data, error } = await supabase
-      .from("categories")
-      .insert({
-        name: trimmedName,
-        user_id: userId,
-      })
-      .select("*")
-      .single();
+    const { data, error } = await supabase.rpc("create_category", {
+      p_user_id: userId,
+      p_name: trimmedName,
+      p_idempotency_key: crypto.randomUUID(),
+    });
 
     if (error) {
       throw new Error(error.message);
     }
 
-    const created = normalizeCategory(data, sortedCategories.length);
+    if (!data) {
+      return null;
+    }
+
+    const created = normalizeCategory(data as CategoryRow, sortedCategories.length);
     setCategories((current) => [...current, created].sort((left, right) => left.name.localeCompare(right.name)));
 
     return created;
@@ -259,20 +261,21 @@ export function TransactionManager({
       return existing;
     }
 
-    const { data, error } = await supabase
-      .from("accounts")
-      .insert({
-        name: trimmedName,
-        user_id: userId,
-      })
-      .select("*")
-      .single();
+    const { data, error } = await supabase.rpc("create_account", {
+      p_user_id: userId,
+      p_name: trimmedName,
+      p_idempotency_key: crypto.randomUUID(),
+    });
 
     if (error) {
       throw new Error(error.message);
     }
 
-    const created = normalizeAccount(data, accounts.length);
+    if (!data) {
+      return null;
+    }
+
+    const created = normalizeAccount(data as AccountRow, accounts.length);
     setAccounts((current) => [...current, created].sort((left, right) => left.name.localeCompare(right.name)));
 
     return created;
@@ -386,46 +389,25 @@ export function TransactionManager({
         throw new Error("Amount must be greater than zero.");
       }
 
+      const amountInCents = Math.round(values.amount * 100);
+
       if (!isIncome && !isTransfer && !categoryName) {
         throw new Error("Category is required for expenses.");
       }
 
       if (isTransfer) {
-        const { error: transferError } = await supabase.from("transfers").insert({
-          user_id: userId,
-          from_account_id: values.sourceAccountId,
-          to_account_id: values.destinationAccountId,
-          amount: values.amount,
-          date: values.date || getTodayInputValue(),
-          notes: values.notes || null,
+        const { error: rpcError } = await supabase.rpc("create_transfer", {
+          p_user_id: userId,
+          p_from_account_id: values.sourceAccountId,
+          p_to_account_id: values.destinationAccountId,
+          p_amount: amountInCents,
+          p_date: values.date || getTodayInputValue(),
+          p_notes: values.notes || null,
+          p_idempotency_key: crypto.randomUUID(),
         });
 
-        if (transferError) {
-          throw new Error(transferError.message);
-        }
-
-        const transferMerchant = `Transfer: ${sourceAccount?.name ?? "Source"} → ${destinationAccount?.name ?? "Destination"}`;
-        const transferNotes = [
-          `From: ${sourceAccount?.name ?? "Source account"}`,
-          `To: ${destinationAccount?.name ?? "Destination account"}`,
-          values.notes.trim(),
-        ]
-          .filter(Boolean)
-          .join(" | ");
-
-        const { error: txError } = await supabase.from("transactions").insert({
-          user_id: userId,
-          merchant: transferMerchant,
-          amount: values.amount,
-          date: values.date || getTodayInputValue(),
-          notes: transferNotes || null,
-          transaction_type: "transfer",
-          category: "Transfer",
-          payment_method: `${sourceAccount?.name ?? "Source"} → ${destinationAccount?.name ?? "Destination"}`,
-        });
-
-        if (txError) {
-          throw new Error(txError.message);
+        if (rpcError) {
+          throw new Error(rpcError.message);
         }
 
         await loadDashboardData(activeFilter);
@@ -455,23 +437,47 @@ export function TransactionManager({
         user_id: userId,
         merchant: transferMerchant,
         category: isTransfer ? "Transfer" : category?.name ?? categoryName ?? "Uncategorized",
-        amount: values.amount,
+        amount: amountInCents,
         date: values.date || getTodayInputValue(),
         notes: transferNotes || null,
         payment_method: sourceAccount?.name ?? null,
         transaction_type: values.transactionType,
+        account_id: sourceAccount?.id ?? null,
       };
 
       if (editingTransaction) {
-        const { error } = await supabase.from("transactions").update(payload).eq("id", editingTransaction.dbId);
+        const { error } = await supabase.rpc("update_transaction", {
+          p_id: editingTransaction.dbId,
+          p_user_id: userId,
+          p_merchant: payload.merchant,
+          p_amount: payload.amount,
+          p_date: payload.date,
+          p_notes: payload.notes,
+          p_transaction_type: payload.transaction_type,
+          p_category: payload.category,
+          p_payment_method: payload.payment_method,
+          p_account_id: payload.account_id,
+        });
 
         if (error) {
           throw new Error(error.message);
         }
       } else {
-        const { error } = await supabase.from("transactions").insert(payload);
+        const { error } = await supabase.rpc("create_transaction", {
+          p_user_id: userId,
+          p_merchant: payload.merchant,
+          p_amount: payload.amount,
+          p_date: payload.date,
+          p_notes: payload.notes,
+          p_transaction_type: payload.transaction_type,
+          p_category: payload.category,
+          p_payment_method: payload.payment_method,
+          p_account_id: payload.account_id,
+          p_idempotency_key: crypto.randomUUID(),
+        });
 
         if (error) {
+          if (error.code === "23505") return;
           throw new Error(error.message);
         }
       }
@@ -483,6 +489,7 @@ export function TransactionManager({
       });
       setEditingTransaction(null);
     } catch (error) {
+      redirectIfAuthError(error);
       throw error instanceof Error ? error : new Error("Could not save the transaction.");
     } finally {
       setIsSaving(false);
@@ -507,7 +514,10 @@ export function TransactionManager({
     setBanner(null);
 
     try {
-      const { error } = await supabase.from("transactions").delete().eq("id", transactionToDelete.dbId);
+      const { error } = await supabase.rpc("delete_transaction", {
+        p_id: transactionToDelete.dbId,
+        p_user_id: userId,
+      });
 
       if (error) {
         throw new Error(error.message);
@@ -517,9 +527,10 @@ export function TransactionManager({
       setBanner({ kind: "success", message: "Transaction deleted." });
       setTransactionToDelete(null);
     } catch (error) {
+      redirectIfAuthError(error);
       setBanner({
         kind: "error",
-        message: error instanceof Error ? error.message : "Could not delete the transaction.",
+        message: error instanceof Error ? sanitizeError(error.message) : "Could not delete the transaction.",
       });
     } finally {
       setIsDeleting(false);

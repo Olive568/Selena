@@ -41,6 +41,7 @@ export function ChatbotLauncher() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastSentRef = useRef("");
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,6 +58,7 @@ export function ChatbotLauncher() {
     const userMessage: Message = { role: "user", content: trimmed };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    lastSentRef.current = trimmed;
     setIsLoading(true);
     setError(null);
 
@@ -165,8 +167,38 @@ export function ChatbotLauncher() {
               )}
 
               {error && (
-                <div className="rounded-2xl border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                  {error}
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 rounded-2xl border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                    {error}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      setError(null);
+                      setIsLoading(true);
+                      const trimmed = lastSentRef.current;
+                      if (!trimmed) return;
+                      try {
+                        const res = await fetch("/api/chat", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ message: trimmed, startDate, endDate }),
+                        });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.error ?? "Failed to get response");
+                        setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+                      } catch (err) {
+                        setError(err instanceof Error ? err.message : "Something went wrong");
+                      } finally {
+                        setIsLoading(false);
+                      }
+                    }}
+                    disabled={isLoading}
+                  >
+                    Retry
+                  </Button>
                 </div>
               )}
 

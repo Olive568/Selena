@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/lib/supabase";
+import { sanitizeError, supabase } from "@/lib/supabase";
 import { formatCurrency, formatMonthYear, getMonthDateRange } from "@/lib/finance";
 
 type MonthlySummaryRecord = {
@@ -59,7 +59,7 @@ export function MonthlySummary({ userId }: { userId: string }) {
 
       if (error) {
         setSummary(null);
-        setErrorMessage(error.message);
+        setErrorMessage(sanitizeError(error.message));
         setIsLoading(false);
         return;
       }

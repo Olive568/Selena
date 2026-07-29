@@ -29,6 +29,7 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
   const [step, setStep] = useState(0);
   const [balances, setBalances] = useState<Record<string, string>>({});
   const [isSavingBalances, setIsSavingBalances] = useState(false);
+  const [balanceError, setBalanceError] = useState<string | null>(null);
 
   function finish(currentStep: number) {
     if (currentStep < steps.length - 1) {
@@ -67,23 +68,28 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
           return {
             user_id: userId,
             merchant: "Initial balance",
-            amount: Number(value),
+            amount: Math.round(Number(value) * 100),
             date: dateStr,
             transaction_type: "income",
             category: "Income",
             payment_method: account?.name ?? null,
             notes: "Starting balance set during onboarding",
+            idempotency_key: crypto.randomUUID(),
           };
         })
       );
 
-      if (error) throw error;
-    } catch {
-      // silently fail — balances are optional
+      if (error) {
+        if (error.code !== "23505") throw error;
+      }
+    } catch (err) {
+      setBalanceError(err instanceof Error ? err.message : "Failed to save balances");
+      setIsSavingBalances(false);
+      return;
     } finally {
       setIsSavingBalances(false);
-      finish(1);
     }
+    finish(1);
   }
 
   const progress = ((step + 1) / steps.length) * 100;
@@ -171,8 +177,11 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
                 </div>
               ))}
             </div>
+            {balanceError && (
+              <p className="text-sm text-red-500">{balanceError}</p>
+            )}
             <div className="flex flex-col gap-2 pt-1">
-              <Button onClick={saveBalances} disabled={isSavingBalances} className="h-11 w-full rounded-full">
+              <Button onClick={() => { setBalanceError(null); saveBalances(); }} disabled={isSavingBalances} className="h-11 w-full rounded-full">
                 {isSavingBalances ? (
                   <><Loader2 className="mr-2 size-4 animate-spin" /> Saving...</>
                 ) : (

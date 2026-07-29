@@ -16,6 +16,8 @@ import {
   type DashboardTransaction,
   type TransactionType,
 } from "@/lib/finance";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { redirectIfAuthError } from "@/lib/supabase";
 
 export type TransactionFormValues = {
   merchant: string;
@@ -95,6 +97,7 @@ export function TransactionDialog({
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isManagingAccount, setIsManagingAccount] = useState(false);
   const [isManagingCategory, setIsManagingCategory] = useState(false);
+  const [showTransferConfirm, setShowTransferConfirm] = useState(false);
 
   const isTransfer = form.transactionType === "transfer";
   const merchantLabel = form.transactionType === "income" ? "Income Source" : "Merchant";
@@ -154,6 +157,9 @@ export function TransactionDialog({
         setError("Source and destination accounts must be different.");
         return;
       }
+
+      setShowTransferConfirm(true);
+      return;
     } else {
       if (!sourceAccount) {
         setError(form.transactionType === "income" ? "Select the account you received money into." : "Select the account you paid from.");
@@ -171,10 +177,19 @@ export function TransactionDialog({
       }
     }
 
+    await handleTransferSubmit();
+  }
+
+  async function handleTransferSubmit() {
+    setError(null);
+
+    const notes = form.notes.trim();
+    const amount = Number(form.amount);
+
     try {
       await onSubmit({
-        merchant: isTransfer ? "" : merchant,
-        category: isTransfer ? "" : category || "",
+        merchant: "",
+        category: "",
         notes,
         amount,
         date: form.date || getTodayInputValue(),
@@ -184,6 +199,7 @@ export function TransactionDialog({
       });
       onOpenChange(false);
     } catch (submitError) {
+      redirectIfAuthError(submitError);
       setError(submitError instanceof Error ? submitError.message : "Could not save the transaction.");
     }
   }
@@ -368,6 +384,7 @@ export function TransactionDialog({
                     <Label htmlFor="new-account">Add account</Label>
                     <Input
                       id="new-account"
+                      maxLength={100}
                       value={newAccountName}
                       onChange={(event) => setNewAccountName(event.target.value)}
                       placeholder="New account name"
@@ -386,6 +403,7 @@ export function TransactionDialog({
               <Label htmlFor="merchant">{merchantLabel}</Label>
               <Input
                 id="merchant"
+                maxLength={200}
                 value={form.merchant}
                 onChange={(event) => setForm((current) => ({ ...current, merchant: event.target.value }))}
                 placeholder={merchantPlaceholder}
@@ -470,6 +488,7 @@ export function TransactionDialog({
                     <Label htmlFor="new-category">Add category</Label>
                     <Input
                       id="new-category"
+                      maxLength={100}
                       value={newCategoryName}
                       onChange={(event) => setNewCategoryName(event.target.value)}
                       placeholder="New category name"
@@ -517,6 +536,7 @@ export function TransactionDialog({
               <Label htmlFor="notes">Notes</Label>
               <Textarea
                 id="notes"
+                maxLength={2000}
                 value={form.notes}
                 onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))}
                 placeholder="Optional notes"
@@ -534,6 +554,25 @@ export function TransactionDialog({
             </Button>
           </div>
         </form>
+
+        <AlertDialog open={showTransferConfirm} onOpenChange={setShowTransferConfirm}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm Transfer</AlertDialogTitle>
+              <AlertDialogDescription>
+                {(() => {
+                  const src = accountOptions.find((a) => a.id === form.sourceAccountId);
+                  const dst = accountOptions.find((a) => a.id === form.destinationAccountId);
+                  return `Transfer ${formatCurrency(Number(form.amount))} from ${src?.name ?? "?"} to ${dst?.name ?? "?"}`;
+                })()}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleTransferSubmit}>Confirm Transfer</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DialogContent>
     </Dialog>
   );

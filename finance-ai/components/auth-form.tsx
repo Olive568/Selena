@@ -77,7 +77,6 @@ export function AuthForm({ mode }: AuthFormProps) {
     try {
       if (isLogin) {
         const signInRes = await supabase.auth.signInWithPassword({ email, password });
-        console.log("supabase signInWithPassword response:", signInRes);
         const { error: authError } = signInRes;
 
         if (authError) {
@@ -104,7 +103,6 @@ export function AuthForm({ mode }: AuthFormProps) {
           },
         },
       });
-      console.log("supabase signUp response:", signUpRes);
       const { data, error: authError } = signUpRes;
 
       if (authError) {
@@ -143,6 +141,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               <Input
                 id="full-name"
                 autoComplete="name"
+                maxLength={100}
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 placeholder="Jane Doe"
@@ -157,6 +156,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               id="email"
               type="email"
               autoComplete="email"
+              maxLength={254}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
@@ -170,6 +170,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               id="password"
               type="password"
               autoComplete={isLogin ? "current-password" : "new-password"}
+              maxLength={128}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="••••••••"
@@ -177,6 +178,11 @@ export function AuthForm({ mode }: AuthFormProps) {
               required
             />
             <p className="text-xs text-muted-foreground">Use at least 6 characters.</p>
+            {isLogin && (
+              <Link href="/forgot-password" className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+                Forgot password?
+              </Link>
+            )}
           </div>
 
           {(error || success) && (

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ChatbotLauncher } from "@/components/chatbot-launcher";
+import { Footer } from "@/components/footer";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({
         <ThemeToggle />
         <ChatbotLauncher />
         {children}
+        <Footer />
       </body>
     </html>
   );

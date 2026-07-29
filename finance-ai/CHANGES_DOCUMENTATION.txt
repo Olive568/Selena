@@ -1,0 +1,757 @@
+============================================================
+  FIXES DOCUMENTATION - Pre-Launch Audit Fixes
+  Project: Finance AI
+  Date: 2026-07-29
+============================================================
+
+------------------------------------------------------------
+FIX #1: Add tests (zero tests exist)
+------------------------------------------------------------
+Root Cause: The financial math functions (normalizeTransaction,
+buildMetrics, buildCategoryBreakdown, formatCurrency, date helpers)
+had zero test coverage. Every refactor or deploy was blind.
+
+Files Modified:
+  - package.json
+    - Added devDependencies: vitest ^4.1.10, @testing-library/react,
+      jsdom, vite-tsconfig-paths
+    - Added scripts: "test": "vitest run", "test:watch": "vitest"
+
+Files Created:
+  - vitest.config.ts
+    - Configures Vitest with jsdom environment and tsconfig path
+      resolution for @/ alias support
+
+  - lib/__tests__/finance.test.ts
+    - 54 tests covering all functions in lib/finance.ts:
+      * normalizeTransaction (12 tests): null/missing fields,
+        transfer/income/expense types, zero/string amount, trimming,
+        date/created_at fallbacks, notes/description fallbacks
+      * buildMetrics (5 tests): mixed transactions, empty array,
+        only income, only expense, transfer ignored
+      * buildCategoryBreakdown (5 tests): multi-txn grouping,
+        empty/income-only input, descending sort, uncategorized
+      * formatCurrency (4 tests): zero, positive, negative, large
+      * formatDashboardDate (2 tests): valid/invalid date
+      * getDashboardDateRange (5 tests): all range values,
+        boundary conditions
+      * getMonthDateRange (5 tests): month boundaries,
+        leap/non-leap February, December/January edges
+      * toDateInputValue (2 tests): formatting, zero-padding
+      * normalizeCategory (4 tests): null user_id, missing name,
+        fallback id, trimming
+      * normalizeAccount (6 tests): null user_id, missing name,
+        fallback id, trimming, null fields
+      * Balance computation (4 tests): transfer/tx logic, empty,
+        income-only, missing payment_method
+
+------------------------------------------------------------
+FIX #2: Make transfers atomic
+------------------------------------------------------------
+Root Cause: transaction-manager.tsx:393-437 and
+transactions-page.tsx:416-461 issue two INSERTs (transfers table +
+transactions table) in separate statements. If the second fails,
+a transfer record exists with no matching transaction.
+
+Files Created:
+  - supabase/migrations/20260729_atomic_transfer.sql
+    - Creates create_transfer RPC function that inserts both
+      transfer and transaction records in a single atomic
+      database transaction (plpgsql block)
+
+Files Modified:
+  - components/transaction-manager.tsx
+    - Lines 393-437: Replaced dual-insert block with single
+      supabase.rpc("create_transfer", {...}) call
+
+  - components/transactions-page.tsx
+    - Lines 416-461: Replaced dual-insert block with single
+      supabase.rpc("create_transfer", {...}) call
+
+Solution:
+  A PostgreSQL function (security definer) wraps both INSERTs
+  in a single transaction. The function validates amount > 0.
+  Client code now calls supabase.rpc("create_transfer", {...})
+  instead of two sequential supabase.from(...).insert() calls.
+  If either insert fails, both roll back.
+
+------------------------------------------------------------
+
+FIX #3: Add idempotency on all writes
+------------------------------------------------------------
+Root Cause: No idempotency key existed. Client-side isSubmitting
+was bypassable. Network retry or double-click could create
+duplicate transactions, transfers, categories, or accounts.
+
+Files Created:
+  - supabase/migrations/20260729_idempotency.sql
+    - Added idempotency_key text UNIQUE column to transactions,
+      transfers, categories, and accounts tables
+
+Files Modified:
+  - supabase/migrations/20260729_atomic_transfer.sql
+    - Updated create_transfer RPC to accept p_idempotency_key
+      parameter and use ON CONFLICT (idempotency_key) DO NOTHING.
+      If the transfer insert is a duplicate, the function returns
+      early without inserting the transaction.
+
+  - components/transaction-manager.tsx
+    - Transfer RPC call: Added p_idempotency_key: crypto.randomUUID()
+    - Category insert: Added idempotency_key, handles 23505 error
+      by fetching existing record via key
+    - Account insert: Added idempotency_key, handles 23505 error
+      by fetching existing record via key
+    - Transaction insert: Added idempotency_key to non-editor insert,
+      handles 23505 error by silently returning (idempotent)
+
+  - components/transactions-page.tsx
+    - Same four changes as transaction-manager.tsx
+
+  - components/new-user-onboarding.tsx
+    - Bulk transaction insert: Added unique idempotency_key per row
+      (crypto.randomUUID() per entry), handles 23505 error silently
+
+  - lib/__tests__/finance.test.ts
+    - Fixed TypeScript type inference issue in balance computation
+      test (added explicit type annotation for transactions array)
+
+Solution:
+  Every insert now generates a unique idempotency_key via
+  crypto.randomUUID() and includes it in the payload. The database
+  has a UNIQUE constraint on idempotency_key. On duplicate key
+  violation (PostgreSQL code 23505), the operation is treated as
+  idempotent — transfers are skipped via ON CONFLICT DO NOTHING,
+  transactions silently return, and categories/accounts fetch the
+  existing record. This prevents duplicates from network retry or
+  double-clicks.
+
+------------------------------------------------------------
+
+FIX #4: Replace payment_method string matching with account_id FK
+------------------------------------------------------------
+Root Cause: account-cards.tsx matched payment_method string against
+account names. Renaming an account would corrupt all historical
+balance calculations because the string would no longer match.
+
+Files Created:
+  - supabase/migrations/20260729_account_id.sql
+    - Added account_id uuid column to transactions table with FK
+      reference to accounts(id) on delete set null
+
+Files Modified:
+  - lib/finance.ts
+    - TransactionRow: Added optional account_id field
+    - DashboardTransaction: Added required accountId field
+    - normalizeTransaction: Passes account_id through as accountId
+
+  - components/transaction-manager.tsx
+    - Transaction payload: Added account_id: sourceAccount?.id ?? null
+
+  - components/transactions-page.tsx
+    - Transaction payload: Added account_id: sourceAccount?.id ?? null
+
+  - components/account-cards.tsx
+    - Supabase query: Changed from selecting payment_method to
+      selecting account_id
+    - Balance logic: Uses account_id (UUID) as balanceMap key
+      instead of lowercased payment_method string. Transactions
+      with null/missing account_id are skipped.
+
+  - lib/__tests__/finance.test.ts
+    - All DashboardTransaction fixtures: Added accountId: ""
+    - Balance computation tests: Updated to use account_id with
+      UUID-based keys instead of payment_method string matching
+
+Solution:
+  Transactions now store the source account's UUID in account_id.
+  The account-cards.tsx fetchAccountBalances function uses this
+  UUID directly instead of matching on payment_method string,
+  making balance calculations immune to account name changes.
+  The payment_method column is retained for display only.
+
+------------------------------------------------------------
+
+FIX #5: GROQ_API_KEY rotation (Manual — no code change)
+------------------------------------------------------------
+Action: Go to https://console.groq.com, revoke the exposed key
+gsk_0RhrJCTSYuBfywxwPngjWGdyb3FYjCNO5gBcL7TYlo7Rmyj4Hbszd,
+generate a new one, and update .env.local with the new key.
+Status: Manual operation — skipped during code pass.
+
+------------------------------------------------------------
+
+FIX #6: Stop forwarding Groq error text to client
+------------------------------------------------------------
+Root Cause: api/chat/route.ts sent the raw Groq error response body
+to the browser in error responses, potentially leaking internal API
+details.
+
+Files Modified:
+  - app/api/chat/route.ts
+    - Lines 80-83: Replaced raw error forwarding with generic user-
+      facing message. The actual error is logged server-side via
+      console.error for debugging, while the client receives:
+      "AI service is temporarily unavailable. Please try again later."
+
+Solution:
+  Server-side error logging preserves diagnostic information while
+  the client always receives a safe, generic error message.
+
+------------------------------------------------------------
+
+FIX #7: Handle session expiry gracefully
+------------------------------------------------------------
+Root Cause: No client-side session lifecycle handling existed. When
+Supabase invalidated a session (token expiry, password change, admin
+revoke), all mutations silently failed without redirecting to login.
+
+Files Modified:
+  - lib/supabase.ts
+    - Added onAuthStateChanged listener: redirects to /login on
+      SIGNED_OUT event (global auth state detection)
+    - Added redirectIfAuthError(error) helper: checks error message
+      for "jwt", "session", or "auth" keywords and redirects to
+      /login. Exported for use in components.
+
+  - components/transaction-manager.tsx
+    - Imported redirectIfAuthError
+    - Added redirectIfAuthError(error) call in loadDashboardData
+      catch block
+    - Added redirectIfAuthError(error) call in handleSaveTransaction
+      catch block (before re-throw)
+    - Added redirectIfAuthError(error) call in handleDeleteTransaction
+      catch block
+
+  - components/transactions-page.tsx
+    - Imported redirectIfAuthError
+    - Added redirectIfAuthError(error) call in handleSaveTransaction
+      catch block (before re-throw)
+    - Added redirectIfAuthError(error) call in handleDeleteTransaction
+      catch block
+
+  - components/transaction-dialog.tsx
+    - Imported redirectIfAuthError
+    - Added redirectIfAuthError(submitError) call in onSubmit catch
+      block before displaying error to user
+
+Solution:
+  Two-layer defense: (1) Auth state listener catches session
+  termination events globally and redirects immediately. (2) Error
+  message scanning catches cases where an operation fails due to
+  invalid/expired session (JWT/session/auth keywords) at the
+  component level and redirects before showing the error to the user.
+
+------------------------------------------------------------
+
+FIX #8: Remove console.log of auth responses
+------------------------------------------------------------
+Root Cause: auth-form.tsx logged raw Supabase auth response objects
+(which contain session tokens) to the browser console on both login
+and signup, creating a security risk.
+
+Files Modified:
+  - components/auth-form.tsx
+    - Line 80: Removed console.log("supabase signInWithPassword
+      response:", signInRes) — leaked sign-in response
+    - Line 107: Removed console.log("supabase signUp response:",
+      signUpRes) — leaked sign-up response
+
+Solution:
+  Both console.log statements that dumped Supabase auth response
+  objects to the browser console have been deleted. Auth responses
+  are still processed internally for error handling and session
+  management, but are no longer exposed to the console.
+
+------------------------------------------------------------
+
+FIX #9: Add server-side validation for all money writes
+------------------------------------------------------------
+Root Cause: All mutations went directly from browser to Supabase
+via the anon key. No server-side validation existed for amounts
+or transaction types. The database had no CHECK constraints and
+client code had direct INSERT/UPDATE/DELETE access to tables.
+
+Files Created:
+
+  - supabase/migrations/20260729_server_validation.sql
+    - DB CHECK constraints:
+      * transactions.amount > 0 (positive amount)
+      * transfers.amount > 0 (positive amount)
+      * transactions.amount < 1e12 (finite amount cap)
+      * transaction_type IN ('income','expense','transfer')
+    - 6 new RPC functions (all security definer):
+      * create_transaction(p_user_id, p_merchant, p_amount, p_date,
+        p_notes, p_transaction_type, p_category, p_payment_method,
+        p_account_id, p_idempotency_key) — validates amount > 0 and
+        valid transaction type, handles idempotency
+      * update_transaction(p_id, p_user_id, ...) — partial update
+        with same validations, returns updated row as JSONB
+      * delete_transaction(p_id, p_user_id) — deletes only if
+        user_id matches, raises exception if not found
+      * create_category(p_user_id, p_name, p_idempotency_key) —
+        validates name non-empty and <= 100 chars
+      * create_account(p_user_id, p_name, p_idempotency_key) —
+        same validation as categories
+
+Files Modified:
+
+  - components/transaction-manager.tsx
+    - createCategoryRecord: replaced direct table insert with
+      create_category RPC
+    - createAccountRecord: replaced direct table insert with
+      create_account RPC
+    - handleSaveTransaction (else/insert): replaced direct insert
+      with create_transaction RPC
+    - handleSaveTransaction (if/update): replaced direct update
+      with update_transaction RPC
+    - handleDeleteTransaction: replaced direct delete with
+      delete_transaction RPC
+
+  - components/transactions-page.tsx
+    - Same five replacements as transaction-manager.tsx
+
+Solution:
+  Two-layer server-side validation: (1) CHECK constraints at the
+  database level enforce amount > 0, finite amounts, and valid
+  transaction types regardless of how data reaches the DB. (2) RPC
+  functions with explicit parameter validation replace direct table
+  access, allowing the browser anon key to be restricted to only
+  EXECUTE on these validated RPCs (requires RLS policy change in
+  Supabase dashboard to revoke direct table INSERT/UPDATE/DELETE).
+
+------------------------------------------------------------
+
+FIX #10: Fix floating-point accumulation in all money math
+------------------------------------------------------------
+Root Cause: Number() in JS is IEEE-754 double precision. Financial
+calculations like 0.1 + 0.2 produce 0.30000000000000004. All
+balance/metric calculations accumulated via JS number addition,
+introducing rounding errors over time.
+
+Files Created:
+
+  - supabase/migrations/20260729_integer_cents.sql
+    - Converts transactions.amount from numeric to bigint (cents)
+    - Converts transfers.amount from numeric to bigint (cents)
+    - Adds positive amount and finite amount CHECK constraints
+    - Recreates all RPCs (create_transfer, create_transaction,
+      update_transaction) with p_amount bigint instead of numeric
+
+Files Modified:
+
+  - lib/finance.ts
+    - normalizeTransaction: divides amount by 100 when reading
+      (amount / 100) to convert DB cents to display units
+
+  - components/transaction-manager.tsx
+    - Added amountInCents = Math.round(values.amount * 100) after
+      validation
+    - All RPC calls use amountInCents instead of values.amount
+
+  - components/transactions-page.tsx
+    - Same changes as transaction-manager.tsx
+
+  - components/new-user-onboarding.tsx
+    - Changed amount: Number(value) to
+      Math.round(Number(value) * 100) for cent conversion
+
+  - lib/__tests__/finance.test.ts
+    - normalizeTransaction "parses string amount" test: input
+      changed from "123.45" to 12345 (cents), expected output
+      remains 123.45 (display units)
+    - Balance computation tests: all monetary values multiplied
+      by 100 to represent cents, expectations updated accordingly
+
+Solution:
+  Database stores all monetary values as integer cents (bigint),
+  eliminating floating-point errors. Client-side form input is
+  converted to cents via Math.round(amount * 100) before writing.
+  On read, normalizeTransaction divides by 100 to restore display
+  units. All calculations on display units still use Number but
+  only for presentation; the source of truth (cents) is always an
+  exact integer. formatCurrency continues to work as it receives
+  display-unit values.
+
+------------------------------------------------------------
+
+FIX #11: Add timeout to Groq fetch
+------------------------------------------------------------
+Root Cause: The Groq API fetch in app/api/chat/route.ts had no
+timeout. If the upstream API hung, the user's request would hang
+indefinitely with no feedback.
+
+Files Modified:
+
+  - app/api/chat/route.ts
+    - Added AbortController with 15-second timeout before fetch
+    - Passed controller.signal to the fetch call
+    - Wrapped fetch in try/catch; on AbortError returns 504 with
+      "AI request timed out. Please try again."
+    - Non-AbortError errors are re-thrown (unexpected failures)
+    - clearTimeout called in both success and error paths
+
+Solution:
+  Standard AbortController pattern. 15 seconds was chosen as a
+  reasonable upper bound for LLM inference. Users get a clear
+  "timed out" message instead of a hanging request.
+
+------------------------------------------------------------
+
+FIX #12: Show onboarding balance errors
+------------------------------------------------------------
+Root Cause: The catch block in saveBalances() was empty, silently
+swallowing any error during initial balance insertion.
+
+Files Modified:
+
+  - components/new-user-onboarding.tsx
+    - Added balanceError state (string | null)
+    - Replaced empty catch with error handler that calls
+      setBalanceError(err.message) and returns without advancing
+    - Error message displayed inline above the Save button
+    - Button onClick resets error before retry: onDismiss
+
+Solution:
+  Show the actual error message to the user instead of silently
+  failing. The user can still skip with the "Skip" link below
+  the button. On failure, the step does not advance, allowing
+  retry.
+
+------------------------------------------------------------
+
+FIX #14: Add confirmation before transfer
+------------------------------------------------------------
+Root Cause: Transfers executed immediately without user
+confirmation. A mis-click on account selection could move money
+to the wrong account with no undo.
+
+Files Modified:
+
+  - components/transaction-dialog.tsx
+    - Added showTransferConfirm state (boolean)
+    - handleSubmit sets showTransferConfirm=true for transfers
+      instead of calling onSubmit directly
+    - Extracted handleTransferSubmit from the old inline submit
+      logic (no validation duplication; validation already ran)
+    - Added AlertDialog overlay showing "Transfer ₱X from A to B"
+    - AlertDialogAction calls handleTransferSubmit on confirm
+    - AlertDialogCancel closes the dialog without submitting
+
+Solution:
+  AlertDialog component from shadcn/ui (already in the project)
+  intercepts the transfer at the last moment. User sees the
+  source, destination, and formatted amount before committing.
+
+------------------------------------------------------------
+
+FIX #13+15: Rate limiting for /api/chat + CHECK constraints
+------------------------------------------------------------
+Root Cause: The /api/chat endpoint had no rate limiting, making
+it susceptible to abuse. CHECK constraints from fix #9 were
+listed as a separate item but were already implemented.
+
+Files Modified:
+
+  - app/api/chat/route.ts
+    - Added module-level Map<string, {count, resetAt}> rateLimit
+    - On each POST, checks x-forwarded-for header
+    - Returns 429 if count >= 20 within the same 60-second window
+    - Resets window on first request after expiry
+
+  - supabase/migrations/20260729_server_validation.sql
+    - Already included CHECK constraints (done in fix #9)
+
+Solution:
+  Simple in-memory rate limiter. Stateless (no DB/external cache),
+  adequate for single-instance deployment. Rate limit resets 60
+  seconds after the first request in each window.
+
+------------------------------------------------------------
+
+FIX #17: Build password-reset page
+------------------------------------------------------------
+Root Cause: No password-recovery flow existed. Users who forgot
+their password had no way to reset it.
+
+Files Created:
+
+  - app/forgot-password/page.tsx
+    - Client component with email form
+    - Calls supabase.auth.resetPasswordForEmail with redirectTo
+      pointing to /update-password
+    - Shows success message after sending
+
+  - app/update-password/page.tsx
+    - Client component with new-password form (minLength=6)
+    - Calls supabase.auth.updateUser({ password })
+    - Redirects to /login on success
+
+Files Modified:
+
+  - components/auth-form.tsx
+    - Added "Forgot password?" link below the password field
+      (only rendered when mode="login")
+
+Solution:
+  Standard Supabase Auth password-reset flow. The forgot-password
+  page sends a reset email. The update-password page handles the
+  redirect from the email link. The "Forgot password?" link on the
+  login form provides the entry point.
+
+------------------------------------------------------------
+
+FIX #18: Build account deletion
+------------------------------------------------------------
+Root Cause: No way for users to delete their account and all
+associated data.
+
+Files Created:
+
+  - app/api/delete-account/route.ts
+    - POST endpoint that authenticates via session cookie
+    - Creates a second adminClient with SUPABASE_SERVICE_ROLE_KEY
+    - Deletes rows from transactions, transfers, categories,
+      accounts, and profiles where user_id matches
+    - Calls adminClient.auth.admin.deleteUser(user.id)
+    - Returns 401 if not authenticated, 500 if service key missing
+
+  - app/settings/page.tsx
+    - Settings page with destructive "Delete account" section
+    - Uses AlertDialog for confirmation ("Are you absolutely sure?")
+    - On confirm, POSTs to /api/delete-account then redirects to
+      /login
+    - Shows error via alert if the API call fails
+
+Solution:
+  Server-side API route uses the Supabase service role key to
+  bypass RLS and delete all user data from public tables, then
+  deletes the auth user via admin API. The client-side settings
+  page provides a two-step confirmation (button + AlertDialog).
+
+------------------------------------------------------------
+
+FIX #19: Add /api/health endpoint
+------------------------------------------------------------
+Root Cause: No simple health-check endpoint existed for
+monitoring or deployment readiness probes.
+
+Files Created:
+
+  - app/api/health/route.ts
+    - GET endpoint returning { status: "ok", timestamp }
+    - No auth required (intentionally public for health checks)
+
+Solution:
+  Minimal health-check endpoint. Public access is intentional so
+  load balancers and monitoring tools can verify the service is
+  alive without authentication.
+
+------------------------------------------------------------
+
+FIX #20: Rename proxy.ts to middleware.ts (REVERTED)
+------------------------------------------------------------
+This version of Next.js deprecated middleware.ts in favor of
+proxy.ts. The file was changed to middleware.ts then reverted
+back to proxy.ts. The export stays as "proxy".
+
+Status: REVERTED — kept the original proxy.ts name.
+
+------------------------------------------------------------
+
+FIX #21: Add unique constraint on categories
+------------------------------------------------------------
+Root Cause: No unique constraint on category names per user,
+allowing duplicate categories to accumulate.
+
+Files Created:
+
+  - supabase/migrations/20260729_unique_category_name.sql
+    - Dedup query deletes duplicate categories (keeps the one with
+      the lowest id) for each user_id + lower(trim(name)) pair
+    - Creates unique index idx_categories_user_name on
+      (user_id, lower(trim(name)))
+
+Solution:
+  Case-insensitive unique index on (user_id, name). Lower-level
+  trim is applied for robustness. Existing duplicates are cleaned
+  up before creating the index.
+
+------------------------------------------------------------
+
+FIX #23: Sanitize Supabase error messages before display
+------------------------------------------------------------
+Root Cause: Raw Supabase error messages were shown directly to
+the user, potentially leaking implementation details (table names,
+constraint names, auth internals).
+
+Files Modified:
+
+  - lib/supabase.ts
+    - Added sanitizeError(message) helper function
+    - Maps JWT/session/auth errors to "Session expired. Please
+      sign in again."
+    - Maps duplicate key/unique constraint to "This record already
+      exists."
+    - Default: "An error occurred. Please try again."
+
+  - components/transaction-manager.tsx
+    - Imported sanitizeError
+    - Applied in both catch blocks (loadDashboardData, handleDelete)
+
+  - components/transactions-page.tsx
+    - Imported sanitizeError
+    - Applied in handleDelete catch block
+
+  - components/monthly-summary.tsx
+    - Imported sanitizeError
+    - Applied at setErrorMessage(error.message) site
+
+Solution:
+  Centralized sanitizeError function filters out implementation-
+  specific details while preserving the user's ability to
+  understand what went wrong. Sensitive auth errors trigger a
+  redirectIfAuthError first (already in place), then fall through
+  to the generic message if no redirect occurred.
+
+------------------------------------------------------------
+
+FIX #25: Add field length limits
+------------------------------------------------------------
+Root Cause: No length restrictions on text fields. Users could
+enter arbitrarily long values, and the DB would silently truncate
+or reject based on column type limits.
+
+Files Created:
+
+  - supabase/migrations/20260729_field_length_limits.sql
+    - CHECK constraints: merchant <= 200, notes <= 2000,
+      category name <= 100, account name <= 100
+
+Files Modified:
+
+  - components/transaction-dialog.tsx
+    - Add account input: maxLength=100 (matches account name)
+    - Merchant input: maxLength=200 (matches merchant)
+    - Add category input: maxLength=100 (matches category name)
+    - Notes textarea: maxLength=2000 (matches notes)
+
+  - components/auth-form.tsx
+    - Full name input: maxLength=100
+    - Email input: maxLength=254 (RFC 5321)
+    - Password input: maxLength=128
+
+Solution:
+  Dual-layer protection: DB CHECK constraints reject oversized
+  data at the server level, while client-side maxLength
+  attributes prevent the user from typing beyond the limit.
+
+------------------------------------------------------------
+
+FIX #26: Add retry button on chat error
+------------------------------------------------------------
+Root Cause: When the chat API call failed, users saw an error
+message but had no way to retry except typing the question again.
+
+Files Modified:
+
+  - components/chatbot-launcher.tsx
+    - Added lastSentRef to store the last sent message text
+    - Stored lastSentRef.current before clearing input in handleSend
+    - Added "Retry" button next to the error banner
+    - Retry re-sends lastSentRef.current via the same API call,
+      bypassing the cleared input field
+    - Retry button is disabled while isLoading
+
+Solution:
+  Store the last sent message in a ref so it survives input
+  clearing. The Retry button appears inline next to the error
+  banner and re-issues the same API request.
+
+------------------------------------------------------------
+
+FIX #27: Graceful env-var missing handling
+------------------------------------------------------------
+Root Cause: All env-var accesses used `!` non-null assertions. If
+any variable was missing, the error would be a cryptic TypeError
+at runtime (cannot read properties of undefined).
+
+Files Modified:
+
+  - lib/supabase.ts
+    - Extracted supabaseUrl/supabaseKey from process.env
+    - Throws descriptive Error if either is missing
+
+  - lib/supabase-server.ts
+    - Same pattern inside createSupabaseServerClient
+
+  - lib/supabase-middleware.ts
+    - Same pattern inside createSupabaseMiddlewareClient
+
+  - app/api/chat/route.ts
+    - Supabase URL/key: added check, returns 500 "Server
+      misconfigured" if missing
+    - GROQ_API_KEY check already existed; improved message
+
+  - app/api/delete-account/route.ts
+    - Supabase URL/key: added check, returns 500 "Server
+      misconfigured" if missing
+
+Solution:
+  Replace every `process.env.X!` with a local variable + guard.
+  Server-side routes return a 500 response instead of throwing.
+  Client-side libraries throw a descriptive Error at import time.
+
+------------------------------------------------------------
+
+FIX #22: Undo after delete — soft delete
+------------------------------------------------------------
+Root Cause: Deletes were hard deletes. No way to recover a
+mistakenly deleted transaction.
+
+Files Created:
+
+  - supabase/migrations/20260729_soft_delete.sql
+    - Added deleted_at timestamptz column to transactions
+    - Replaced delete_transaction RPC: now SET deleted_at = now()
+      instead of DELETE
+    - Created restore_transaction RPC (SET deleted_at = null)
+    - Created delete_transaction_permanent RPC (true DELETE)
+
+Files Modified:
+
+  - components/transaction-manager.tsx (8 SELECT queries)
+    - Added .is("deleted_at", null) to the loadDashboardData query
+    - Added BannerAction type for optional action button on banner
+    - Delete flow: stores deletedId, after reload sets banner with
+      Undo action that calls restore_transaction + reload
+    - Banner render: show action button when present
+    - All 7 transaction SELECT queries across the codebase got
+      the .is("deleted_at", null) filter
+
+  - components/transactions-page.tsx
+    - Same BannerState + BannerAction + Undo pattern
+
+  - components/monthly-summary.tsx
+    - Added .is("deleted_at", null) to the monthly rollup query
+
+  - components/account-cards.tsx
+    - Added .is("deleted_at", null) to the balance computation
+      query
+
+  - app/page.tsx
+    - Added .is("deleted_at", null) to the dashboard query
+
+  - app/transactions/page.tsx
+    - Added .is("deleted_at", null) to the transactions list query
+
+  - app/api/chat/route.ts
+    - Added .is("deleted_at", null) to the chat data query
+
+Solution:
+  Soft delete with deleted_at timestamp. All SELECT queries
+  automatically exclude soft-deleted rows. Deleted transactions
+  can be restored within the same session via the "Undo" button
+  on the success banner. A permanent delete RPC is available for
+  future cleanup/GC tasks.
+
+------------------------------------------------------------

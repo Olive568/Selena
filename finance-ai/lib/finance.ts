@@ -22,6 +22,7 @@ export type TransactionRow = {
   description?: string | null;
   notes?: string | null;
   user_id?: string | null;
+  account_id?: string | null;
 };
 
 export type CategoryRow = {
@@ -49,6 +50,7 @@ export type DashboardTransaction = {
   date: string;
   transactionType: TransactionType;
   paymentMethod: string;
+  accountId: string;
 };
 
 export type DashboardCategory = {
@@ -123,10 +125,11 @@ export function normalizeTransaction(row: TransactionRow, fallbackIndex: number)
     merchant: row.merchant?.trim() || (transactionType === "income" ? "Income" : "Untitled merchant"),
     category: row.category?.trim() || "Uncategorized",
     notes: row.notes?.trim() || row.description?.trim() || "",
-    amount: Number(row.amount ?? 0),
+    amount: Number(row.amount ?? 0) / 100,
     date,
     transactionType,
     paymentMethod: row.payment_method?.trim() || "Not set",
+    accountId: row.account_id?.trim() || "",
   };
 }
 
