@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import { MoonStar, SunMedium } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const THEME_STORAGE_KEY = "selena-theme";
 
-export function ThemeToggle() {
+type ThemeToggleProps = {
+  position?: "fixed" | "inline";
+};
+
+export function ThemeToggle({ position = "fixed" }: ThemeToggleProps) {
   const [isDark, setIsDark] = useState(() => {
     if (typeof window === "undefined") {
       return true;
@@ -31,7 +36,11 @@ export function ThemeToggle() {
       type="button"
       variant="outline"
       size="icon-sm"
-      className="fixed right-3 top-3 z-50 rounded-full border-border bg-card/95 text-foreground shadow-lg shadow-black/10 backdrop-blur sm:right-4 sm:top-4"
+      className={cn(
+        position === "fixed" &&
+          "fixed right-3 top-3 z-50 rounded-full border-border bg-card/95 text-foreground shadow-lg shadow-black/10 backdrop-blur sm:right-4 sm:top-4",
+        position === "inline" && "rounded-full border-border bg-card/95 text-foreground shadow-none backdrop-blur"
+      )}
       onClick={handleToggleTheme}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       title={isDark ? "Switch to light mode" : "Switch to dark mode"}

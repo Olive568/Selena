@@ -2,10 +2,17 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { createSupabaseMiddlewareClient } from "@/lib/supabase-middleware";
 
+const authPages = ["/sign-in", "/sign-up", "/login", "/register"];
+const protectedPaths = ["/dashboard", "/transactions", "/settings"];
+
 function cloneCookies(source: NextResponse, target: NextResponse) {
   source.cookies.getAll().forEach((cookie) => {
     target.cookies.set(cookie.name, cookie.value, cookie);
   });
+}
+
+function matches(pathname: string, prefixes: string[]) {
+  return prefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
 export async function proxy(request: NextRequest) {
@@ -19,18 +26,25 @@ export async function proxy(request: NextRequest) {
   const { data } = await supabase.auth.getUser();
   const user = data.user;
   const { pathname } = request.nextUrl;
-  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register");
+  const isAuthPage = matches(pathname, authPages);
+  const isProtected = matches(pathname, protectedPaths);
 
-  if (!user && !isAuthPage) {
-    const redirectResponse = NextResponse.redirect(new URL("/login", request.url));
-    cloneCookies(response, redirectResponse);
-    return redirectResponse;
+  if (isAuthPage) {
+    if (user) {
+      const redirectResponse = NextResponse.redirect(new URL("/dashboard", request.url));
+      cloneCookies(response, redirectResponse);
+      return redirectResponse;
+    }
+    return response;
   }
 
-  if (user && isAuthPage) {
-    const redirectResponse = NextResponse.redirect(new URL("/", request.url));
-    cloneCookies(response, redirectResponse);
-    return redirectResponse;
+  if (isProtected) {
+    if (!user) {
+      const redirectResponse = NextResponse.redirect(new URL("/sign-in", request.url));
+      cloneCookies(response, redirectResponse);
+      return redirectResponse;
+    }
+    return response;
   }
 
   return response;

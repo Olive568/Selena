@@ -539,7 +539,7 @@ export function TransactionManager({
 
   async function handleLogout() {
     await supabase.auth.signOut();
-    window.location.assign("/login");
+    window.location.assign("/sign-in");
   }
 
   const dialogInitialValues = editingTransaction

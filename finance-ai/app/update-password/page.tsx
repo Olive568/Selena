@@ -25,7 +25,7 @@ export default function UpdatePasswordPage() {
 
       if (updateError) throw updateError;
 
-      router.push("/login");
+      router.push("/sign-in");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update password.");
     } finally {

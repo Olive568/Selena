@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const hiddenRoutes = ["/login", "/register"];
+const hiddenRoutes = ["/", "/sign-in", "/sign-up", "/login", "/register"];
 
 function getToday() {
   const now = new Date();

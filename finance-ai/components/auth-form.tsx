@@ -84,7 +84,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         }
 
         await ensureProfileRow();
-        window.location.assign("/");
+        window.location.assign("/dashboard");
         return;
       }
 
@@ -111,7 +111,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
       if (data.session) {
         await ensureProfileRow(trimmedFullName);
-        window.location.assign("/");
+        window.location.assign("/dashboard");
         return;
       }
 
@@ -202,7 +202,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           <p className="text-center text-sm text-muted-foreground">
             {isLogin ? "No account yet?" : "Already have an account?"}{" "}
             <Link
-              href={isLogin ? "/register" : "/login"}
+              href={isLogin ? "/sign-up" : "/sign-in"}
               className="font-medium text-foreground underline underline-offset-4"
             >
               {isLogin ? "Register" : "Sign in"}

@@ -119,6 +119,14 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black 30%, transparent 75%);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

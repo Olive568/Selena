@@ -1,58 +1,47 @@
-import { redirect } from "next/navigation";
+import { AiPreview } from "@/components/marketing/ai-preview";
+import { DashboardPreview } from "@/components/marketing/dashboard-preview";
+import { Features } from "@/components/marketing/features";
+import { FinalCta } from "@/components/marketing/final-cta";
+import { Hero } from "@/components/marketing/hero";
+import { Navbar } from "@/components/marketing/navbar";
+import { Stats } from "@/components/marketing/stats";
+import { WhySelena } from "@/components/marketing/why-selena";
+import { FadeIn } from "@/components/marketing/fade-in";
 
-import { TransactionManager } from "@/components/transaction-manager";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
-import {
-  getDashboardDateRange,
-  type AccountRow,
-  type CategoryRow,
-  type TransactionRow,
-} from "@/lib/finance";
-
-export default async function Home() {
-  const supabase = await createSupabaseServerClient();
-  const { data: userData } = await supabase.auth.getUser();
-
-  if (!userData.user) {
-    redirect("/login");
-  }
-
-  const { start, end } = getDashboardDateRange("this_month");
-
-  const transactionsQuery = supabase
-    .from("transactions")
-    .select("*")
-    .eq("user_id", userData.user.id)
-    .order("date", { ascending: false })
-    .order("created_at", { ascending: false });
-
-  if (start && end) {
-    transactionsQuery.gte("date", start).lte("date", end);
-  }
-
-  const [{ data: transactionsData }, { data: categoriesData }, { data: accountsData }] = await Promise.all([
-    transactionsQuery,
-    // Include shared category rows where user_id is NULL alongside the user's own rows.
-    supabase
-      .from("categories")
-      .select("*")
-      .or(`user_id.is.null,user_id.eq.${userData.user.id}`)
-      .order("name", { ascending: true }),
-    // Include shared account rows where user_id is NULL alongside the user's own rows.
-    supabase
-      .from("accounts")
-      .select("*")
-      .or(`user_id.is.null,user_id.eq.${userData.user.id}`)
-      .order("name", { ascending: true }),
-  ]);
-
+export default function Home() {
   return (
-    <TransactionManager
-      initialTransactions={(transactionsData ?? []) as TransactionRow[]}
-      initialCategories={(categoriesData ?? []) as CategoryRow[]}
-      initialAccounts={(accountsData ?? []) as AccountRow[]}
-      userId={userData.user.id}
-      userEmail={userData.user.email}
-    />
+    <>
+      <Navbar />
+      <main className="flex-1">
+        <Hero />
+
+        <Features />
+
+        <WhySelena />
+
+        <section id="dashboard" className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+          <FadeIn className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-600 dark:text-teal-400">
+              Your dashboard
+            </p>
+            <h2 className="mt-3 font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+              Everything you need to understand your money
+            </h2>
+            <p className="mt-4 text-base leading-7 text-muted-foreground sm:text-lg">
+              A clean, real-time overview of your spending, income, and insights—ready the moment you sign in.
+            </p>
+          </FadeIn>
+          <FadeIn delay={0.15} className="mt-14">
+            <DashboardPreview />
+          </FadeIn>
+        </section>
+
+        <AiPreview />
+
+        <Stats />
+
+        <FinalCta />
+      </main>
+    </>
   );
 }

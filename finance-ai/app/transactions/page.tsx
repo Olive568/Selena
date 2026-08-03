@@ -53,7 +53,7 @@ export default async function TransactionsRoute({
   const { data: userData } = await supabase.auth.getUser();
 
   if (!userData.user) {
-    redirect("/login");
+    redirect("/sign-in");
   }
 
   const month = getSingleValue(searchParams?.month) || getCurrentMonthValue();

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ChatbotLauncher } from "@/components/chatbot-launcher";
+import { GlobalChrome } from "@/components/global-chrome";
 import { Footer } from "@/components/footer";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
-  title: "Selena",
-  description: "Mobile-first expense tracking dashboard with Supabase auth, category analytics, and transaction management.",
+  title: "Selena — AI-Powered Personal Finance Assistant",
+  description:
+    "Selena is an AI-powered personal finance assistant that helps you track expenses, understand spending habits, upload receipts, and make smarter financial decisions—all in one place.",
 };
 
 export default function RootLayout({
@@ -22,8 +22,7 @@ export default function RootLayout({
             __html: `(function(){try{var theme=localStorage.getItem('selena-theme');if(theme!=='light'&&theme!=='dark'){theme='dark';localStorage.setItem('selena-theme',theme);}document.documentElement.classList.toggle('dark',theme==='dark');}catch(e){document.documentElement.classList.add('dark');}})();`,
           }}
         />
-        <ThemeToggle />
-        <ChatbotLauncher />
+        <GlobalChrome />
         {children}
         <Footer />
       </body>

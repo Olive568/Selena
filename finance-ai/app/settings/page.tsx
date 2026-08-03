@@ -21,7 +21,7 @@ export default function SettingsPage() {
         const body = await res.json();
         throw new Error(body.error ?? "Failed to delete account");
       }
-      router.push("/login");
+      router.push("/sign-in");
     } catch (err) {
       alert(err instanceof Error ? err.message : "Failed to delete account");
     } finally {
