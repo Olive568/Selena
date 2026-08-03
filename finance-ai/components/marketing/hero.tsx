@@ -79,7 +79,6 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.96, y: 24 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3, ease: [0.21, 0.47, 0.32, 0.98] }}
-          className="order-first lg:order-none"
         >
           <DashboardMockup />
         </motion.div>
