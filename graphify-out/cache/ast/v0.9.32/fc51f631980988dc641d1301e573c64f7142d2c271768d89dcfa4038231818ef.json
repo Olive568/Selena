@@ -1,0 +1,1 @@
+{"nodes": [{"id": "$graphify-root$_finance_ai_supabase_migrations_20260729_unique_category_name_sql", "label": "20260729_unique_category_name.sql", "file_type": "code", "source_file": "finance-ai/supabase/migrations/20260729_unique_category_name.sql", "source_location": null}], "edges": []}

@@ -174,10 +174,10 @@ export function AuthForm({ mode }: AuthFormProps) {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="••••••••"
-              minLength={6}
+              minLength={8}
               required
             />
-            <p className="text-xs text-muted-foreground">Use at least 6 characters.</p>
+            <p className="text-xs text-muted-foreground">Use at least 8 characters.</p>
             {isLogin && (
               <Link href="/forgot-password" className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
                 Forgot password?

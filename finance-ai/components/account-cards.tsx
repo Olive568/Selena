@@ -5,7 +5,12 @@ import { Landmark, Loader2 } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/lib/supabase";
-import { formatCurrency, type DashboardAccount } from "@/lib/finance";
+import {
+  centsToPesos,
+  computeAccountBalancesInCents,
+  formatCurrency,
+  type DashboardAccount,
+} from "@/lib/finance";
 
 type AccountCardsProps = {
   accounts: DashboardAccount[];
@@ -25,35 +30,14 @@ async function fetchAccountBalances(userId: string, accounts: DashboardAccount[]
     supabase.from("transactions").select("amount, transaction_type, account_id").eq("user_id", userId),
   ]);
 
-  const balanceMap = new Map<string, number>();
+  const transferData = transfersResult.error ? [] : (transfersResult.data ?? []);
+  const txData = txResult.error ? [] : (txResult.data ?? []);
 
-  if (!transfersResult.error && transfersResult.data) {
-    for (const t of transfersResult.data) {
-      if (t.to_account_id) {
-        balanceMap.set(String(t.to_account_id), (balanceMap.get(String(t.to_account_id)) ?? 0) + Number(t.amount));
-      }
-      if (t.from_account_id) {
-        balanceMap.set(String(t.from_account_id), (balanceMap.get(String(t.from_account_id)) ?? 0) - Number(t.amount));
-      }
-    }
-  }
-
-  if (!txResult.error && txResult.data) {
-    for (const t of txResult.data) {
-      const accountId = t.account_id?.trim();
-      if (!accountId) continue;
-
-      if (t.transaction_type === "income") {
-        balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) + Number(t.amount));
-      } else if (t.transaction_type === "expense") {
-        balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) - Number(t.amount));
-      }
-    }
-  }
+  const balanceMap = computeAccountBalancesInCents(accounts, transferData, txData);
 
   return accounts.map((a) => ({
     name: a.name,
-    balance: balanceMap.get(a.id) ?? 0,
+    balance: centsToPesos(balanceMap.get(a.id) ?? 0),
     currency: a.currency ?? "PHP",
     institution: a.institution ?? null,
   }));
@@ -79,7 +63,7 @@ export function AccountCards({ accounts: initialAccounts, userId }: AccountCards
   if (initialAccounts.length === 0) return null;
 
   return (
-    <section>
+    <section id="accounts" className="scroll-mt-24">
       <div className="mb-3 flex items-center gap-2">
         <Landmark className="size-4 text-primary" />
         <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Accounts</h2>

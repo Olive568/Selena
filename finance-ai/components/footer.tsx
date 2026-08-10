@@ -26,16 +26,16 @@ const companyLinks = [
 export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
-      <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
-          <div className="max-w-sm space-y-4">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/25">
-                <Sparkles className="size-4 text-white" />
+      <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr] lg:gap-16">
+          <div className="max-w-sm space-y-5">
+            <Link href="/" className="flex items-center gap-2.5">
+              <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/25 lg:size-12">
+                <Sparkles className="size-5 text-white lg:size-6" />
               </span>
-              <span className="font-heading text-lg font-semibold tracking-tight">Selena</span>
+              <span className="font-heading text-xl font-semibold tracking-tight lg:text-2xl">Selena</span>
             </Link>
-            <p className="text-sm leading-6 text-muted-foreground">
+            <p className="text-base leading-7 text-muted-foreground lg:text-lg lg:leading-8">
               An AI-powered personal finance assistant that helps you track expenses, understand your spending, and
               make smarter financial decisions.
             </p>
@@ -45,28 +45,28 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Selena on GitHub"
-                className="flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="flex size-11 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:size-12"
               >
-                <GithubIcon className="size-4" />
+                <GithubIcon className="size-5 lg:size-6" />
               </a>
               <a
                 href="mailto:support@selenafinance.online"
                 aria-label="Email Selena"
-                className="flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="flex size-11 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:size-12"
               >
-                <Mail className="size-4" />
+                <Mail className="size-5 lg:size-6" />
               </a>
             </div>
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-foreground">Product</p>
-            <ul className="mt-4 space-y-3">
+            <p className="text-base font-semibold text-foreground lg:text-lg">Product</p>
+            <ul className="mt-5 space-y-3.5">
               {productLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="text-base text-muted-foreground transition-colors hover:text-foreground lg:text-lg"
                   >
                     {link.label}
                   </Link>
@@ -76,13 +76,13 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-foreground">Company</p>
-            <ul className="mt-4 space-y-3">
+            <p className="text-base font-semibold text-foreground lg:text-lg">Company</p>
+            <ul className="mt-5 space-y-3.5">
               {companyLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="text-base text-muted-foreground transition-colors hover:text-foreground lg:text-lg"
                   >
                     {link.label}
                   </Link>
@@ -92,9 +92,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-base text-muted-foreground sm:flex-row lg:mt-16 lg:text-lg">
           <p>
-            <span className="mr-2 inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+            <span className="mr-2 inline-block rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
               Alpha
             </span>
             &copy; {new Date().getFullYear()} Selena. All rights reserved.

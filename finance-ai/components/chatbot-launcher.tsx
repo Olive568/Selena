@@ -95,15 +95,17 @@ export function ChatbotLauncher() {
     <>
       <div className="fixed bottom-4 left-4 z-50 flex flex-col items-start gap-3">
         {isOpen && (
-          <Card className="w-[calc(100vw-2rem)] max-w-sm border-border bg-card/95 shadow-2xl shadow-black/20 backdrop-blur sm:w-[22rem]">
+          <Card className="w-[calc(100vw-2rem)] max-w-sm border-border bg-card/95 shadow-2xl shadow-black/20 backdrop-blur sm:w-[26rem] lg:w-[32rem]">
             <CardHeader className="space-y-3 border-b border-border pb-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <Bot className="size-4 text-primary" />
-                    <CardTitle className="text-base">Finance Chat</CardTitle>
+                    <Bot className="size-5 text-primary lg:size-6" />
+                    <CardTitle className="text-lg lg:text-xl">Finance Chat</CardTitle>
                   </div>
-                  <CardDescription>Ask about your transactions within a date range.</CardDescription>
+                  <CardDescription className="lg:text-sm">
+                    Ask about your transactions within a date range.
+                  </CardDescription>
                 </div>
                 <Button
                   type="button"
@@ -119,44 +121,44 @@ export function ChatbotLauncher() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="grid gap-1">
-                  <Label htmlFor="chat-start" className="text-xs text-muted-foreground">From</Label>
+                  <Label htmlFor="chat-start" className="text-xs text-muted-foreground lg:text-sm">From</Label>
                   <Input
                     id="chat-start"
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="h-8 text-xs"
+                    className="h-9 text-sm lg:h-10 lg:text-base"
                   />
                 </div>
                 <div className="grid gap-1">
-                  <Label htmlFor="chat-end" className="text-xs text-muted-foreground">To</Label>
+                  <Label htmlFor="chat-end" className="text-xs text-muted-foreground lg:text-sm">To</Label>
                   <Input
                     id="chat-end"
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="h-8 text-xs"
+                    className="h-9 text-sm lg:h-10 lg:text-base"
                   />
                 </div>
               </div>
             </CardHeader>
 
-            <CardContent className="space-y-4 p-4">
+            <CardContent className="space-y-4 p-4 lg:p-5">
               {messages.length === 0 && !error && (
-                <div className="rounded-2xl border border-dashed border-border bg-muted/40 p-3 text-sm leading-6 text-muted-foreground">
+                <div className="rounded-2xl border border-dashed border-border bg-muted/40 p-3 text-sm leading-6 text-muted-foreground lg:p-4 lg:text-base lg:leading-7">
                   Ask about your spending, income, or any transaction within the selected dates.
                 </div>
               )}
 
               {messages.length > 0 && (
-                <div className="flex max-h-72 flex-col gap-3 overflow-y-auto">
+                <div className="flex max-h-72 flex-col gap-3 overflow-y-auto lg:max-h-[26rem]">
                   {messages.map((msg, i) => (
                     <div
                       key={i}
-                      className={`rounded-2xl px-3 py-2 text-sm leading-6 ${
+                      className={`rounded-2xl px-3 py-2 text-sm leading-6 lg:px-4 lg:py-3 lg:text-base lg:leading-7 ${
                         msg.role === "user"
-                          ? "ml-8 bg-primary/10 text-foreground"
-                          : "mr-8 border border-border bg-muted/40 text-foreground"
+                          ? "ml-8 bg-primary/10 text-foreground lg:ml-16"
+                          : "mr-8 border border-border bg-muted/40 text-foreground lg:mr-16"
                       }`}
                     >
                       {msg.content}
@@ -168,7 +170,7 @@ export function ChatbotLauncher() {
 
               {error && (
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 rounded-2xl border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+                  <div className="flex-1 rounded-2xl border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive lg:px-4 lg:text-base">
                     {error}
                   </div>
                   <Button
@@ -209,15 +211,16 @@ export function ChatbotLauncher() {
                   onKeyDown={handleKeyDown}
                   placeholder="Ask about your finances..."
                   disabled={isLoading}
+                  className="h-10 text-base lg:h-12 lg:text-base"
                 />
                 <Button
                   type="button"
-                  size="icon"
+                  size="icon-lg"
                   onClick={handleSend}
                   disabled={isLoading || !input.trim()}
                   className="shrink-0"
                 >
-                  {isLoading ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+                  {isLoading ? <Loader2 className="size-5 animate-spin" /> : <Send className="size-5" />}
                 </Button>
               </div>
             </CardContent>
@@ -227,11 +230,11 @@ export function ChatbotLauncher() {
         <Button
           type="button"
           onClick={() => setIsOpen((current) => !current)}
-          className="h-12 rounded-full px-5 shadow-lg shadow-black/20"
+          className="h-12 rounded-full px-5 text-base shadow-lg shadow-black/20 lg:h-14 lg:px-6 lg:text-lg"
         >
-          <Bot className="mr-2 size-4" />
+          <Bot className="mr-2 size-5 lg:size-6" />
           {isOpen ? "Close chat" : "Chat"}
-          <ChevronDown className={`ml-2 size-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+          <ChevronDown className={`ml-2 size-5 transition-transform lg:size-6 ${isOpen ? "rotate-180" : ""}`} />
         </Button>
       </div>
     </>

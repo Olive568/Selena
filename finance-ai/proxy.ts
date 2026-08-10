@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseMiddlewareClient } from "@/lib/supabase-middleware";
 
 const authPages = ["/sign-in", "/sign-up", "/login", "/register"];
-const protectedPaths = ["/dashboard", "/transactions", "/settings"];
+const protectedPaths = ["/dashboard", "/transactions", "/settings", "/accounts"];
 
 function cloneCookies(source: NextResponse, target: NextResponse) {
   source.cookies.getAll().forEach((cookie) => {

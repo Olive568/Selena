@@ -1,21 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-const rateLimit = new Map<string, { count: number; resetAt: number }>();
+import { checkRateLimit } from "@/lib/rate-limit";
+
 const RATE_LIMIT = 20;
+const RATE_LIMIT_WINDOW_MS = 60_000;
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get("x-forwarded-for") ?? "unknown";
-  const now = Date.now();
-  const entry = rateLimit.get(ip);
-  if (entry && now < entry.resetAt) {
-    if (entry.count >= RATE_LIMIT) {
-      return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
-    }
-    entry.count++;
-  } else {
-    rateLimit.set(ip, { count: 1, resetAt: now + 60000 });
-  }
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!supabaseUrl || !supabaseKey) {
@@ -40,6 +31,10 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!checkRateLimit(`chat:${user.id}`, RATE_LIMIT, RATE_LIMIT_WINDOW_MS)) {
+    return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
   }
 
   const { message, startDate, endDate } = await request.json();

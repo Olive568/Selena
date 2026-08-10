@@ -37,6 +37,7 @@ export type AccountRow = {
   name?: string | null;
   institution?: string | null;
   currency?: string | null;
+  opening_balance?: number | string | null;
   created_at?: string | null;
 };
 
@@ -67,6 +68,7 @@ export type DashboardAccount = {
   userId: string | null;
   institution?: string | null;
   currency?: string | null;
+  openingBalance: number;
 };
 
 export type CategoryBreakdownItem = {
@@ -154,6 +156,7 @@ export function normalizeAccount(row: AccountRow, fallbackIndex: number): Dashbo
     userId: row.user_id ?? null,
     institution: row.institution?.trim() || null,
     currency: row.currency?.trim() || null,
+    openingBalance: Math.round(Number(row.opening_balance ?? 0)),
   };
 }
 
@@ -177,6 +180,63 @@ export function formatDashboardDate(value: string) {
     day: "numeric",
     year: "numeric",
   });
+}
+
+export type TransferSeed = {
+  from_account_id: string | number | null;
+  to_account_id: string | number | null;
+  amount: number | string | null;
+};
+
+export type BalanceTransaction = {
+  amount?: number | string | null;
+  transaction_type?: string | null;
+  account_id?: string | null;
+};
+
+export function computeAccountBalancesInCents(
+  accounts: DashboardAccount[],
+  transfers: TransferSeed[],
+  transactions: BalanceTransaction[]
+): Map<string, number> {
+  const balanceMap = new Map<string, number>();
+
+  for (const account of accounts) {
+    balanceMap.set(account.id, account.openingBalance ?? 0);
+  }
+
+  for (const t of transfers) {
+    const amount = Math.round(Number(t.amount ?? 0));
+
+    if (t.to_account_id) {
+      const key = String(t.to_account_id);
+      balanceMap.set(key, (balanceMap.get(key) ?? 0) + amount);
+    }
+
+    if (t.from_account_id) {
+      const key = String(t.from_account_id);
+      balanceMap.set(key, (balanceMap.get(key) ?? 0) - amount);
+    }
+  }
+
+  for (const t of transactions) {
+    const accountId = String(t.account_id ?? "").trim();
+    if (!accountId) continue;
+
+    const amount = Math.round(Number(t.amount ?? 0));
+
+    if (t.transaction_type === "income") {
+      balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) + amount);
+    } else if (t.transaction_type === "expense") {
+      balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) - amount);
+    }
+  }
+
+  return balanceMap;
+}
+
+export function centsToPesos(cents: number | string | null) {
+  return Math.round(Number(cents ?? 0)) / 100;
 }
 
 export function buildCategoryBreakdown(transactions: DashboardTransaction[]) {

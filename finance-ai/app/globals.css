@@ -137,6 +137,9 @@
   html {
     @apply font-sans;
   }
+  html {
+    scroll-padding-top: 5.5rem;
+  }
   html.dark {
     color-scheme: dark;
   }

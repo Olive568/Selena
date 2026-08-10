@@ -19,12 +19,12 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:h-20 lg:px-8">
         <Link href="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-          <span className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/25">
-            <Sparkles className="size-4 text-white" />
+          <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/25 lg:size-11">
+            <Sparkles className="size-5 text-white lg:size-6" />
           </span>
-          <span className="font-heading text-lg font-semibold tracking-tight">Selena</span>
+          <span className="font-heading text-xl font-semibold tracking-tight lg:text-2xl">Selena</span>
         </Link>
 
         <div className="hidden items-center gap-1 md:flex">
@@ -32,7 +32,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="rounded-full px-4 py-2 text-base font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:px-5 lg:py-2.5"
             >
               {link.label}
             </Link>
@@ -42,12 +42,12 @@ export function Navbar() {
         <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle position="inline" />
           <Link href="/sign-in">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="lg">
               Sign In
             </Button>
           </Link>
           <Link href="/sign-up">
-            <Button size="sm" className="rounded-full">
+            <Button size="lg" className="rounded-full">
               Get Started
             </Button>
           </Link>
@@ -58,11 +58,11 @@ export function Navbar() {
           <Button
             type="button"
             variant="ghost"
-            size="icon"
+            size="icon-lg"
             aria-label={isOpen ? "Close menu" : "Open menu"}
             onClick={() => setIsOpen((current) => !current)}
           >
-            {isOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
           </Button>
         </div>
       </nav>
@@ -81,7 +81,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="block rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="block rounded-xl px-4 py-3.5 text-base font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 {link.label}
               </Link>
