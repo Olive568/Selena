@@ -355,19 +355,19 @@
     "semantic_hash": "69e96bd90e1dcc9935d5ace6888bbe8d"
   },
   "finance-ai/supabase/migrations/20260729_integer_cents.sql": {
-    "mtime": 1786371679.3889184,
-    "ast_hash": "3948318dc11cb19569e90b2eb47dc317",
-    "semantic_hash": ""
+    "mtime": 1786352936.681925,
+    "ast_hash": "724a32ce42d53a47222ad76288b1b75d",
+    "semantic_hash": "724a32ce42d53a47222ad76288b1b75d"
   },
   "finance-ai/supabase/migrations/20260729_remove_soft_delete.sql": {
-    "mtime": 1786371681.2765272,
-    "ast_hash": "34cb1ad085fcb3f12dc06d2eb22cbd8d",
-    "semantic_hash": ""
+    "mtime": 1786352940.694024,
+    "ast_hash": "4a062f83ebe4eadcaceb91c6c48d47c7",
+    "semantic_hash": "4a062f83ebe4eadcaceb91c6c48d47c7"
   },
   "finance-ai/supabase/migrations/20260729_server_validation.sql": {
-    "mtime": 1786371682.8669515,
-    "ast_hash": "505423f5326995eaffd2b07043493d53",
-    "semantic_hash": ""
+    "mtime": 1786353061.3000946,
+    "ast_hash": "17c7467a952a924be8284d7206523805",
+    "semantic_hash": "17c7467a952a924be8284d7206523805"
   },
   "finance-ai/supabase/migrations/20260729_soft_delete.sql": {
     "mtime": 1785325993.4161053,
@@ -440,14 +440,24 @@
     "semantic_hash": "a7ded90f1676106901251bb1564abc57"
   },
   "finance-ai/components/app-header.tsx": {
-    "mtime": 1786370530.4325652,
-    "ast_hash": "d4cc037f3f3a792a3e662efa8f130923",
-    "semantic_hash": ""
+    "mtime": 1785772789.0416636,
+    "ast_hash": "0bc954422ff3f05f9d78068d86d604b5",
+    "semantic_hash": "0bc954422ff3f05f9d78068d86d604b5"
   },
   "finance-ai/lib/rate-limit.ts": {
     "mtime": 1786353346.599122,
     "ast_hash": "18033b3fb02127bb0268b7c1230281e2",
     "semantic_hash": "18033b3fb02127bb0268b7c1230281e2"
+  },
+  "finance-ai/supabase/migrations/20260804_account_opening_balance.sql": {
+    "mtime": 1785773262.2041726,
+    "ast_hash": "358a5b4e7069a2d85c0f8d8d8c07ef28",
+    "semantic_hash": "358a5b4e7069a2d85c0f8d8d8c07ef28"
+  },
+  "finance-ai/supabase/migrations/20260810_rpc_owner_check.sql": {
+    "mtime": 1786353112.1213665,
+    "ast_hash": "40127f23be388e64ac56149aee562f17",
+    "semantic_hash": "40127f23be388e64ac56149aee562f17"
   },
   "finance-ai/public/file.svg": {
     "mtime": 1781616724.413946,
@@ -473,10 +483,5 @@
     "mtime": 1781616724.4676557,
     "ast_hash": "a2760511c65806022ad20adf74370ff3",
     "semantic_hash": "a2760511c65806022ad20adf74370ff3"
-  },
-  "PROJECT_CONTEXT.md": {
-    "mtime": 1786369860.930954,
-    "ast_hash": "d832ae718a8be298022d2135e3cc50a2",
-    "semantic_hash": ""
   }
 }
