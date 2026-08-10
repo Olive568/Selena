@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { sanitizeError, supabase } from "@/lib/supabase";
-import { formatCurrency, formatMonthYear, getMonthDateRange } from "@/lib/finance";
+import { centsToPesos, formatCurrency, formatMonthYear, getMonthDateRange } from "@/lib/finance";
 
 type MonthlySummaryRecord = {
   amount: number | string | null;
@@ -68,7 +68,7 @@ export function MonthlySummary({ userId }: { userId: string }) {
 
       const nextSummary = rows.reduce<MonthlySummaryState>(
         (accumulator, row) => {
-          const amount = Number(row.amount ?? 0);
+          const amount = centsToPesos(row.amount);
 
           if (row.transaction_type === "income") {
             accumulator.income += amount;
