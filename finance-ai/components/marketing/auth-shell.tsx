@@ -1,6 +1,7 @@
-import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+
+import { SelenaIcon } from "@/components/selena-icon";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -17,8 +18,8 @@ export function AuthShell({ title, subtitle, highlights, children }: AuthShellPr
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
         <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/25">
-              <Sparkles className="size-4 text-white" />
+            <span className="flex size-8 items-center justify-center overflow-hidden rounded-xl">
+              <SelenaIcon className="h-full w-full" />
             </span>
             <span className="font-heading text-lg font-semibold tracking-tight">Selena</span>
           </Link>

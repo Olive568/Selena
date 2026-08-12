@@ -63,15 +63,103 @@
   },
   "nodes": [
     {
+      "label": "chatbot-launcher.tsx",
+      "file_type": "code",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "finance_ai_components_chatbot_launcher",
+      "community": 7,
+      "community_name": "cn",
+      "norm_label": "chatbot-launcher.tsx"
+    },
+    {
+      "label": "hiddenRoutes",
+      "file_type": "code",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L14",
+      "_origin": "ast",
+      "id": "finance_ai_components_chatbot_launcher_hiddenroutes",
+      "community": 7,
+      "community_name": "cn",
+      "norm_label": "hiddenroutes"
+    },
+    {
+      "label": "suggestionPrompts",
+      "file_type": "code",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L16",
+      "_origin": "ast",
+      "id": "finance_ai_components_chatbot_launcher_suggestionprompts",
+      "community": 7,
+      "community_name": "cn",
+      "norm_label": "suggestionprompts"
+    },
+    {
+      "label": "getToday()",
+      "file_type": "code",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L26",
+      "_origin": "ast",
+      "id": "finance_ai_components_chatbot_launcher_gettoday",
+      "community": 7,
+      "community_name": "cn",
+      "norm_label": "gettoday()"
+    },
+    {
+      "label": "getMonthStart()",
+      "file_type": "code",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L34",
+      "_origin": "ast",
+      "id": "finance_ai_components_chatbot_launcher_getmonthstart",
+      "community": 7,
+      "community_name": "cn",
+      "norm_label": "getmonthstart()"
+    },
+    {
+      "label": "formatDateLabel()",
+      "file_type": "code",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "finance_ai_components_chatbot_launcher_formatdatelabel",
+      "community": 7,
+      "community_name": "cn",
+      "norm_label": "formatdatelabel()"
+    },
+    {
+      "label": "Message",
+      "file_type": "code",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L55",
+      "_origin": "ast",
+      "id": "finance_ai_components_chatbot_launcher_message",
+      "community": 7,
+      "community_name": "cn",
+      "norm_label": "message"
+    },
+    {
+      "label": "ChatbotLauncher()",
+      "file_type": "code",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L60",
+      "_origin": "ast",
+      "id": "finance_ai_components_chatbot_launcher_chatbotlauncher",
+      "community": 7,
+      "community_name": "cn",
+      "norm_label": "chatbotlauncher()"
+    },
+    {
       "label": "monthly-summary.tsx",
       "file_type": "code",
       "source_file": "finance-ai/components/monthly-summary.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "finance_ai_components_monthly_summary",
       "community": 2,
       "community_name": "transactions-page.tsx",
-      "norm_label": "monthly-summary.tsx"
+      "norm_label": "monthly-summary.tsx",
+      "id": "finance_ai_components_monthly_summary"
     },
     {
       "label": "MonthlySummaryRecord",
@@ -79,10 +167,10 @@
       "source_file": "finance-ai/components/monthly-summary.tsx",
       "source_location": "L11",
       "_origin": "ast",
-      "id": "finance_ai_components_monthly_summary_monthlysummaryrecord",
       "community": 2,
       "community_name": "transactions-page.tsx",
-      "norm_label": "monthlysummaryrecord"
+      "norm_label": "monthlysummaryrecord",
+      "id": "finance_ai_components_monthly_summary_monthlysummaryrecord"
     },
     {
       "label": "MonthlySummaryState",
@@ -90,10 +178,10 @@
       "source_file": "finance-ai/components/monthly-summary.tsx",
       "source_location": "L17",
       "_origin": "ast",
-      "id": "finance_ai_components_monthly_summary_monthlysummarystate",
       "community": 2,
       "community_name": "transactions-page.tsx",
-      "norm_label": "monthlysummarystate"
+      "norm_label": "monthlysummarystate",
+      "id": "finance_ai_components_monthly_summary_monthlysummarystate"
     },
     {
       "label": "startOfMonth()",
@@ -101,10 +189,10 @@
       "source_file": "finance-ai/components/monthly-summary.tsx",
       "source_location": "L23",
       "_origin": "ast",
-      "id": "finance_ai_components_monthly_summary_startofmonth",
       "community": 2,
       "community_name": "transactions-page.tsx",
-      "norm_label": "startofmonth()"
+      "norm_label": "startofmonth()",
+      "id": "finance_ai_components_monthly_summary_startofmonth"
     },
     {
       "label": "shiftMonth()",
@@ -112,10 +200,10 @@
       "source_file": "finance-ai/components/monthly-summary.tsx",
       "source_location": "L27",
       "_origin": "ast",
-      "id": "finance_ai_components_monthly_summary_shiftmonth",
       "community": 2,
       "community_name": "transactions-page.tsx",
-      "norm_label": "shiftmonth()"
+      "norm_label": "shiftmonth()",
+      "id": "finance_ai_components_monthly_summary_shiftmonth"
     },
     {
       "label": "MonthlySummary()",
@@ -123,10 +211,10 @@
       "source_file": "finance-ai/components/monthly-summary.tsx",
       "source_location": "L31",
       "_origin": "ast",
-      "id": "finance_ai_components_monthly_summary_monthlysummary",
       "community": 2,
       "community_name": "transactions-page.tsx",
-      "norm_label": "monthlysummary()"
+      "norm_label": "monthlysummary()",
+      "id": "finance_ai_components_monthly_summary_monthlysummary"
     },
     {
       "label": "PROJECT_CONTEXT.md",
@@ -618,8 +706,8 @@
       "source_file": "finance-ai/components/account-balance-dialog.tsx",
       "source_location": "L24",
       "_origin": "ast",
-      "community": 61,
-      "community_name": "formatCurrency",
+      "community": 2,
+      "community_name": "transactions-page.tsx",
       "norm_label": "accountbalancedialog()",
       "id": "finance_ai_components_account_balance_dialog_accountbalancedialog"
     },
@@ -662,8 +750,8 @@
       "source_file": "finance-ai/components/account-cards.tsx",
       "source_location": "L27",
       "_origin": "ast",
-      "community": 61,
-      "community_name": "formatCurrency",
+      "community": 2,
+      "community_name": "transactions-page.tsx",
       "norm_label": "fetchaccountbalances()",
       "id": "finance_ai_components_account_cards_fetchaccountbalances"
     },
@@ -794,8 +882,8 @@
       "source_file": "finance-ai/components/accounts-page.tsx",
       "source_location": "L42",
       "_origin": "ast",
-      "community": 61,
-      "community_name": "formatCurrency",
+      "community": 2,
+      "community_name": "transactions-page.tsx",
       "norm_label": "accountspage()",
       "id": "finance_ai_components_accounts_page_accountspage"
     },
@@ -806,7 +894,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "app-header.tsx",
       "id": "finance_ai_components_app_header"
     },
@@ -817,7 +905,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "navlinks",
       "id": "finance_ai_components_app_header_navlinks"
     },
@@ -828,7 +916,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "isactive()",
       "id": "finance_ai_components_app_header_isactive"
     },
@@ -839,7 +927,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "appheader()",
       "id": "finance_ai_components_app_header_appheader"
     },
@@ -849,8 +937,8 @@
       "source_file": "finance-ai/components/auth-form.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
-      "community_name": "auth-form.tsx",
+      "community": 2,
+      "community_name": "transactions-page.tsx",
       "norm_label": "auth-form.tsx",
       "id": "finance_ai_components_auth_form"
     },
@@ -860,8 +948,8 @@
       "source_file": "finance-ai/components/auth-form.tsx",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 1,
-      "community_name": "auth-form.tsx",
+      "community": 2,
+      "community_name": "transactions-page.tsx",
       "norm_label": "authmode",
       "id": "finance_ai_components_auth_form_authmode"
     },
@@ -871,8 +959,8 @@
       "source_file": "finance-ai/components/auth-form.tsx",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 1,
-      "community_name": "auth-form.tsx",
+      "community": 2,
+      "community_name": "transactions-page.tsx",
       "norm_label": "authformprops",
       "id": "finance_ai_components_auth_form_authformprops"
     },
@@ -882,8 +970,8 @@
       "source_file": "finance-ai/components/auth-form.tsx",
       "source_location": "L18",
       "_origin": "ast",
-      "community": 1,
-      "community_name": "auth-form.tsx",
+      "community": 2,
+      "community_name": "transactions-page.tsx",
       "norm_label": "ensureprofilerow()",
       "id": "finance_ai_components_auth_form_ensureprofilerow"
     },
@@ -893,76 +981,10 @@
       "source_file": "finance-ai/components/auth-form.tsx",
       "source_location": "L61",
       "_origin": "ast",
-      "community": 1,
-      "community_name": "auth-form.tsx",
+      "community": 3,
+      "community_name": "finance.ts",
       "norm_label": "authform()",
       "id": "finance_ai_components_auth_form_authform"
-    },
-    {
-      "label": "chatbot-launcher.tsx",
-      "file_type": "code",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "button.tsx",
-      "norm_label": "chatbot-launcher.tsx",
-      "id": "finance_ai_components_chatbot_launcher"
-    },
-    {
-      "label": "hiddenRoutes",
-      "file_type": "code",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L12",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "button.tsx",
-      "norm_label": "hiddenroutes",
-      "id": "finance_ai_components_chatbot_launcher_hiddenroutes"
-    },
-    {
-      "label": "getToday()",
-      "file_type": "code",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L14",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "button.tsx",
-      "norm_label": "gettoday()",
-      "id": "finance_ai_components_chatbot_launcher_gettoday"
-    },
-    {
-      "label": "getMonthStart()",
-      "file_type": "code",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L22",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "button.tsx",
-      "norm_label": "getmonthstart()",
-      "id": "finance_ai_components_chatbot_launcher_getmonthstart"
-    },
-    {
-      "label": "Message",
-      "file_type": "code",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L29",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "button.tsx",
-      "norm_label": "message",
-      "id": "finance_ai_components_chatbot_launcher_message"
-    },
-    {
-      "label": "ChatbotLauncher()",
-      "file_type": "code",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L34",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "button.tsx",
-      "norm_label": "chatbotlauncher()",
-      "id": "finance_ai_components_chatbot_launcher_chatbotlauncher"
     },
     {
       "label": "footer.tsx",
@@ -971,7 +993,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "footer.tsx",
       "id": "finance_ai_components_footer"
     },
@@ -982,7 +1004,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "githubicon()",
       "id": "finance_ai_components_footer_githubicon"
     },
@@ -993,7 +1015,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "productlinks",
       "id": "finance_ai_components_footer_productlinks"
     },
@@ -1004,7 +1026,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "companylinks",
       "id": "finance_ai_components_footer_companylinks"
     },
@@ -1015,7 +1037,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "footer()",
       "id": "finance_ai_components_footer_footer"
     },
@@ -1026,7 +1048,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "global-chrome.tsx",
       "id": "finance_ai_components_global_chrome"
     },
@@ -1037,7 +1059,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "marketingroutes",
       "id": "finance_ai_components_global_chrome_marketingroutes"
     },
@@ -1048,7 +1070,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "approutes",
       "id": "finance_ai_components_global_chrome_approutes"
     },
@@ -1059,7 +1081,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "globalchrome()",
       "id": "finance_ai_components_global_chrome_globalchrome"
     },
@@ -1070,7 +1092,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "navbar.tsx",
       "id": "finance_ai_components_marketing_navbar"
     },
@@ -1081,7 +1103,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "community": 6,
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "norm_label": "navlinks",
       "id": "finance_ai_components_marketing_navbar_navlinks"
     },
@@ -1091,8 +1113,8 @@
       "source_file": "finance-ai/components/marketing/navbar.tsx",
       "source_location": "L17",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "app/page.tsx",
+      "community": 6,
+      "community_name": "app-header.tsx",
       "norm_label": "navbar()",
       "id": "finance_ai_components_marketing_navbar_navbar"
     },
@@ -1113,8 +1135,8 @@
       "source_file": "finance-ai/lib/finance.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 2,
-      "community_name": "transactions-page.tsx",
+      "community": 61,
+      "community_name": "formatCurrency",
       "norm_label": "transactiontype",
       "id": "finance_ai_lib_finance_transactiontype"
     },
@@ -1344,8 +1366,8 @@
       "source_file": "finance-ai/lib/finance.ts",
       "source_location": "L197",
       "_origin": "ast",
-      "community": 61,
-      "community_name": "formatCurrency",
+      "community": 2,
+      "community_name": "transactions-page.tsx",
       "norm_label": "computeaccountbalancesincents()",
       "id": "finance_ai_lib_finance_computeaccountbalancesincents"
     },
@@ -1355,8 +1377,8 @@
       "source_file": "finance-ai/lib/finance.ts",
       "source_location": "L238",
       "_origin": "ast",
-      "community": 61,
-      "community_name": "formatCurrency",
+      "community": 2,
+      "community_name": "transactions-page.tsx",
       "norm_label": "centstopesos()",
       "id": "finance_ai_lib_finance_centstopesos"
     },
@@ -2457,7 +2479,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "layout.tsx",
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "id": "finance_ai_app_layout"
     },
     {
@@ -2468,7 +2490,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "metadata",
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "id": "finance_ai_app_layout_metadata"
     },
     {
@@ -2479,7 +2501,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "rootlayout()",
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "id": "finance_ai_app_layout_rootlayout"
     },
     {
@@ -2609,9 +2631,9 @@
       "source_file": "finance-ai/app/sign-in/page.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
+      "community": 3,
       "norm_label": "sign-in/page.tsx",
-      "community_name": "auth-form.tsx",
+      "community_name": "finance.ts",
       "id": "finance_ai_app_sign_in_page"
     },
     {
@@ -2620,9 +2642,9 @@
       "source_file": "finance-ai/app/sign-in/page.tsx",
       "source_location": "L8",
       "_origin": "ast",
-      "community": 1,
+      "community": 3,
       "norm_label": "metadata",
-      "community_name": "auth-form.tsx",
+      "community_name": "finance.ts",
       "id": "finance_ai_app_sign_in_page_metadata"
     },
     {
@@ -2631,9 +2653,9 @@
       "source_file": "finance-ai/app/sign-in/page.tsx",
       "source_location": "L13",
       "_origin": "ast",
-      "community": 1,
+      "community": 3,
       "norm_label": "signinpage()",
-      "community_name": "auth-form.tsx",
+      "community_name": "finance.ts",
       "id": "finance_ai_app_sign_in_page_signinpage"
     },
     {
@@ -2642,9 +2664,9 @@
       "source_file": "finance-ai/app/sign-up/page.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
+      "community": 3,
       "norm_label": "sign-up/page.tsx",
-      "community_name": "auth-form.tsx",
+      "community_name": "finance.ts",
       "id": "finance_ai_app_sign_up_page"
     },
     {
@@ -2653,9 +2675,9 @@
       "source_file": "finance-ai/app/sign-up/page.tsx",
       "source_location": "L8",
       "_origin": "ast",
-      "community": 1,
+      "community": 3,
       "norm_label": "metadata",
-      "community_name": "auth-form.tsx",
+      "community_name": "finance.ts",
       "id": "finance_ai_app_sign_up_page_metadata"
     },
     {
@@ -2664,9 +2686,9 @@
       "source_file": "finance-ai/app/sign-up/page.tsx",
       "source_location": "L13",
       "_origin": "ast",
-      "community": 1,
+      "community": 3,
       "norm_label": "signuppage()",
-      "community_name": "auth-form.tsx",
+      "community_name": "finance.ts",
       "id": "finance_ai_app_sign_up_page_signuppage"
     },
     {
@@ -3159,9 +3181,9 @@
       "source_file": "finance-ai/components/marketing/auth-shell.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
+      "community": 6,
       "norm_label": "auth-shell.tsx",
-      "community_name": "auth-form.tsx",
+      "community_name": "app-header.tsx",
       "id": "finance_ai_components_marketing_auth_shell"
     },
     {
@@ -3170,9 +3192,9 @@
       "source_file": "finance-ai/components/marketing/auth-shell.tsx",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 1,
+      "community": 6,
       "norm_label": "authshellprops",
-      "community_name": "auth-form.tsx",
+      "community_name": "app-header.tsx",
       "id": "finance_ai_components_marketing_auth_shell_authshellprops"
     },
     {
@@ -3181,9 +3203,9 @@
       "source_file": "finance-ai/components/marketing/auth-shell.tsx",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 1,
+      "community": 3,
       "norm_label": "authshell()",
-      "community_name": "auth-form.tsx",
+      "community_name": "finance.ts",
       "id": "finance_ai_components_marketing_auth_shell_authshell"
     },
     {
@@ -3568,7 +3590,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "theme-toggle.tsx",
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "id": "finance_ai_components_theme_toggle"
     },
     {
@@ -3579,7 +3601,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "themetoggleprops",
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "id": "finance_ai_components_theme_toggle_themetoggleprops"
     },
     {
@@ -3590,7 +3612,7 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "themetoggle()",
-      "community_name": "button.tsx",
+      "community_name": "app-header.tsx",
       "id": "finance_ai_components_theme_toggle_themetoggle"
     },
     {
@@ -3599,9 +3621,9 @@
       "source_file": "finance-ai/components/transaction-dialog.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 2,
+      "community": 7,
       "norm_label": "transaction-dialog.tsx",
-      "community_name": "transactions-page.tsx",
+      "community_name": "cn",
       "id": "finance_ai_components_transaction_dialog"
     },
     {
@@ -3621,9 +3643,9 @@
       "source_file": "finance-ai/components/transaction-dialog.tsx",
       "source_location": "L33",
       "_origin": "ast",
-      "community": 2,
+      "community": 7,
       "norm_label": "transactiondialogprops",
-      "community_name": "transactions-page.tsx",
+      "community_name": "cn",
       "id": "finance_ai_components_transaction_dialog_transactiondialogprops"
     },
     {
@@ -4083,9 +4105,9 @@
       "source_file": "finance-ai/components/ui/button.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 6,
+      "community": 7,
       "norm_label": "button.tsx",
-      "community_name": "button.tsx",
+      "community_name": "cn",
       "id": "finance_ai_components_ui_button"
     },
     {
@@ -4094,9 +4116,9 @@
       "source_file": "finance-ai/components/ui/button.tsx",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 6,
+      "community": 7,
       "norm_label": "buttonvariants",
-      "community_name": "button.tsx",
+      "community_name": "cn",
       "id": "finance_ai_components_ui_button_buttonvariants"
     },
     {
@@ -4105,9 +4127,9 @@
       "source_file": "finance-ai/components/ui/button.tsx",
       "source_location": "L44",
       "_origin": "ast",
-      "community": 6,
+      "community": 7,
       "norm_label": "button()",
-      "community_name": "button.tsx",
+      "community_name": "cn",
       "id": "finance_ai_components_ui_button_button"
     },
     {
@@ -4380,9 +4402,9 @@
       "source_file": "finance-ai/components/ui/select.tsx",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 2,
+      "community": 7,
       "norm_label": "select()",
-      "community_name": "transactions-page.tsx",
+      "community_name": "cn",
       "id": "finance_ai_components_ui_select_select"
     },
     {
@@ -4402,9 +4424,9 @@
       "source_file": "finance-ai/components/ui/select.tsx",
       "source_location": "L17",
       "_origin": "ast",
-      "community": 2,
+      "community": 7,
       "norm_label": "selectvalue()",
-      "community_name": "transactions-page.tsx",
+      "community_name": "cn",
       "id": "finance_ai_components_ui_select_selectvalue"
     },
     {
@@ -4545,9 +4567,9 @@
       "source_file": "finance-ai/lib/supabase-server.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
+      "community": 3,
       "norm_label": "supabase-server.ts",
-      "community_name": "auth-form.tsx",
+      "community_name": "finance.ts",
       "id": "finance_ai_lib_supabase_server"
     },
     {
@@ -4556,9 +4578,9 @@
       "source_file": "finance-ai/lib/supabase-server.ts",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 1,
+      "community": 3,
       "norm_label": "createsupabaseserverclient()",
-      "community_name": "auth-form.tsx",
+      "community_name": "finance.ts",
       "id": "finance_ai_lib_supabase_server_createsupabaseserverclient"
     },
     {
@@ -6341,13 +6363,270 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_chatbot_launcher_chatbotlauncher",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_chatbot_launcher_formatdatelabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_chatbot_launcher_getmonthstart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_chatbot_launcher_gettoday",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_chatbot_launcher_hiddenroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_chatbot_launcher_message",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_chatbot_launcher_suggestionprompts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_ui_button",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_ui_button_button",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_ui_input",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_ui_input_input",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_ui_label",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_ui_label_label",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_ui_textarea",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_components_ui_textarea_textarea",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_lib_utils",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher",
+      "target": "finance_ai_lib_utils_cn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/global-chrome.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "finance_ai_components_global_chrome",
+      "target": "finance_ai_components_chatbot_launcher"
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L66",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher_chatbotlauncher",
+      "target": "finance_ai_components_chatbot_launcher_gettoday",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L65",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher_chatbotlauncher",
+      "target": "finance_ai_components_chatbot_launcher_getmonthstart",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/chatbot-launcher.tsx",
+      "source_location": "L224",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "finance_ai_components_chatbot_launcher_chatbotlauncher",
+      "target": "finance_ai_components_chatbot_launcher_formatdatelabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "finance-ai/components/global-chrome.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "finance_ai_components_global_chrome",
+      "target": "finance_ai_components_chatbot_launcher_chatbotlauncher"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "finance-ai/components/monthly-summary.tsx",
       "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_monthly_summary_monthlysummary",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_monthly_summary_monthlysummary"
     },
     {
       "relation": "contains",
@@ -6356,9 +6635,9 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_monthly_summary_monthlysummaryrecord",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_monthly_summary_monthlysummaryrecord"
     },
     {
       "relation": "contains",
@@ -6367,9 +6646,9 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_monthly_summary_monthlysummarystate",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_monthly_summary_monthlysummarystate"
     },
     {
       "relation": "contains",
@@ -6378,9 +6657,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_monthly_summary_shiftmonth",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_monthly_summary_shiftmonth"
     },
     {
       "relation": "contains",
@@ -6389,9 +6668,9 @@
       "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_monthly_summary_startofmonth",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_monthly_summary_startofmonth"
     },
     {
       "relation": "imports_from",
@@ -6401,9 +6680,9 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_ui_button",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_ui_button"
     },
     {
       "relation": "imports",
@@ -6413,9 +6692,9 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_ui_button_button",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_ui_button_button"
     },
     {
       "relation": "imports_from",
@@ -6425,9 +6704,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_ui_card",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_ui_card"
     },
     {
       "relation": "imports",
@@ -6437,9 +6716,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_ui_card_card",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_ui_card_card"
     },
     {
       "relation": "imports",
@@ -6449,9 +6728,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_ui_card_cardcontent",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_ui_card_cardcontent"
     },
     {
       "relation": "imports",
@@ -6461,9 +6740,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_ui_card_carddescription",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_ui_card_carddescription"
     },
     {
       "relation": "imports",
@@ -6473,9 +6752,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_ui_card_cardheader",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_ui_card_cardheader"
     },
     {
       "relation": "imports",
@@ -6485,9 +6764,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_components_ui_card_cardtitle",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_ui_card_cardtitle"
     },
     {
       "relation": "imports_from",
@@ -6497,9 +6776,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_lib_finance",
-      "confidence_score": 1.0
+      "target": "finance_ai_lib_finance"
     },
     {
       "relation": "imports",
@@ -6509,9 +6788,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_lib_finance_centstopesos",
-      "confidence_score": 1.0
+      "target": "finance_ai_lib_finance_centstopesos"
     },
     {
       "relation": "imports",
@@ -6521,9 +6800,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_lib_finance_formatcurrency",
-      "confidence_score": 1.0
+      "target": "finance_ai_lib_finance_formatcurrency"
     },
     {
       "relation": "imports",
@@ -6533,9 +6812,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_lib_finance_formatmonthyear",
-      "confidence_score": 1.0
+      "target": "finance_ai_lib_finance_formatmonthyear"
     },
     {
       "relation": "imports",
@@ -6545,9 +6824,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_lib_finance_getmonthdaterange",
-      "confidence_score": 1.0
+      "target": "finance_ai_lib_finance_getmonthdaterange"
     },
     {
       "relation": "imports_from",
@@ -6557,9 +6836,9 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_lib_supabase",
-      "confidence_score": 1.0
+      "target": "finance_ai_lib_supabase"
     },
     {
       "relation": "imports",
@@ -6569,9 +6848,9 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_lib_supabase_sanitizeerror",
-      "confidence_score": 1.0
+      "target": "finance_ai_lib_supabase_sanitizeerror"
     },
     {
       "relation": "imports",
@@ -6581,9 +6860,9 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary",
-      "target": "finance_ai_lib_supabase_supabase",
-      "confidence_score": 1.0
+      "target": "finance_ai_lib_supabase_supabase"
     },
     {
       "relation": "imports_from",
@@ -6605,9 +6884,9 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary_monthlysummary",
-      "target": "finance_ai_components_monthly_summary_startofmonth",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_monthly_summary_startofmonth"
     },
     {
       "relation": "calls",
@@ -6617,9 +6896,9 @@
       "source_location": "L116",
       "weight": 1.0,
       "_origin": "ast",
+      "confidence_score": 1.0,
       "source": "finance_ai_components_monthly_summary_monthlysummary",
-      "target": "finance_ai_components_monthly_summary_shiftmonth",
-      "confidence_score": 1.0
+      "target": "finance_ai_components_monthly_summary_shiftmonth"
     },
     {
       "relation": "imports",
@@ -8948,253 +9227,6 @@
       "confidence_score": 1.0,
       "source": "finance_ai_app_sign_up_page",
       "target": "finance_ai_components_auth_form_authform"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L34",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_chatbot_launcher_chatbotlauncher"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L22",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_chatbot_launcher_getmonthstart"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_chatbot_launcher_gettoday"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_chatbot_launcher_hiddenroutes"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L29",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_chatbot_launcher_message"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_button"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_button_button"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_card"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_card_card"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_card_cardcontent"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_card_carddescription"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_card_cardheader"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_card_cardtitle"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_input"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_input_input"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_label"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_chatbot_launcher",
-      "target": "finance_ai_components_ui_label_label"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/global-chrome.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_global_chrome",
-      "target": "finance_ai_components_chatbot_launcher"
-    },
-    {
-      "relation": "indirect_call",
-      "context": "argument",
-      "confidence": "INFERRED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 0.5,
-      "source": "finance_ai_components_chatbot_launcher_chatbotlauncher",
-      "target": "finance_ai_components_chatbot_launcher_gettoday"
-    },
-    {
-      "relation": "indirect_call",
-      "context": "argument",
-      "confidence": "INFERRED",
-      "source_file": "finance-ai/components/chatbot-launcher.tsx",
-      "source_location": "L39",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 0.5,
-      "source": "finance_ai_components_chatbot_launcher_chatbotlauncher",
-      "target": "finance_ai_components_chatbot_launcher_getmonthstart"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "finance-ai/components/global-chrome.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "finance_ai_components_global_chrome",
-      "target": "finance_ai_components_chatbot_launcher_chatbotlauncher"
     },
     {
       "relation": "imports_from",
@@ -18520,5 +18552,5 @@
       "source_file": "finance-ai/FIXES.md"
     }
   ],
-  "built_at_commit": "70304b09b3a18358aaa451fe7b9ab56c798a526f"
+  "built_at_commit": "9fb070405ccbeb8193ca638d10a43a1e642a7131"
 }

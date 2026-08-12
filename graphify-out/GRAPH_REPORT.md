@@ -1,27 +1,26 @@
 # Graph Report - FinancialApp  (2026-08-10)
 
 ## Corpus Check
-- 90 files · ~36,459 words
+- 90 files · ~36,933 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 552 nodes · 1045 edges · 66 communities (30 shown, 36 thin omitted)
+- 554 nodes · 1046 edges · 65 communities (29 shown, 36 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `70304b09`
+- Built from commit: `9fb07040`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - app/page.tsx
-- auth-form.tsx
 - transactions-page.tsx
 - finance.ts
 - devDependencies
 - Pre-Launch Audit Fixes Documentation
-- button.tsx
+- app-header.tsx
 - cn
 - dependencies
 - compilerOptions
@@ -71,16 +70,16 @@
 - Selena — Personal Finance AI
 
 ## God Nodes (most connected - your core abstractions)
-1. `cn()` - 44 edges
+1. `cn()` - 45 edges
 2. `formatCurrency()` - 23 edges
 3. `Button()` - 22 edges
 4. `Selena — Personal Finance AI` - 19 edges
 5. `compilerOptions` - 16 edges
-6. `Card()` - 15 edges
-7. `CardContent()` - 14 edges
-8. `CardHeader()` - 12 edges
-9. `CardTitle()` - 12 edges
-10. `CardDescription()` - 12 edges
+6. `Card()` - 14 edges
+7. `CardContent()` - 13 edges
+8. `DashboardAccount` - 11 edges
+9. `CardHeader()` - 11 edges
+10. `CardTitle()` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Selena — Personal Finance AI (README)` --semantically_similar_to--> `Development Playbook v2`  [INFERRED] [semantically similar]
@@ -103,23 +102,19 @@
 - **Money Write Integrity Reforms** — finance_ai_changes_documentation_integer_cents, finance_ai_changes_documentation_server_validation, finance_ai_changes_documentation_idempotency, finance_ai_changes_documentation_create_transfer_rpc, finance_ai_changes_documentation_account_id_fk [INFERRED 0.85]
 - **Pre-Launch Audit Fix Program** — finance_ai_fixes, finance_ai_changes_documentation, finance_ai_changes_documentation_test_suite, finance_ai_fixes_priority_order [EXTRACTED 1.00]
 
-## Communities (66 total, 36 thin omitted)
+## Communities (65 total, 36 thin omitted)
 
 ### Community 0 - "app/page.tsx"
-Cohesion: 0.12
-Nodes (18): AiPreview(), DashboardMockup(), spendingData, transactions, FadeIn(), FadeInProps, Feature, Features (+10 more)
-
-### Community 1 - "auth-form.tsx"
-Cohesion: 0.21
-Nodes (10): metadata, SignInPage(), metadata, SignUpPage(), AuthForm(), AuthFormProps, AuthMode, AuthShell() (+2 more)
+Cohesion: 0.13
+Nodes (17): AiPreview(), DashboardMockup(), spendingData, transactions, FadeIn(), FadeInProps, Feature, Features (+9 more)
 
 ### Community 2 - "transactions-page.tsx"
-Cohesion: 0.09
-Nodes (47): AccountBalance, AccountCards(), AccountCardsProps, AccountsPageProps, BannerState, PendingAdjustment, MonthlySummary(), MonthlySummaryRecord (+39 more)
+Cohesion: 0.08
+Nodes (50): AccountBalanceDialog(), AccountBalance, AccountCards(), AccountCardsProps, fetchAccountBalances(), AccountsPage(), AccountsPageProps, BannerState (+42 more)
 
 ### Community 3 - "finance.ts"
-Cohesion: 0.11
-Nodes (35): AccountsRoute(), metadata, DashboardPage(), metadata, getSingleValue(), getTransactionType(), SearchParamValue, TransactionsPageSearchParams (+27 more)
+Cohesion: 0.09
+Nodes (42): AccountsRoute(), metadata, DashboardPage(), metadata, metadata, SignInPage(), metadata, SignUpPage() (+34 more)
 
 ### Community 4 - "devDependencies"
 Cohesion: 0.06
@@ -129,13 +124,13 @@ Nodes (35): eslint, eslint-config-next, devDependencies, eslint, eslint-config-n
 Cohesion: 0.08
 Nodes (31): Pre-Launch Audit Fixes Documentation, account_id FK for Balance Computation, Atomic Transfer RPC (create_transfer), Write Idempotency via idempotency_key, Integer Cents Money Storage, /api/chat In-Memory Rate Limiter, Sanitized Supabase Error Messages, Server-Side Money Validation (CHECK Constraints + RPCs) (+23 more)
 
-### Community 6 - "button.tsx"
-Cohesion: 0.11
-Nodes (20): metadata, AppHeader(), isActive(), navLinks, ChatbotLauncher(), getMonthStart(), getToday(), hiddenRoutes (+12 more)
+### Community 6 - "app-header.tsx"
+Cohesion: 0.12
+Nodes (15): metadata, AppHeader(), isActive(), navLinks, companyLinks, Footer(), productLinks, appRoutes (+7 more)
 
 ### Community 7 - "cn"
-Cohesion: 0.11
-Nodes (26): BalanceDialogProps, BalanceFormValues, AccountDialog(), AccountDialogProps, AccountFormValues, currencyOptions, getInitialForm(), AlertDialogOverlay() (+18 more)
+Cohesion: 0.10
+Nodes (38): BalanceDialogProps, BalanceFormValues, AccountDialog(), AccountDialogProps, AccountFormValues, currencyOptions, getInitialForm(), ChatbotLauncher() (+30 more)
 
 ### Community 8 - "dependencies"
 Cohesion: 0.07
@@ -170,8 +165,8 @@ Cohesion: 0.40
 Nodes (4): on_auth_user_created, public.handle_new_user(), public.accounts, public.handle_new_user
 
 ### Community 61 - "formatCurrency"
-Cohesion: 0.09
-Nodes (29): AccountBalanceDialog(), fetchAccountBalances(), AccountsPage(), ChartTooltip(), DashboardCharts(), DashboardChartsProps, pieColors, DashboardCharts (+21 more)
+Cohesion: 0.10
+Nodes (25): ChartTooltip(), DashboardCharts(), DashboardChartsProps, pieColors, DashboardCharts, DashboardChartsShell(), DashboardChartsShellProps, categories (+17 more)
 
 ### Community 65 - "Selena — Personal Finance AI"
 Cohesion: 0.06
@@ -182,7 +177,7 @@ Nodes (33): 1. Transaction Management, 2. Account Balances, 3. Dashboard, 4. Tra
   finance-ai/CHANGES_DOCUMENTATION.txt · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **196 isolated node(s):** `MonthlySummaryRecord`, `MonthlySummaryState`, `Project Overview`, `Tech Stack`, `Project Structure` (+191 more)
+- **197 isolated node(s):** `hiddenRoutes`, `suggestionPrompts`, `Message`, `MonthlySummaryRecord`, `MonthlySummaryState` (+192 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **36 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -191,15 +186,15 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **What is the exact relationship between `Soft Delete with Undo (deleted_at)` and `Soft Delete Reverted (Hard Delete Restored)`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `Button()` connect `button.tsx` to `app/page.tsx`, `auth-form.tsx`, `transactions-page.tsx`, `cn`, `formatCurrency`?**
-  _High betweenness centrality (0.019) - this node is a cross-community bridge._
-- **Why does `cn()` connect `cn` to `transactions-page.tsx`, `formatCurrency`, `button.tsx`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+- **Why does `Button()` connect `cn` to `app/page.tsx`, `transactions-page.tsx`, `formatCurrency`, `app-header.tsx`?**
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+- **Why does `cn()` connect `cn` to `transactions-page.tsx`, `formatCurrency`, `app-header.tsx`?**
+  _High betweenness centrality (0.020) - this node is a cross-community bridge._
 - **Why does `formatCurrency()` connect `formatCurrency` to `app/page.tsx`, `transactions-page.tsx`, `finance.ts`, `cn`?**
   _High betweenness centrality (0.013) - this node is a cross-community bridge._
-- **What connects `MonthlySummaryRecord`, `MonthlySummaryState`, `Project Overview` to the rest of the system?**
-  _196 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `hiddenRoutes`, `suggestionPrompts`, `Message` to the rest of the system?**
+  _197 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `app/page.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.11904761904761904 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12535612535612536 - nodes in this community are weakly interconnected._
 - **Should `transactions-page.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.08955223880597014 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07902973395931143 - nodes in this community are weakly interconnected._

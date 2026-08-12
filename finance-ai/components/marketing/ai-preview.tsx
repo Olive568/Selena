@@ -1,5 +1,6 @@
-import { Bot, User } from "lucide-react";
+import { User } from "lucide-react";
 
+import { SelenaIcon } from "@/components/selena-icon";
 import { FadeIn } from "@/components/marketing/fade-in";
 import { formatCurrency } from "@/lib/finance";
 
@@ -24,8 +25,8 @@ export function AiPreview() {
           <div className="mx-auto max-w-lg">
             <div className="rounded-3xl border border-border bg-card p-4 shadow-2xl shadow-black/10 sm:p-6">
               <div className="mb-4 flex items-center gap-2 border-b border-border pb-4">
-                <span className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/25">
-                  <Bot className="size-4 text-white" />
+                <span className="flex size-8 items-center justify-center overflow-hidden rounded-xl">
+                  <SelenaIcon className="h-full w-full" />
                 </span>
                 <div>
                   <p className="text-sm font-semibold">Selena</p>
@@ -48,8 +49,8 @@ export function AiPreview() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-500 to-emerald-600">
-                    <Bot className="size-4 text-white" />
+                  <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full">
+                    <SelenaIcon className="h-full w-full" />
                   </span>
                   <div className="max-w-[85%] space-y-1 rounded-2xl rounded-tl-sm border border-border bg-background/60 px-4 py-3 text-sm leading-6">
                     <p>

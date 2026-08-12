@@ -1,16 +1,16 @@
 # Graph Report - FinancialApp  (2026-08-10)
 
 ## Corpus Check
-- 90 files · ~36,460 words
+- 90 files · ~36,459 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 552 nodes · 1046 edges · 66 communities (30 shown, 36 thin omitted)
+- 552 nodes · 1045 edges · 66 communities (30 shown, 36 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0640c8f0`
+- Built from commit: `70304b09`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -72,7 +72,7 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 44 edges
-2. `formatCurrency()` - 24 edges
+2. `formatCurrency()` - 23 edges
 3. `Button()` - 22 edges
 4. `Selena — Personal Finance AI` - 19 edges
 5. `compilerOptions` - 16 edges
@@ -115,11 +115,11 @@ Nodes (10): metadata, SignInPage(), metadata, SignUpPage(), AuthForm(), AuthForm
 
 ### Community 2 - "transactions-page.tsx"
 Cohesion: 0.09
-Nodes (48): AccountBalance, AccountCards(), AccountCardsProps, AccountsPageProps, BannerState, PendingAdjustment, MonthlySummary(), MonthlySummaryRecord (+40 more)
+Nodes (47): AccountBalance, AccountCards(), AccountCardsProps, AccountsPageProps, BannerState, PendingAdjustment, MonthlySummary(), MonthlySummaryRecord (+39 more)
 
 ### Community 3 - "finance.ts"
-Cohesion: 0.12
-Nodes (34): AccountsRoute(), metadata, DashboardPage(), metadata, getSingleValue(), getTransactionType(), SearchParamValue, TransactionsPageSearchParams (+26 more)
+Cohesion: 0.11
+Nodes (35): AccountsRoute(), metadata, DashboardPage(), metadata, getSingleValue(), getTransactionType(), SearchParamValue, TransactionsPageSearchParams (+27 more)
 
 ### Community 4 - "devDependencies"
 Cohesion: 0.06
@@ -182,7 +182,7 @@ Nodes (33): 1. Transaction Management, 2. Account Balances, 3. Dashboard, 4. Tra
   finance-ai/CHANGES_DOCUMENTATION.txt · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **196 isolated node(s):** `Project Overview`, `Tech Stack`, `Project Structure`, `Tables`, `Row Level Security (RLS)` (+191 more)
+- **196 isolated node(s):** `MonthlySummaryRecord`, `MonthlySummaryState`, `Project Overview`, `Tech Stack`, `Project Structure` (+191 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **36 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -196,10 +196,10 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `cn()` connect `cn` to `transactions-page.tsx`, `formatCurrency`, `button.tsx`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **Why does `formatCurrency()` connect `formatCurrency` to `app/page.tsx`, `transactions-page.tsx`, `finance.ts`, `cn`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
-- **What connects `Project Overview`, `Tech Stack`, `Project Structure` to the rest of the system?**
+  _High betweenness centrality (0.013) - this node is a cross-community bridge._
+- **What connects `MonthlySummaryRecord`, `MonthlySummaryState`, `Project Overview` to the rest of the system?**
   _196 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `app/page.tsx` be split into smaller, more focused modules?**
   _Cohesion score 0.11904761904761904 - nodes in this community are weakly interconnected._
 - **Should `transactions-page.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.08823529411764706 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08955223880597014 - nodes in this community are weakly interconnected._

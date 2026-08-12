@@ -1,10 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Menu, Sparkles, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+import { SelenaIcon } from "@/components/selena-icon";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -21,8 +22,8 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:h-20 lg:px-8">
         <Link href="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-          <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/25 lg:size-11">
-            <Sparkles className="size-5 text-white lg:size-6" />
+          <span className="flex size-9 items-center justify-center overflow-hidden rounded-xl lg:size-11">
+            <SelenaIcon className="h-full w-full" />
           </span>
           <span className="font-heading text-xl font-semibold tracking-tight lg:text-2xl">Selena</span>
         </Link>

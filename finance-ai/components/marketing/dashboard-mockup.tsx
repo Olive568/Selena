@@ -1,6 +1,8 @@
 "use client";
 
-import { ArrowDownRight, ArrowUpRight, Bot, TrendingUp, Wallet } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, TrendingUp, Wallet } from "lucide-react";
+
+import { SelenaIcon } from "@/components/selena-icon";
 import { Area, AreaChart, ResponsiveContainer } from "recharts";
 
 import { formatCurrency } from "@/lib/finance";
@@ -121,8 +123,8 @@ export function DashboardMockup() {
 
         <div className="mt-3 rounded-xl border border-teal-500/20 bg-gradient-to-br from-teal-500/10 to-emerald-500/5 p-4">
           <div className="flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-teal-500/15">
-              <Bot className="size-3.5 text-teal-500" />
+            <span className="flex size-7 items-center justify-center overflow-hidden rounded-lg">
+              <SelenaIcon className="h-full w-full" />
             </span>
             <div>
               <p className="text-sm font-semibold">AI Insight</p>

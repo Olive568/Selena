@@ -105,9 +105,9 @@
     "semantic_hash": "661e754db0567670d20732fcf551e885"
   },
   "finance-ai/components/chatbot-launcher.tsx": {
-    "mtime": 1785772362.877343,
-    "ast_hash": "3a9347a1133ac289e37940c79f643572",
-    "semantic_hash": "3a9347a1133ac289e37940c79f643572"
+    "mtime": 1786373603.968867,
+    "ast_hash": "044a7776914b5fa593317bea9099809e",
+    "semantic_hash": ""
   },
   "finance-ai/components/dashboard-charts-shell.tsx": {
     "mtime": 1781694563.913454,

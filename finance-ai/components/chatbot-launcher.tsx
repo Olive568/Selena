@@ -2,9 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { CalendarDays, Loader2, Minus, Send, Sparkles, X } from "lucide-react";
+import { CalendarDays, Loader2, Minus, Send, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { SelenaIcon } from "@/components/selena-icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -181,8 +182,8 @@ export function ChatbotLauncher() {
             >
               <header className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5 sm:py-4">
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-sm shadow-teal-500/20">
-                    <Sparkles className="size-5 text-white" />
+                  <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl">
+                    <SelenaIcon className="h-full w-full" />
                   </span>
                   <div className="min-w-0">
                     <p className="font-heading text-lg font-semibold tracking-tight">Selena</p>
@@ -269,8 +270,8 @@ export function ChatbotLauncher() {
               <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-5 sm:py-6">
                 {messages.length === 0 && !error ? (
                   <div className="flex h-full flex-col items-center justify-center gap-6 text-center">
-                    <span className="flex size-14 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/20">
-                      <Sparkles className="size-7 text-white" />
+                    <span className="flex size-14 items-center justify-center overflow-hidden rounded-2xl">
+                      <SelenaIcon className="h-full w-full" />
                     </span>
 
                     <div className="space-y-1.5">
@@ -305,8 +306,8 @@ export function ChatbotLauncher() {
                         </div>
                       ) : (
                         <div key={index} className="flex items-start gap-3">
-                          <span className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-emerald-600">
-                            <Sparkles className="size-4 text-white" />
+                          <span className="mt-1 flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+                            <SelenaIcon className="h-full w-full" />
                           </span>
                           <div className="min-w-0 flex-1 whitespace-pre-wrap rounded-2xl rounded-tl-md border border-border bg-muted/30 px-4 py-3 text-base leading-7 text-foreground">
                             {msg.content}
@@ -317,8 +318,8 @@ export function ChatbotLauncher() {
 
                     {isLoading && (
                       <div className="flex items-start gap-3">
-                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-emerald-600">
-                          <Sparkles className="size-4 text-white" />
+                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+                          <SelenaIcon className="h-full w-full" />
                         </span>
                         <div className="flex items-center gap-1.5 rounded-2xl border border-border bg-muted/30 px-4 py-3">
                           <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground" />
@@ -330,8 +331,8 @@ export function ChatbotLauncher() {
 
                     {error && (
                       <div className="flex items-start gap-3">
-                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-emerald-600">
-                          <Sparkles className="size-4 text-white" />
+                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+                          <SelenaIcon className="h-full w-full" />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="rounded-2xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -391,7 +392,7 @@ export function ChatbotLauncher() {
           onClick={() => setIsOpen(true)}
           className="fixed bottom-4 right-4 z-50 h-12 rounded-full px-5 text-lg shadow-lg shadow-black/20 lg:bottom-6 lg:right-6 lg:h-14 lg:px-6 lg:text-xl"
         >
-          <Sparkles className="mr-2 size-5 lg:size-6" />
+          <SelenaIcon className="mr-2 size-5 lg:size-6" />
           Selena Chat
         </Button>
       )}

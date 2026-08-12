@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { SelenaIcon } from "@/components/selena-icon";
 import { DashboardMockup } from "@/components/marketing/dashboard-mockup";
 import { Button } from "@/components/ui/button";
 
@@ -35,8 +36,8 @@ export function Hero() {
           className="flex max-w-2xl flex-col items-start gap-6 text-center sm:text-left"
         >
           <motion.div variants={item}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-teal-500/25 bg-teal-500/10 px-3 py-1 text-xs font-medium text-teal-600 dark:text-teal-400">
-              <Sparkles className="size-3.5" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-teal-500/25 px-3 py-1 text-xs font-medium text-teal-600 dark:text-teal-400">
+              <SelenaIcon className="size-3.5 rounded-full" />
               AI-powered personal finance
             </span>
           </motion.div>

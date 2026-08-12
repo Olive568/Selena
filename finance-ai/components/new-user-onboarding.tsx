@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowRight, Check, ChevronRight, Coins, Landmark, Loader2, Plus, Sparkles, Wallet } from "lucide-react";
 
+import { SelenaIcon } from "@/components/selena-icon";
 import type { DashboardAccount } from "@/lib/finance";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -115,8 +116,8 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
 
         {step === 0 && (
           <div className="space-y-5">
-            <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10">
-              <Sparkles className="size-6 text-primary" />
+            <div className="flex size-12 items-center justify-center overflow-hidden rounded-2xl">
+              <SelenaIcon className="h-full w-full" />
             </div>
             <div className="space-y-2">
               <h2 className="text-xl font-semibold tracking-tight text-foreground">Hi there! Welcome to Selena</h2>

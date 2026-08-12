@@ -185,9 +185,9 @@
     "semantic_hash": "2c75d44dcd58860402538a7694dbcb0d"
   },
   "finance-ai/components/monthly-summary.tsx": {
-    "mtime": 1785326993.7271814,
-    "ast_hash": "36469f66b328872824283c0769080712",
-    "semantic_hash": "36469f66b328872824283c0769080712"
+    "mtime": 1786372091.1664011,
+    "ast_hash": "a6d20ea6c79351ad2917b0dd498444ca",
+    "semantic_hash": ""
   },
   "finance-ai/components/new-user-onboarding.tsx": {
     "mtime": 1785324523.6086564,

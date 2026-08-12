@@ -1,5 +1,7 @@
-import { Mail, Sparkles } from "lucide-react";
+import { Mail } from "lucide-react";
 import Link from "next/link";
+
+import { SelenaIcon } from "@/components/selena-icon";
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -30,8 +32,8 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr] lg:gap-16">
           <div className="max-w-sm space-y-5">
             <Link href="/" className="flex items-center gap-2.5">
-              <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 shadow-lg shadow-teal-500/25 lg:size-12">
-                <Sparkles className="size-5 text-white lg:size-6" />
+              <span className="flex size-10 items-center justify-center overflow-hidden rounded-xl lg:size-12">
+                <SelenaIcon className="h-full w-full" />
               </span>
               <span className="font-heading text-xl font-semibold tracking-tight lg:text-2xl">Selena</span>
             </Link>
