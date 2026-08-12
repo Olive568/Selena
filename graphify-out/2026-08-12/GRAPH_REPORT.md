@@ -1,27 +1,27 @@
-# Graph Report - FinancialApp  (2026-08-12)
+# Graph Report - FinancialApp  (2026-08-10)
 
 ## Corpus Check
-- 91 files · ~118,467 words
+- 90 files · ~36,933 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 557 nodes · 1064 edges · 65 communities (29 shown, 36 thin omitted)
+- 554 nodes · 1046 edges · 65 communities (29 shown, 36 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `904fffe0`
+- Built from commit: `9fb07040`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - app/page.tsx
-- transaction-manager.tsx
+- transactions-page.tsx
 - finance.ts
 - devDependencies
 - Pre-Launch Audit Fixes Documentation
-- chatbot-launcher.tsx
-- transactions-page.tsx
+- app-header.tsx
+- cn
 - dependencies
 - compilerOptions
 - components.json
@@ -70,10 +70,10 @@
 - Selena — Personal Finance AI
 
 ## God Nodes (most connected - your core abstractions)
-1. `cn()` - 46 edges
-2. `Button()` - 22 edges
-3. `Selena — Personal Finance AI` - 19 edges
-4. `formatCurrency()` - 19 edges
+1. `cn()` - 45 edges
+2. `formatCurrency()` - 23 edges
+3. `Button()` - 22 edges
+4. `Selena — Personal Finance AI` - 19 edges
 5. `compilerOptions` - 16 edges
 6. `Card()` - 14 edges
 7. `CardContent()` - 13 edges
@@ -105,16 +105,16 @@
 ## Communities (65 total, 36 thin omitted)
 
 ### Community 0 - "app/page.tsx"
-Cohesion: 0.09
-Nodes (26): AiPreview(), DashboardMockup(), spendingData, transactions, categories, DashboardPreview(), incomeExpense, monthlySpending (+18 more)
+Cohesion: 0.13
+Nodes (17): AiPreview(), DashboardMockup(), spendingData, transactions, FadeIn(), FadeInProps, Feature, Features (+9 more)
 
-### Community 2 - "transaction-manager.tsx"
-Cohesion: 0.14
-Nodes (25): AccountBalance, AccountCards(), AccountCardsProps, AuthFormProps, AuthMode, MonthlySummary(), MonthlySummaryRecord, MonthlySummaryState (+17 more)
+### Community 2 - "transactions-page.tsx"
+Cohesion: 0.08
+Nodes (50): AccountBalanceDialog(), AccountBalance, AccountCards(), AccountCardsProps, fetchAccountBalances(), AccountsPage(), AccountsPageProps, BannerState (+42 more)
 
 ### Community 3 - "finance.ts"
-Cohesion: 0.07
-Nodes (54): AccountsRoute(), metadata, DashboardPage(), metadata, metadata, SignInPage(), metadata, SignUpPage() (+46 more)
+Cohesion: 0.09
+Nodes (42): AccountsRoute(), metadata, DashboardPage(), metadata, metadata, SignInPage(), metadata, SignUpPage() (+34 more)
 
 ### Community 4 - "devDependencies"
 Cohesion: 0.06
@@ -124,13 +124,13 @@ Nodes (35): eslint, eslint-config-next, devDependencies, eslint, eslint-config-n
 Cohesion: 0.08
 Nodes (31): Pre-Launch Audit Fixes Documentation, account_id FK for Balance Computation, Atomic Transfer RPC (create_transfer), Write Idempotency via idempotency_key, Integer Cents Money Storage, /api/chat In-Memory Rate Limiter, Sanitized Supabase Error Messages, Server-Side Money Validation (CHECK Constraints + RPCs) (+23 more)
 
-### Community 6 - "chatbot-launcher.tsx"
-Cohesion: 0.10
-Nodes (20): metadata, AppHeader(), isActive(), navLinks, ChatbotLauncher(), formatDateLabel(), getMonthStart(), getToday() (+12 more)
+### Community 6 - "app-header.tsx"
+Cohesion: 0.12
+Nodes (15): metadata, AppHeader(), isActive(), navLinks, companyLinks, Footer(), productLinks, appRoutes (+7 more)
 
-### Community 7 - "transactions-page.tsx"
-Cohesion: 0.08
-Nodes (45): BalanceDialogProps, BalanceFormValues, AccountDialog(), AccountDialogProps, currencyOptions, getInitialForm(), getInitialState(), TransactionDialog() (+37 more)
+### Community 7 - "cn"
+Cohesion: 0.10
+Nodes (38): BalanceDialogProps, BalanceFormValues, AccountDialog(), AccountDialogProps, AccountFormValues, currencyOptions, getInitialForm(), ChatbotLauncher() (+30 more)
 
 ### Community 8 - "dependencies"
 Cohesion: 0.07
@@ -165,8 +165,8 @@ Cohesion: 0.40
 Nodes (4): on_auth_user_created, public.handle_new_user(), public.accounts, public.handle_new_user
 
 ### Community 61 - "formatCurrency"
-Cohesion: 0.14
-Nodes (18): ChartTooltip(), DashboardCharts(), DashboardChartsProps, pieColors, DashboardCharts, DashboardChartsShell(), DashboardChartsShellProps, getAmountPrefix() (+10 more)
+Cohesion: 0.10
+Nodes (25): ChartTooltip(), DashboardCharts(), DashboardChartsProps, pieColors, DashboardCharts, DashboardChartsShell(), DashboardChartsShellProps, categories (+17 more)
 
 ### Community 65 - "Selena — Personal Finance AI"
 Cohesion: 0.06
@@ -177,7 +177,7 @@ Nodes (33): 1. Transaction Management, 2. Account Balances, 3. Dashboard, 4. Tra
   finance-ai/CHANGES_DOCUMENTATION.txt · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **198 isolated node(s):** `hiddenRoutes`, `suggestionPrompts`, `Message`, `productLinks`, `companyLinks` (+193 more)
+- **197 isolated node(s):** `hiddenRoutes`, `suggestionPrompts`, `Message`, `MonthlySummaryRecord`, `MonthlySummaryState` (+192 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **36 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -186,15 +186,15 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **What is the exact relationship between `Soft Delete with Undo (deleted_at)` and `Soft Delete Reverted (Hard Delete Restored)`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `cn()` connect `transactions-page.tsx` to `app/page.tsx`, `transaction-manager.tsx`, `formatCurrency`, `chatbot-launcher.tsx`?**
+- **Why does `Button()` connect `cn` to `app/page.tsx`, `transactions-page.tsx`, `formatCurrency`, `app-header.tsx`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
-- **Why does `Button()` connect `transaction-manager.tsx` to `app/page.tsx`, `finance.ts`, `chatbot-launcher.tsx`, `transactions-page.tsx`, `formatCurrency`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Why does `formatCurrency()` connect `formatCurrency` to `app/page.tsx`, `transaction-manager.tsx`, `finance.ts`, `transactions-page.tsx`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **Why does `cn()` connect `cn` to `transactions-page.tsx`, `formatCurrency`, `app-header.tsx`?**
+  _High betweenness centrality (0.020) - this node is a cross-community bridge._
+- **Why does `formatCurrency()` connect `formatCurrency` to `app/page.tsx`, `transactions-page.tsx`, `finance.ts`, `cn`?**
+  _High betweenness centrality (0.013) - this node is a cross-community bridge._
 - **What connects `hiddenRoutes`, `suggestionPrompts`, `Message` to the rest of the system?**
-  _198 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _197 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `app/page.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.08717948717948718 - nodes in this community are weakly interconnected._
-- **Should `transaction-manager.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.1417004048582996 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12535612535612536 - nodes in this community are weakly interconnected._
+- **Should `transactions-page.tsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.07902973395931143 - nodes in this community are weakly interconnected._

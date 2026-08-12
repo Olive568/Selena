@@ -35,13 +35,6 @@ export function Hero() {
           animate="show"
           className="flex max-w-2xl flex-col items-start gap-6 text-center sm:text-left"
         >
-          <motion.div variants={item}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-teal-500/25 px-3 py-1 text-xs font-medium text-teal-600 dark:text-teal-400">
-              <SelenaIcon className="size-3.5 rounded-full" />
-              AI-powered personal finance
-            </span>
-          </motion.div>
-
           <motion.h1
             variants={item}
             className="font-heading text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl"

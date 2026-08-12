@@ -105,8 +105,8 @@
     "semantic_hash": "661e754db0567670d20732fcf551e885"
   },
   "finance-ai/components/chatbot-launcher.tsx": {
-    "mtime": 1786548452.048284,
-    "ast_hash": "cebef45245e32f88fd6361846fea0194",
+    "mtime": 1786373603.968867,
+    "ast_hash": "044a7776914b5fa593317bea9099809e",
     "semantic_hash": ""
   },
   "finance-ai/components/dashboard-charts-shell.tsx": {
@@ -120,9 +120,9 @@
     "semantic_hash": "245d8a715b98f7e1ce7427f37efe0df6"
   },
   "finance-ai/components/footer.tsx": {
-    "mtime": 1786548445.3599381,
-    "ast_hash": "d0a0923374bed130d360a16540f4c397",
-    "semantic_hash": ""
+    "mtime": 1785772387.7433953,
+    "ast_hash": "a9b28f4949ff68c8f2298baaf67115f5",
+    "semantic_hash": "a9b28f4949ff68c8f2298baaf67115f5"
   },
   "finance-ai/components/global-chrome.tsx": {
     "mtime": 1785772793.4337237,
@@ -130,24 +130,24 @@
     "semantic_hash": "d14a8ae9fbb5aeedf2cf3f030ce63fc0"
   },
   "finance-ai/components/marketing/ai-preview.tsx": {
-    "mtime": 1786548448.918151,
-    "ast_hash": "bbf0532b9de2075ce475262baafb4d61",
-    "semantic_hash": ""
+    "mtime": 1785760774.9652429,
+    "ast_hash": "34a0466e78375dca9d894388b7d7eb27",
+    "semantic_hash": "34a0466e78375dca9d894388b7d7eb27"
   },
   "finance-ai/components/marketing/auth-shell.tsx": {
-    "mtime": 1786548445.6934052,
-    "ast_hash": "7058bfe594246fa5665ea871bb85738d",
-    "semantic_hash": ""
+    "mtime": 1785760812.7344775,
+    "ast_hash": "49b993cb98042330d315824bf8797f87",
+    "semantic_hash": "49b993cb98042330d315824bf8797f87"
   },
   "finance-ai/components/marketing/dashboard-mockup.tsx": {
-    "mtime": 1786548454.6263125,
-    "ast_hash": "76e12d7e88999814ce8f1c810720f9a3",
-    "semantic_hash": ""
+    "mtime": 1785760682.4303706,
+    "ast_hash": "cfe0388f977e219145ff7119dded59c6",
+    "semantic_hash": "cfe0388f977e219145ff7119dded59c6"
   },
   "finance-ai/components/marketing/dashboard-preview.tsx": {
-    "mtime": 1786548455.0108933,
-    "ast_hash": "bef7aa365e4628a3b6cc5899c26de0f6",
-    "semantic_hash": ""
+    "mtime": 1785760971.9185228,
+    "ast_hash": "effed60b4a8836beb079cc56371ba15c",
+    "semantic_hash": "effed60b4a8836beb079cc56371ba15c"
   },
   "finance-ai/components/marketing/fade-in.tsx": {
     "mtime": 1785760661.0477738,
@@ -165,14 +165,14 @@
     "semantic_hash": "3c52ebd1687761ed2597d70f3b39f279"
   },
   "finance-ai/components/marketing/hero.tsx": {
-    "mtime": 1786548457.8519502,
-    "ast_hash": "d449f907d86b2aed88cb414b5acf0a2a",
-    "semantic_hash": ""
+    "mtime": 1785761760.3613336,
+    "ast_hash": "55c45cc3747f403448afcc391d778a50",
+    "semantic_hash": "55c45cc3747f403448afcc391d778a50"
   },
   "finance-ai/components/marketing/navbar.tsx": {
-    "mtime": 1786548444.559665,
-    "ast_hash": "d6bca365f26d01b45e3fad297aba39ab",
-    "semantic_hash": ""
+    "mtime": 1785772375.903108,
+    "ast_hash": "57c08030e1c4291e0336db5c5d0ea016",
+    "semantic_hash": "57c08030e1c4291e0336db5c5d0ea016"
   },
   "finance-ai/components/marketing/stats.tsx": {
     "mtime": 1785760778.2148883,
@@ -190,9 +190,9 @@
     "semantic_hash": ""
   },
   "finance-ai/components/new-user-onboarding.tsx": {
-    "mtime": 1786548455.306388,
-    "ast_hash": "14ede8928bc6dc2bb05cb54700409428",
-    "semantic_hash": ""
+    "mtime": 1785324523.6086564,
+    "ast_hash": "92f48bf614e9095772da229f9a53a3b6",
+    "semantic_hash": "92f48bf614e9095772da229f9a53a3b6"
   },
   "finance-ai/components/theme-toggle.tsx": {
     "mtime": 1785760652.077026,
@@ -477,21 +477,6 @@
   "PROJECT_CONTEXT.md": {
     "mtime": 1786369860.930954,
     "ast_hash": "d832ae718a8be298022d2135e3cc50a2",
-    "semantic_hash": ""
-  },
-  "finance-ai/components/selena-icon.tsx": {
-    "mtime": 1786548163.8100286,
-    "ast_hash": "35f5e3d154eb28b923860bb4151cc31a",
-    "semantic_hash": ""
-  },
-  "finance-ai/app/icon.png": {
-    "mtime": 1786548161.3664477,
-    "ast_hash": "92f11c54492bf9cbcd71fb93f949fdfe",
-    "semantic_hash": ""
-  },
-  "finance-ai/app/images/Icon.png": {
-    "mtime": 1786547743.0004625,
-    "ast_hash": "fc681e33ce8d71b50952c1a565c1554a",
     "semantic_hash": ""
   }
 }
