@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-const hiddenRoutes = ["/", "/sign-in", "/sign-up", "/login", "/register"];
+const hiddenRoutes = ["/", "/sign-in", "/sign-up", "/login", "/register", "/privacy", "/terms", "/about", "/contact"];
 
 const suggestionPrompts = [
   "How much did I spend this month?",
