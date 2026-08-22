@@ -12,7 +12,6 @@ import {
   toDateInputValue,
   type TransactionRow,
   type DashboardTransaction,
-  type DashboardAccount,
   type AccountRow,
   type CategoryRow,
 } from "@/lib/finance";
@@ -210,11 +209,18 @@ describe("formatCurrency", () => {
   it("formats positive number", () => {
     const result = formatCurrency(1234);
     expect(result).toContain("1,234");
+    expect(result).toContain(".00");
+  });
+
+  it("preserves non-zero centavos", () => {
+    expect(formatCurrency(123.45)).toContain("123.45");
+    expect(formatCurrency(0.5)).toContain("0.50");
   });
 
   it("formats negative number", () => {
     const result = formatCurrency(-500);
     expect(result).toContain("500");
+    expect(result).toContain(".00");
     expect(result.startsWith("-")).toBe(true);
   });
 

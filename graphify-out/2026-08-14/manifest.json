@@ -5,9 +5,9 @@
     "semantic_hash": "2a475a525d320d35d25b65f02d19ed14"
   },
   "finance-ai/app/api/chat/route.ts": {
-    "mtime": 1786639441.1783192,
-    "ast_hash": "086d1aef2a3634bb86bd8ebdc700d9bd",
-    "semantic_hash": ""
+    "mtime": 1786353355.361553,
+    "ast_hash": "0da728127c4327d0980c586e4c199c8d",
+    "semantic_hash": "0da728127c4327d0980c586e4c199c8d"
   },
   "finance-ai/app/api/delete-account/route.ts": {
     "mtime": 1786353363.9810853,
@@ -50,9 +50,9 @@
     "semantic_hash": "1e7fa8fd87c1f1e8059d3508bedb3ec8"
   },
   "finance-ai/app/privacy/page.tsx": {
-    "mtime": 1786691411.4806833,
-    "ast_hash": "92e7ce713a6276331a24442aa2d9b229",
-    "semantic_hash": ""
+    "mtime": 1785327205.2509816,
+    "ast_hash": "99cc9507a2137fa40d484fd170127013",
+    "semantic_hash": "99cc9507a2137fa40d484fd170127013"
   },
   "finance-ai/app/register/page.tsx": {
     "mtime": 1785760830.4140484,
@@ -75,9 +75,9 @@
     "semantic_hash": "214eef2892d99df82525c1429c63f47d"
   },
   "finance-ai/app/terms/page.tsx": {
-    "mtime": 1786691613.375311,
-    "ast_hash": "852cd27af9a7a1da1361a5151b7ca278",
-    "semantic_hash": ""
+    "mtime": 1785760870.2949407,
+    "ast_hash": "6204472cc6fed26a8a9a946842b46a54",
+    "semantic_hash": "6204472cc6fed26a8a9a946842b46a54"
   },
   "finance-ai/app/transactions/page.tsx": {
     "mtime": 1785760903.238239,
@@ -95,18 +95,18 @@
     "semantic_hash": "a0238eb4ceb9341a82b6e3640ca96743"
   },
   "finance-ai/components/account-cards.tsx": {
-    "mtime": 1786639441.1793182,
-    "ast_hash": "2998e63b5f166ffc8b2607e7e9ed206b",
-    "semantic_hash": ""
+    "mtime": 1785773320.849342,
+    "ast_hash": "31f30f16d6ddb3b511d92b7a452acd87",
+    "semantic_hash": "31f30f16d6ddb3b511d92b7a452acd87"
   },
   "finance-ai/components/auth-form.tsx": {
-    "mtime": 1786689514.2519996,
-    "ast_hash": "7b396a320aede5de6e15573659545b0a",
-    "semantic_hash": ""
+    "mtime": 1786353436.6521416,
+    "ast_hash": "661e754db0567670d20732fcf551e885",
+    "semantic_hash": "661e754db0567670d20732fcf551e885"
   },
   "finance-ai/components/chatbot-launcher.tsx": {
-    "mtime": 1786690228.2685833,
-    "ast_hash": "c22de0f43793ee51392aa358dbb16b6f",
+    "mtime": 1786548452.048284,
+    "ast_hash": "cebef45245e32f88fd6361846fea0194",
     "semantic_hash": ""
   },
   "finance-ai/components/dashboard-charts-shell.tsx": {
@@ -125,9 +125,9 @@
     "semantic_hash": ""
   },
   "finance-ai/components/global-chrome.tsx": {
-    "mtime": 1786690225.6480093,
-    "ast_hash": "7164eab538cd6c1c5c152b2ddfcfd681",
-    "semantic_hash": ""
+    "mtime": 1785772793.4337237,
+    "ast_hash": "d14a8ae9fbb5aeedf2cf3f030ce63fc0",
+    "semantic_hash": "d14a8ae9fbb5aeedf2cf3f030ce63fc0"
   },
   "finance-ai/components/marketing/ai-preview.tsx": {
     "mtime": 1786548448.918151,
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "finance-ai/components/marketing/auth-shell.tsx": {
-    "mtime": 1786689699.3326304,
-    "ast_hash": "6fc45d36af97019f38282cd8b7f2f71c",
+    "mtime": 1786548445.6934052,
+    "ast_hash": "7058bfe594246fa5665ea871bb85738d",
     "semantic_hash": ""
   },
   "finance-ai/components/marketing/dashboard-mockup.tsx": {
@@ -165,8 +165,8 @@
     "semantic_hash": "3c52ebd1687761ed2597d70f3b39f279"
   },
   "finance-ai/components/marketing/hero.tsx": {
-    "mtime": 1786639441.1823187,
-    "ast_hash": "ad77bc66a829a0fc3f3d19e47727ad85",
+    "mtime": 1786549224.6358876,
+    "ast_hash": "f0504c81122c19afacb44615fb9ed105",
     "semantic_hash": ""
   },
   "finance-ai/components/marketing/navbar.tsx": {
@@ -185,8 +185,8 @@
     "semantic_hash": "2c75d44dcd58860402538a7694dbcb0d"
   },
   "finance-ai/components/monthly-summary.tsx": {
-    "mtime": 1786639441.1833174,
-    "ast_hash": "2d89bf0f106441472269025dc85d708d",
+    "mtime": 1786372091.1664011,
+    "ast_hash": "a6d20ea6c79351ad2917b0dd498444ca",
     "semantic_hash": ""
   },
   "finance-ai/components/new-user-onboarding.tsx": {
@@ -205,9 +205,9 @@
     "semantic_hash": "8868e6febd4687518905f23e7f905898"
   },
   "finance-ai/components/transaction-manager.tsx": {
-    "mtime": 1786639441.1843188,
-    "ast_hash": "c453d9fa575f45788fd2a5057f3a91b3",
-    "semantic_hash": ""
+    "mtime": 1785760885.4970436,
+    "ast_hash": "24dd1be8fd676ade2b8f0d695c05c1e5",
+    "semantic_hash": "24dd1be8fd676ade2b8f0d695c05c1e5"
   },
   "finance-ai/components/transaction-row-item.tsx": {
     "mtime": 1781871893.7320793,
@@ -215,9 +215,9 @@
     "semantic_hash": "9cc3d66b27ba4833c7c8ad9cae87fd93"
   },
   "finance-ai/components/transactions-page.tsx": {
-    "mtime": 1786639441.1853178,
-    "ast_hash": "896c1aed42eb1c58cd6b073eb5567d43",
-    "semantic_hash": ""
+    "mtime": 1785327049.8112056,
+    "ast_hash": "ced39639585cef16057df97af91f8bf4",
+    "semantic_hash": "ced39639585cef16057df97af91f8bf4"
   },
   "finance-ai/components/ui/alert-dialog.tsx": {
     "mtime": 1781694516.0271032,
@@ -435,9 +435,9 @@
     "semantic_hash": "b49871fb413402391a2a23cb924ad978"
   },
   "finance-ai/components/accounts-page.tsx": {
-    "mtime": 1786639441.1803174,
-    "ast_hash": "aa985fa34fe0c4ca16af03ab36986006",
-    "semantic_hash": ""
+    "mtime": 1785773480.1672008,
+    "ast_hash": "a7ded90f1676106901251bb1564abc57",
+    "semantic_hash": "a7ded90f1676106901251bb1564abc57"
   },
   "finance-ai/components/app-header.tsx": {
     "mtime": 1786370530.4325652,
@@ -492,16 +492,6 @@
   "finance-ai/app/images/Icon.png": {
     "mtime": 1786547743.0004625,
     "ast_hash": "fc681e33ce8d71b50952c1a565c1554a",
-    "semantic_hash": ""
-  },
-  "finance-ai/components/legal-document.tsx": {
-    "mtime": 1786691157.5493238,
-    "ast_hash": "1152819324f312747fd53cb1dfbb18b3",
-    "semantic_hash": ""
-  },
-  "finance-ai/components/marketing/legal-header.tsx": {
-    "mtime": 1786690220.714658,
-    "ast_hash": "a6d3bbea8e519d7992adcece49736a5c",
     "semantic_hash": ""
   }
 }

@@ -15,6 +15,7 @@ import {
 type AccountCardsProps = {
   accounts: DashboardAccount[];
   userId: string;
+  refreshKey: number;
 };
 
 type AccountBalance = {
@@ -43,7 +44,7 @@ async function fetchAccountBalances(userId: string, accounts: DashboardAccount[]
   }));
 }
 
-export function AccountCards({ accounts: initialAccounts, userId }: AccountCardsProps) {
+export function AccountCards({ accounts: initialAccounts, userId, refreshKey }: AccountCardsProps) {
   const [balances, setBalances] = useState<AccountBalance[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,14 +52,17 @@ export function AccountCards({ accounts: initialAccounts, userId }: AccountCards
     let active = true;
 
     async function load() {
+      setLoading(true);
       const result = await fetchAccountBalances(userId, initialAccounts);
-      if (active) setBalances(result);
-      setLoading(false);
+      if (active) {
+        setBalances(result);
+        setLoading(false);
+      }
     }
 
     load();
     return () => { active = false; };
-  }, [userId]);
+  }, [initialAccounts, refreshKey, userId]);
 
   if (initialAccounts.length === 0) return null;
 

@@ -10,7 +10,7 @@ type Stat = {
 
 const stats: Stat[] = [
   { icon: Bot, label: "AI Powered", description: "Smart insights on every transaction." },
-  { icon: ScanText, label: "Receipt OCR", description: "Scan receipts in seconds." },
+  { icon: ScanText, label: "Receipt OCR (Coming Soon)", description: "Planned for a future release." },
   { icon: Activity, label: "Real-Time Analytics", description: "Live view of your finances." },
   { icon: Gift, label: "Free to Start", description: "No hidden costs to begin." },
 ];

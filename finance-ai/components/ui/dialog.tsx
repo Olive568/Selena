@@ -46,7 +46,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed left-1/2 top-1/2 z-50 grid w-[calc(100vw-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 gap-4 rounded-3xl border border-border bg-card p-6 text-card-foreground shadow-2xl outline-none sm:w-full sm:max-h-[calc(100vh-2rem)] sm:overflow-y-auto",
+          "fixed left-1/2 top-1/2 z-50 grid max-h-[calc(100dvh-1rem)] w-[calc(100vw-2rem)] max-w-2xl -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-3xl border border-border bg-card p-6 text-card-foreground shadow-2xl outline-none sm:max-h-[calc(100vh-2rem)] sm:w-full",
           className
         )}
         onPointerDownOutside={(e) => e.preventDefault()}
@@ -54,7 +54,7 @@ function DialogContent({
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
+        <DialogPrimitive.Close className="absolute right-3 top-3 inline-flex size-11 items-center justify-center rounded-full p-2.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
           <X className="size-4" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>

@@ -30,8 +30,8 @@ const features: Feature[] = [
   },
   {
     icon: ScanText,
-    title: "Receipt OCR",
-    description: "Snap a photo of any receipt and let Selena extract the details, merchant, and amount automatically.",
+    title: "Receipt OCR (Coming Soon)",
+    description: "Receipt capture and automatic extraction are planned for a future Selena release.",
   },
   {
     icon: BarChart3,
@@ -40,13 +40,13 @@ const features: Feature[] = [
   },
   {
     icon: PiggyBank,
-    title: "Budget Planning",
-    description: "Set budgets per category and get alerted before you overspend—so goals stay on track.",
+    title: "Budget Planning (Coming Soon)",
+    description: "Budget planning and alerts are planned for a future Selena release.",
   },
   {
     icon: ReceiptText,
-    title: "Net Worth Tracking",
-    description: "Watch your net worth grow over time with a clear view of assets, liabilities, and progress.",
+    title: "Net Worth Tracking (Coming Soon)",
+    description: "Assets, liabilities, and net-worth tracking are planned for a future Selena release.",
   },
 ];
 

@@ -28,7 +28,7 @@ function shiftMonth(date: Date, delta: number) {
   return new Date(date.getFullYear(), date.getMonth() + delta, 1);
 }
 
-export function MonthlySummary({ userId }: { userId: string }) {
+export function MonthlySummary({ userId, refreshKey }: { userId: string; refreshKey: number }) {
   const [selectedMonth, setSelectedMonth] = useState(() => startOfMonth(new Date()));
   const [summary, setSummary] = useState<MonthlySummaryState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -96,7 +96,7 @@ export function MonthlySummary({ userId }: { userId: string }) {
     return () => {
       isActive = false;
     };
-  }, [selectedMonth, userId]);
+  }, [refreshKey, selectedMonth, userId]);
 
   const netBalance = (summary?.income ?? 0) - (summary?.expenses ?? 0);
 
@@ -113,6 +113,7 @@ export function MonthlySummary({ userId }: { userId: string }) {
             type="button"
             variant="outline"
             size="icon-sm"
+            className="size-11"
             onClick={() => setSelectedMonth((current) => shiftMonth(current, -1))}
             aria-label="Previous month"
           >
@@ -122,6 +123,7 @@ export function MonthlySummary({ userId }: { userId: string }) {
             type="button"
             variant="outline"
             size="icon-sm"
+            className="size-11"
             onClick={() => setSelectedMonth((current) => shiftMonth(current, 1))}
             aria-label="Next month"
           >

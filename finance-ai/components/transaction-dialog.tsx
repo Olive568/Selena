@@ -58,7 +58,7 @@ function getInitialState(
       amount: initialTransaction.amount,
       date: initialTransaction.date,
       transactionType: initialTransaction.transactionType,
-      sourceAccountId: "",
+      sourceAccountId: initialTransaction.accountId,
       destinationAccountId: "",
     };
   }
@@ -132,12 +132,12 @@ export function TransactionDialog({
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSubmitting) return;
     setError(null);
 
     const isTransfer = form.transactionType === "transfer";
     const merchant = form.merchant.trim();
     const category = form.category.trim();
-    const notes = form.notes.trim();
     const amount = Number(form.amount);
     const sourceAccount = accountOptions.find((account) => account.id === form.sourceAccountId);
     const destinationAccount = accountOptions.find((account) => account.id === form.destinationAccountId);
@@ -348,7 +348,7 @@ export function TransactionDialog({
                     <SelectTrigger id="source-account">
                       <SelectValue placeholder="Select source account" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent viewportClassName="grid max-h-48 grid-cols-3 gap-1 overflow-y-auto">
                       {accountOptions.map((account) => (
                         <SelectItem key={account.id} value={account.id}>
                           {account.name}
@@ -367,7 +367,7 @@ export function TransactionDialog({
                     <SelectTrigger id="destination-account">
                       <SelectValue placeholder="Select destination account" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent viewportClassName="grid max-h-48 grid-cols-3 gap-1 overflow-y-auto">
                       {accountOptions.map((account) => (
                         <SelectItem key={account.id} value={account.id}>
                           {account.name}
@@ -447,7 +447,7 @@ export function TransactionDialog({
                   <SelectTrigger id="income-expense-account">
                     <SelectValue placeholder="Select account" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent viewportClassName="grid max-h-48 grid-cols-3 gap-1 overflow-y-auto">
                     {accountOptions.map((account) => (
                       <SelectItem key={account.id} value={account.id}>
                         {account.name}
@@ -471,7 +471,7 @@ export function TransactionDialog({
                   <SelectTrigger id="category">
                     <SelectValue placeholder={form.transactionType === "income" ? "No category" : "Select category"} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent viewportClassName="grid max-h-48 grid-cols-3 gap-1 overflow-y-auto">
                     {categorySuggestions.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
@@ -568,8 +568,10 @@ export function TransactionDialog({
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleTransferSubmit}>Confirm Transfer</AlertDialogAction>
+            <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleTransferSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "Saving..." : "Confirm Transfer"}
+            </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

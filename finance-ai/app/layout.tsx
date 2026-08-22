@@ -6,7 +6,7 @@ import { Footer } from "@/components/footer";
 export const metadata: Metadata = {
   title: "Selena — AI-Powered Personal Finance Assistant",
   description:
-    "Selena is an AI-powered personal finance assistant that helps you track expenses, understand spending habits, upload receipts, and make smarter financial decisions—all in one place.",
+    "Selena is an AI-powered personal finance assistant that helps you track expenses, understand spending habits, and make smarter financial decisions—all in one place.",
 };
 
 export default function RootLayout({

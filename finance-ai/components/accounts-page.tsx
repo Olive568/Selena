@@ -399,7 +399,7 @@ export function AccountsPage({
                       type="button"
                       variant="outline"
                       size="icon-sm"
-                      className="shrink-0 rounded-full"
+                       className="size-11 shrink-0 rounded-full"
                       aria-label={`Set balance for ${account.name}`}
                       onClick={() => openBalance(account)}
                       disabled={account.userId === null}
@@ -452,6 +452,7 @@ export function AccountsPage({
                           type="button"
                           variant="outline"
                           size="icon-sm"
+                          className="size-11"
                           aria-label={`Set balance for ${account.name}`}
                           onClick={() => openBalance(account)}
                           disabled={account.userId === null}
@@ -462,6 +463,7 @@ export function AccountsPage({
                           type="button"
                           variant="outline"
                           size="icon-sm"
+                          className="size-11"
                           aria-label={`Edit ${account.name}`}
                           onClick={() => openEdit(account)}
                         >
@@ -471,6 +473,7 @@ export function AccountsPage({
                           type="button"
                           variant="outline"
                           size="icon-sm"
+                          className="size-11"
                           aria-label={`Delete ${account.name}`}
                           onClick={() => setAccountToDelete(account)}
                         >

@@ -567,7 +567,7 @@ export function TransactionsPage({
         <section className="flex flex-col gap-4 rounded-[2rem] border border-border bg-card/90 p-5 shadow-lg shadow-black/5 backdrop-blur sm:p-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-2">
             <Button asChild variant="outline" className="h-10 rounded-full px-4">
-              <Link href="/">
+              <Link href="/dashboard">
                 <ArrowLeft className="mr-2 size-4" />
                 Back to dashboard
               </Link>
@@ -635,7 +635,7 @@ export function TransactionsPage({
                 <SelectTrigger id="category-filter">
                   <SelectValue placeholder="All categories" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent viewportClassName="grid max-h-48 grid-cols-3 gap-1 overflow-y-auto">
                   <SelectItem value="all">All categories</SelectItem>
                   {visibleCategories.map((category) => (
                     <SelectItem key={category.id} value={category.name}>

@@ -26,7 +26,7 @@
 | Auth | Supabase Auth (email/password) |
 | Real-time/Storage | Supabase (RLS policies) |
 | Charts | Recharts |
-| AI Chat | Groq API (Llama 3.3 70B) |
+| AI Chat | Configurable Qwen model through Groq |
 | Animations | Framer Motion |
 | Icons | Lucide React |
 | Testing | Vitest + React Testing Library |
@@ -220,14 +220,14 @@ All tables have RLS enabled with policies:
 - Date range filter: This Month / Last Month / Last 3 Months / This Year / All Time
 
 ### 4. Transaction List Page (`/transactions`)
-- Full paginated list
+- Month-filtered transaction list
 - Filters: Month, Type, Category, Sort
 - Inline edit/delete
 
 ### 5. AI Chatbot
 - Floating button (bottom-left)
 - Accepts date range + natural language question
-- Server-side `/api/chat` route → Groq (Llama 3.3 70B)
+- Server-side `/api/chat` route → configurable Qwen model through Groq
 - Returns answer based on user's transactions in that period
 
 ### 6. New User Onboarding
@@ -265,9 +265,9 @@ CategoryBreakdownItem: { name, amount }
 ## API Routes
 
 ### `POST /api/chat`
-**Body**: `{ messages: [{ role, content }], dateRange: { start, end } }`
+**Body**: `{ message, startDate, endDate }`
 **Action**: Fetches user's transactions in date range, sends to Groq with context
-**Returns**: `{ answer: string }`
+**Returns**: `{ reply: string }`
 
 ---
 
@@ -291,6 +291,7 @@ CategoryBreakdownItem: { name, amount }
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 GROQ_API_KEY=gsk_your_groq_key
+GROQ_MODEL=qwen/qwen3.6-27b
 
 # Optional
 NEXT_PUBLIC_APP_URL=http://localhost:3000
@@ -351,7 +352,7 @@ npm run test:watch # Watch mode tests
 - Handled in `.or('user_id.is.null,user_id.eq.{userId}')` queries
 
 ### Transfer Logic
-- Creates 2 transaction rows (transfer out + transfer in) via `create_transfer` RPC
+- Creates a transfer record and a generated transaction display row via `create_transfer` RPC
 - Merchant: `"Transfer: Source → Destination"`
 - Category: `"Transfer"` (excluded from expense charts)
 - `isGeneratedTransferTransaction()` detects these for UI disabling
@@ -366,8 +367,8 @@ npm run test:watch # Watch mode tests
 ## Deployment Checklist
 
 - [ ] Supabase env vars configured in host dashboard
-- [ ] `GROQ_API_KEY` configured (server-side only)
-- [ ] Run `20260728_full_schema.sql` in Supabase SQL editor
+- [ ] `GROQ_API_KEY` and `GROQ_MODEL` configured (server-side only)
+- [ ] Apply the repository's Supabase migrations in a controlled environment
 - [ ] Supabase Auth redirect origins include deployment URL
 - [ ] Supabase project not paused (free tier pauses after 7 days inactivity)
 
@@ -409,7 +410,7 @@ A: `app/api/chat/route.ts` — fetches transactions, builds prompt, calls Groq.
 A: `NewUserOnboarding` component checks `localStorage` flag, shows if `initialTransactions.length === 0`.
 
 **Q: How to run migrations?**
-A: Copy `supabase/migrations/20260728_full_schema.sql` into Supabase SQL editor and run. Subsequent migrations run in order.
+A: Apply the repository's Supabase migrations in a controlled environment. Verify the resulting schema and RPCs before deployment.
 
 ---
 

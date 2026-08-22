@@ -70,7 +70,18 @@ export function ChatbotLauncher() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
+  const hasOpenedRef = useRef(false);
   const lastSentRef = useRef("");
+
+  useEffect(() => {
+    if (isOpen) {
+      hasOpenedRef.current = true;
+      textareaRef.current?.focus();
+    } else if (hasOpenedRef.current) {
+      launcherRef.current?.focus();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -160,6 +171,12 @@ export function ChatbotLauncher() {
     }
   }
 
+  function handlePanelKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Escape") {
+      setIsOpen(false);
+    }
+  }
+
   return (
     <>
       <AnimatePresence>
@@ -171,6 +188,10 @@ export function ChatbotLauncher() {
             exit={{ opacity: 0, scale: 0.94, y: 24 }}
             transition={{ duration: 0.28, ease: [0.21, 0.47, 0.32, 0.98] }}
             className="fixed inset-x-0 bottom-0 z-50 origin-bottom-right sm:inset-x-auto sm:bottom-4 sm:right-4 lg:bottom-6 lg:right-6"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="selena-chat-title"
+            onKeyDown={handlePanelKeyDown}
           >
             <div
               className={cn(
@@ -186,7 +207,7 @@ export function ChatbotLauncher() {
                     <SelenaIcon className="h-full w-full" />
                   </span>
                   <div className="min-w-0">
-                    <p className="font-heading text-lg font-semibold tracking-tight">Selena</p>
+                    <p id="selena-chat-title" className="font-heading text-lg font-semibold tracking-tight">Selena</p>
                     <p className="truncate text-sm text-muted-foreground">Your personal finance assistant</p>
                   </div>
                 </div>
@@ -267,7 +288,7 @@ export function ChatbotLauncher() {
                 )}
               </div>
 
-              <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-5 sm:py-6">
+              <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-5 sm:py-6" aria-live="polite">
                 {messages.length === 0 && !error ? (
                   <div className="flex h-full flex-col items-center justify-center gap-6 text-center">
                     <span className="flex size-14 items-center justify-center overflow-hidden rounded-2xl">
@@ -321,7 +342,7 @@ export function ChatbotLauncher() {
                         <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
                           <SelenaIcon className="h-full w-full" />
                         </span>
-                        <div className="flex items-center gap-1.5 rounded-2xl border border-border bg-muted/30 px-4 py-3">
+                        <div role="status" className="flex items-center gap-1.5 rounded-2xl border border-border bg-muted/30 px-4 py-3">
                           <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground" />
                           <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:120ms]" />
                           <span className="size-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:240ms]" />
@@ -335,7 +356,7 @@ export function ChatbotLauncher() {
                           <SelenaIcon className="h-full w-full" />
                         </span>
                         <div className="min-w-0 flex-1">
-                          <div className="rounded-2xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                           <div role="alert" className="rounded-2xl border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
                             {error}
                           </div>
                           <Button
@@ -361,6 +382,7 @@ export function ChatbotLauncher() {
                 <div className="flex items-end gap-2 rounded-2xl border border-border bg-background px-3 py-2 transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/40">
                   <Textarea
                     ref={textareaRef}
+                    aria-label="Ask Selena about your finances"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -372,7 +394,7 @@ export function ChatbotLauncher() {
                   <Button
                     type="button"
                     size="icon-lg"
-                    className="mb-0.5 shrink-0 rounded-full"
+                    className="mb-0.5 size-11 shrink-0 rounded-full"
                     onClick={() => void handleSend()}
                     disabled={isLoading || !input.trim()}
                     aria-label="Send message"
@@ -389,6 +411,7 @@ export function ChatbotLauncher() {
       {!isOpen && (
         <Button
           type="button"
+          ref={launcherRef}
           onClick={() => setIsOpen(true)}
           className="fixed bottom-4 right-4 z-50 h-12 rounded-full px-5 text-lg shadow-lg shadow-black/20 lg:bottom-6 lg:right-6 lg:h-14 lg:px-6 lg:text-xl"
         >

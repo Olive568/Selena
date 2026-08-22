@@ -47,7 +47,7 @@ function getTransactionType(value: SearchParamValue): TransactionType | "all" {
 export default async function TransactionsRoute({
   searchParams,
 }: {
-  searchParams?: TransactionsPageSearchParams;
+  searchParams?: Promise<TransactionsPageSearchParams>;
 }) {
   const supabase = await createSupabaseServerClient();
   const { data: userData } = await supabase.auth.getUser();
@@ -56,9 +56,10 @@ export default async function TransactionsRoute({
     redirect("/sign-in");
   }
 
-  const month = getSingleValue(searchParams?.month) || getCurrentMonthValue();
-  const transactionType = getTransactionType(searchParams?.type);
-  const category = getSingleValue(searchParams?.category) || "all";
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const month = getSingleValue(resolvedSearchParams?.month) || getCurrentMonthValue();
+  const transactionType = getTransactionType(resolvedSearchParams?.type);
+  const category = getSingleValue(resolvedSearchParams?.category) || "all";
   const monthDate = parseMonthValue(month);
   const { start, end } = getMonthDateRange(monthDate);
 

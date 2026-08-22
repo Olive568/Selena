@@ -98,6 +98,7 @@ export function TransactionManager({
   const [transactionToDelete, setTransactionToDelete] = useState<DashboardTransaction | null>(null);
   const [banner, setBanner] = useState<BannerState>(null);
   const [dialogVersion, setDialogVersion] = useState(0);
+  const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [showOnboarding, setShowOnboarding] = useState(() => {
     if (typeof window === "undefined") return false;
     return initialTransactions.length === 0 && !localStorage.getItem("selena-onboarding-done");
@@ -185,6 +186,7 @@ export function TransactionManager({
       setTransactions((transactionsResult.data ?? []).map((row, index) => normalizeTransaction(row, index)));
       setCategories((categoriesResult.data ?? []).map((row, index) => normalizeCategory(row, index)));
       setAccounts((accountsResult.data ?? []).map((row, index) => normalizeAccount(row, index)));
+      setDashboardRefreshKey((current) => current + 1);
     } catch (error) {
       redirectIfAuthError(error);
       setBanner({
@@ -600,9 +602,9 @@ export function TransactionManager({
           </div>
         )}
 
-        <AccountCards accounts={visibleAccounts} userId={userId} />
+        <AccountCards accounts={visibleAccounts} userId={userId} refreshKey={dashboardRefreshKey} />
 
-        <MonthlySummary userId={userId} />
+        <MonthlySummary userId={userId} refreshKey={dashboardRefreshKey} />
 
         <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
           <Card className="border-border bg-card">
@@ -712,7 +714,13 @@ export function TransactionManager({
         <NewUserOnboarding
           accounts={visibleAccounts.filter((a) => a.userId === userId)}
           userId={userId}
-          onAddTransaction={openCreateExpense}
+          onAddTransaction={(transactionType) => {
+            if (transactionType === "income") {
+              openCreateIncome();
+            } else {
+              openCreateExpense();
+            }
+          }}
           onDismiss={() => setShowOnboarding(false)}
         />
       )}

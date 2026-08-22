@@ -5,6 +5,8 @@ import { checkRateLimit } from "@/lib/rate-limit";
 
 const RATE_LIMIT = 20;
 const RATE_LIMIT_WINDOW_MS = 60_000;
+const GROQ_MODEL =
+  process.env.GROQ_MODEL ?? "qwen/qwen3.6-27b";
 
 export async function POST(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -64,7 +66,8 @@ export async function POST(request: NextRequest) {
   const apiKey = process.env.GROQ_API_KEY;
 
   if (!apiKey) {
-    return NextResponse.json({ error: "GROQ_API_KEY is not configured. Check your .env.local file." }, { status: 500 });
+    console.error("Groq API key is not configured");
+    return NextResponse.json({ error: "AI service is not configured." }, { status: 500 });
   }
 
   const systemPrompt = `You are a personal finance assistant. The user has asked you about their transactions.
@@ -88,7 +91,8 @@ Answer questions about their spending, income, categories, merchants, or any oth
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: GROQ_MODEL,
+        reasoning_effort: "none",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: message },
@@ -101,13 +105,22 @@ Answer questions about their spending, income, categories, merchants, or any oth
     if (err instanceof DOMException && err.name === "AbortError") {
       return NextResponse.json({ error: "AI request timed out. Please try again." }, { status: 504 });
     }
-    throw err;
+    console.error("Groq API request failed", {
+      error: err instanceof Error ? err.message : "Unknown error",
+      model: GROQ_MODEL,
+    });
+    return NextResponse.json({ error: "AI service is temporarily unavailable. Please try again later." }, { status: 502 });
   }
   clearTimeout(timeoutId);
 
   if (!groqResponse.ok) {
     const errorText = await groqResponse.text();
-    console.error("Groq API error:", errorText);
+    console.error("Groq API error", {
+      status: groqResponse.status,
+      statusText: groqResponse.statusText,
+      model: GROQ_MODEL,
+      response: errorText.slice(0, 1000),
+    });
     return NextResponse.json({ error: "AI service is temporarily unavailable. Please try again later." }, { status: 502 });
   }
 

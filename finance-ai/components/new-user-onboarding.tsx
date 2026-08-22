@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Check, ChevronRight, Coins, Landmark, Loader2, Plus, Sparkles, Wallet } from "lucide-react";
 
 import { SelenaIcon } from "@/components/selena-icon";
@@ -15,7 +15,7 @@ const ONBOARDING_KEY = "selena-onboarding-done";
 type NewUserOnboardingProps = {
   accounts: DashboardAccount[];
   userId: string;
-  onAddTransaction: () => void;
+  onAddTransaction: (transactionType: "expense" | "income") => void;
   onDismiss: () => void;
 };
 
@@ -31,6 +31,21 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
   const [balances, setBalances] = useState<Record<string, string>>({});
   const [isSavingBalances, setIsSavingBalances] = useState(false);
   const [balanceError, setBalanceError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    dialogRef.current?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        localStorage.setItem(ONBOARDING_KEY, "true");
+        onDismiss();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onDismiss]);
 
   function finish(currentStep: number) {
     if (currentStep < steps.length - 1) {
@@ -93,13 +108,26 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
     finish(1);
   }
 
-  const progress = ((step + 1) / steps.length) * 100;
-
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-foreground/60 backdrop-blur-sm sm:items-center">
+    <div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="onboarding-title"
+      aria-describedby="onboarding-description"
+      tabIndex={-1}
+      className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/60 backdrop-blur-sm outline-none sm:items-center"
+    >
       <Card className="mx-4 mb-0 w-full max-w-lg rounded-t-3xl border-border bg-card p-6 shadow-2xl sm:mb-0 sm:rounded-3xl">
         <div className="mb-6 flex items-center justify-between">
-          <div className="flex gap-1.5">
+          <div
+            className="flex gap-1.5"
+            aria-label={`Onboarding step ${step + 1} of ${steps.length}`}
+            role="progressbar"
+            aria-valuemin={1}
+            aria-valuemax={steps.length}
+            aria-valuenow={step + 1}
+          >
             {steps.map((s, i) => (
               <div
                 key={i}
@@ -109,7 +137,7 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
               />
             ))}
           </div>
-          <button onClick={skip} className="text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
+          <button type="button" onClick={skip} className="min-h-11 px-2 text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground">
             Skip
           </button>
         </div>
@@ -120,8 +148,8 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
               <SelenaIcon className="h-full w-full" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-xl font-semibold tracking-tight text-foreground">Hi there! Welcome to Selena</h2>
-              <p className="text-sm leading-6 text-muted-foreground">
+              <h2 id="onboarding-title" className="text-xl font-semibold tracking-tight text-foreground">Hi there! Welcome to Selena</h2>
+              <p id="onboarding-description" className="text-sm leading-6 text-muted-foreground">
                 Selena is your personal finance copilot. Track income and expenses, organize them into categories, and
                 see where your money goes — all in one place.
               </p>
@@ -179,7 +207,7 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
               ))}
             </div>
             {balanceError && (
-              <p className="text-sm text-red-500">{balanceError}</p>
+              <p role="alert" className="text-sm text-red-500">{balanceError}</p>
             )}
             <div className="flex flex-col gap-2 pt-1">
               <Button onClick={() => { setBalanceError(null); saveBalances(); }} disabled={isSavingBalances} className="h-11 w-full rounded-full">
@@ -208,10 +236,10 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row">
-              <Button onClick={() => { onAddTransaction(); finish(2); }} className="h-11 flex-1 rounded-full">
+              <Button onClick={() => { onAddTransaction("expense"); finish(2); }} className="h-11 flex-1 rounded-full">
                 <Plus className="mr-2 size-4" /> Add Expense
               </Button>
-              <Button onClick={() => { onAddTransaction(); finish(2); }} variant="outline" className="h-11 flex-1 rounded-full">
+              <Button onClick={() => { onAddTransaction("income"); finish(2); }} variant="outline" className="h-11 flex-1 rounded-full">
                 <Plus className="mr-2 size-4" /> Add Income
               </Button>
             </div>

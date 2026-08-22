@@ -10,7 +10,7 @@ Selena is a mobile-first personal finance dashboard built with Next.js 16 and Su
 - Transaction list with filtering by month, type, category, and sort
 - Category breakdown pie chart (Recharts)
 - Shared and user-owned categories and accounts
-- AI chatbot powered by Groq (Llama 3.3 70B) — asks about your transactions within a date range
+- AI chatbot powered by Groq and configurable Qwen — asks about your transactions within a date range
 - New user onboarding wizard with optional initial balance setup
 - Dark/light theme toggle
 - Modern mobile-first UI with Tailwind CSS and shadcn/ui
@@ -47,13 +47,14 @@ Create a `.env.local` file in the project root:
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 GROQ_API_KEY=gsk_your_groq_key
+GROQ_MODEL=qwen/qwen3.6-27b
 ```
 
 The `NEXT_PUBLIC_` variables are safe to expose to the browser (Supabase anon key is protected by RLS). `GROQ_API_KEY` is server-side only and never leaves the `/api/chat` route handler.
 
 ### 3) Set up the database
 
-Run `supabase/migrations/20260728_full_schema.sql` in your Supabase SQL editor. This creates all tables (profiles, categories, accounts, transactions, transfers), enables Row Level Security, and sets up the auto-profile trigger that creates starter accounts on registration.
+Apply the repository's Supabase migrations in a controlled environment. The base schema creates the tables, RLS, and auto-profile trigger; later migrations add the fields and RPCs used by the application.
 
 ### 4) Start the development server
 
@@ -96,7 +97,7 @@ npm run lint       # Run ESLint
 
 ## AI Chatbot
 
-The chatbot (bottom-left corner) accepts a date range and answers questions about transactions within that period. It uses Groq's Llama 3.3 70B model via a server-side route handler at `/api/chat`. 
+The chatbot (bottom-left corner) accepts a date range and answers questions about transactions within that period. It uses the configurable Qwen model through Groq via the server-side `/api/chat` route.
 
 ## Deployment
 
@@ -104,8 +105,8 @@ This app can be deployed on Vercel or any platform that supports Next.js.
 
 Before deploying, make sure:
 
-- Supabase environment variables and `GROQ_API_KEY` are configured in your host's dashboard
-- The database migration (`20260728_full_schema.sql`) has been applied to your Supabase project
+- Supabase environment variables, `GROQ_API_KEY`, and `GROQ_MODEL` are configured in your host's dashboard
+- The repository's Supabase migrations have been applied to your Supabase project
 - Your Supabase project Auth settings include your deployment URL in the allowed redirect origins
 - Your Supabase project is not paused (free tier projects pause after 7 days of inactivity)
 

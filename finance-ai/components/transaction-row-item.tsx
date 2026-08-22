@@ -96,6 +96,7 @@ export function TransactionRowItem({
             type="button"
             variant="ghost"
             size="icon-sm"
+            className="size-11"
             disabled={!canEdit}
             onClick={() => onEdit?.(transaction)}
             aria-label={`Edit ${transaction.merchant}`}
@@ -106,7 +107,7 @@ export function TransactionRowItem({
             type="button"
             variant="ghost"
             size="icon-sm"
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="size-11 text-destructive hover:bg-destructive/10 hover:text-destructive"
             disabled={!canDelete}
             onClick={() => onDelete?.(transaction)}
             aria-label={`Delete ${transaction.merchant}`}

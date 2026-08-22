@@ -23,7 +23,7 @@ export default function AboutPage() {
 
         <p className="text-sm leading-7 text-muted-foreground">
           Managing money should not require complicated spreadsheets or financial expertise. Selena Finance provides
-          intelligent insights, budgeting tools, spending analytics, and AI-powered assistance to help users make
+            intelligent insights, spending analytics, and AI-powered assistance to help users make
           informed financial decisions with confidence.
         </p>
 
@@ -40,9 +40,9 @@ export default function AboutPage() {
           <ul className="list-disc pl-5 text-sm leading-7 text-muted-foreground">
             <li>AI-powered financial insights</li>
             <li>Expense and income tracking</li>
-            <li>Budget management</li>
+            <li>Budget management (coming soon)</li>
             <li>Spending analytics</li>
-            <li>Receipt scanning and OCR</li>
+            <li>Receipt scanning and OCR (coming soon)</li>
             <li>Financial reports and visualizations</li>
             <li>Secure cloud-based access</li>
           </ul>

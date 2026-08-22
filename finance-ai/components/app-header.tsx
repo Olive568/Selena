@@ -44,6 +44,7 @@ export function AppHeader() {
                   ? "bg-muted text-foreground"
                   : "text-muted-foreground"
               )}
+              aria-current={isActive(pathname, link.href) ? "page" : undefined}
             >
               {link.label}
             </Link>
@@ -56,8 +57,10 @@ export function AppHeader() {
             type="button"
             variant="ghost"
             size="icon-lg"
-            className="md:hidden"
+            className="size-11 md:hidden"
             aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
             onClick={() => setIsOpen((current) => !current)}
           >
             {isOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -66,7 +69,7 @@ export function AppHeader() {
       </nav>
 
       {isOpen && (
-        <div className="border-t border-border bg-background/95 backdrop-blur-sm md:hidden">
+        <div id="mobile-navigation" className="border-t border-border bg-background/95 backdrop-blur-sm md:hidden">
           <div className="space-y-1 px-4 py-4">
             {navLinks.map((link) => (
               <Link
@@ -79,6 +82,7 @@ export function AppHeader() {
                     ? "bg-muted text-foreground"
                     : "text-muted-foreground"
                 )}
+                aria-current={isActive(pathname, link.href) ? "page" : undefined}
               >
                 {link.label}
               </Link>

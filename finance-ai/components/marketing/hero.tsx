@@ -4,7 +4,6 @@ import { motion, type Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { SelenaIcon } from "@/components/selena-icon";
 import { DashboardMockup } from "@/components/marketing/dashboard-mockup";
 import { Button } from "@/components/ui/button";
 
@@ -47,7 +46,7 @@ export function Hero() {
 
           <motion.p variants={item} className="max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
             Selena is an AI-powered personal finance assistant that helps you track expenses, understand spending
-            habits, upload receipts, and make smarter financial decisions—all in one place.
+            habits, and make smarter financial decisions—all in one place.
           </motion.p>
 
           <motion.div variants={item} className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
