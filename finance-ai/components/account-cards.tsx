@@ -19,6 +19,7 @@ type AccountCardsProps = {
 };
 
 type AccountBalance = {
+  id: string;
   name: string;
   balance: number;
   currency: string;
@@ -31,12 +32,16 @@ async function fetchAccountBalances(userId: string, accounts: DashboardAccount[]
     supabase.from("transactions").select("amount, transaction_type, account_id").eq("user_id", userId),
   ]);
 
-  const transferData = transfersResult.error ? [] : (transfersResult.data ?? []);
-  const txData = txResult.error ? [] : (txResult.data ?? []);
+  if (transfersResult.error || txResult.error) {
+    throw new Error("Unable to load account balances.");
+  }
+  const transferData = transfersResult.data ?? [];
+  const txData = txResult.data ?? [];
 
   const balanceMap = computeAccountBalancesInCents(accounts, transferData, txData);
 
   return accounts.map((a) => ({
+    id: a.id,
     name: a.name,
     balance: centsToPesos(balanceMap.get(a.id) ?? 0),
     currency: a.currency ?? "PHP",
@@ -47,16 +52,21 @@ async function fetchAccountBalances(userId: string, accounts: DashboardAccount[]
 export function AccountCards({ accounts: initialAccounts, userId, refreshKey }: AccountCardsProps) {
   const [balances, setBalances] = useState<AccountBalance[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     let active = true;
 
     async function load() {
       setLoading(true);
-      const result = await fetchAccountBalances(userId, initialAccounts);
-      if (active) {
-        setBalances(result);
-        setLoading(false);
+      setLoadError(false);
+      try {
+        const result = await fetchAccountBalances(userId, initialAccounts);
+        if (active) setBalances(result);
+      } catch {
+        if (active) setLoadError(true);
+      } finally {
+        if (active) setLoading(false);
       }
     }
 
@@ -75,7 +85,7 @@ export function AccountCards({ accounts: initialAccounts, userId, refreshKey }: 
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {initialAccounts.map((account) => {
-          const balance = balances.find((b) => b.name === account.name);
+          const balance = balances.find((b) => b.id === account.id);
           const amount = balance?.balance ?? 0;
 
           return (
@@ -89,6 +99,8 @@ export function AccountCards({ accounts: initialAccounts, userId, refreshKey }: 
               <CardContent className="p-4 pt-0">
                 {loading ? (
                   <Loader2 className="size-4 animate-spin text-muted-foreground" />
+                ) : loadError ? (
+                  <p className="text-sm text-destructive">Unable to load financial data</p>
                 ) : (
                   <>
                     <p className={`text-xl font-semibold tracking-tight ${amount >= 0 ? "text-foreground" : "text-rose-600 dark:text-rose-400"}`}>

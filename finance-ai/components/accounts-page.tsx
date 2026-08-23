@@ -37,7 +37,30 @@ type AccountsPageProps = {
 type PendingAdjustment = {
   account: DashboardAccount;
   targetBalanceCents: number;
+  idempotencyKey: string;
 };
+
+async function loadAccountFinancialData(userId: string) {
+  const [accountsResult, transfersResult, transactionsResult] = await Promise.all([
+    supabase
+      .from("accounts")
+      .select("*")
+      .or(`user_id.is.null,user_id.eq.${userId}`)
+      .order("name", { ascending: true }),
+    supabase.from("transfers").select("from_account_id, to_account_id, amount").eq("user_id", userId),
+    supabase.from("transactions").select("amount, transaction_type, account_id").eq("user_id", userId),
+  ]);
+
+  if (accountsResult.error || transfersResult.error || transactionsResult.error) {
+    throw new Error("Unable to load financial data.");
+  }
+
+  return {
+    accounts: (accountsResult.data ?? []).map((row, index) => normalizeAccount(row as AccountRow, index)),
+    transfers: (transfersResult.data ?? []) as TransferSeed[],
+    transactions: (transactionsResult.data ?? []) as TransactionRow[],
+  };
+}
 
 export function AccountsPage({
   initialAccounts,
@@ -77,21 +100,15 @@ export function AccountsPage({
     let active = true;
 
     async function refresh() {
-      const [{ data: accountsData }, { data: transfersData }, { data: transactionsData }] = await Promise.all([
-        supabase
-          .from("accounts")
-          .select("*")
-          .or(`user_id.is.null,user_id.eq.${userId}`)
-          .order("name", { ascending: true }),
-        supabase.from("transfers").select("from_account_id, to_account_id, amount").eq("user_id", userId),
-        supabase.from("transactions").select("amount, transaction_type, account_id").eq("user_id", userId),
-      ]);
-
-      if (active && !accountsData) return;
-      if (active) {
-        setAccounts((accountsData ?? []).map((row, index) => normalizeAccount(row as AccountRow, index)));
-        setTransfers((transfersData ?? []) as TransferSeed[]);
-        setTransactions((transactionsData ?? []) as TransactionRow[]);
+      try {
+        const data = await loadAccountFinancialData(userId);
+        if (active) {
+          setAccounts(data.accounts);
+          setTransfers(data.transfers);
+          setTransactions(data.transactions);
+        }
+      } catch {
+        if (active) setBanner({ kind: "error", message: "Unable to load financial data." });
       }
     }
 
@@ -150,19 +167,10 @@ export function AccountsPage({
         if (!data) throw new Error("Could not create the account.");
       }
 
-      const [{ data: accountsData }, { data: transfersData }, { data: transactionsData }] = await Promise.all([
-        supabase
-          .from("accounts")
-          .select("*")
-          .or(`user_id.is.null,user_id.eq.${userId}`)
-          .order("name", { ascending: true }),
-        supabase.from("transfers").select("from_account_id, to_account_id, amount").eq("user_id", userId),
-        supabase.from("transactions").select("amount, transaction_type, account_id").eq("user_id", userId),
-      ]);
-
-      setAccounts((accountsData ?? []).map((row, index) => normalizeAccount(row as AccountRow, index)));
-      setTransfers((transfersData ?? []) as TransferSeed[]);
-      setTransactions((transactionsData ?? []) as TransactionRow[]);
+      const data = await loadAccountFinancialData(userId);
+      setAccounts(data.accounts);
+      setTransfers(data.transfers);
+      setTransactions(data.transactions);
 
       setBanner({
         kind: "success",
@@ -225,7 +233,11 @@ export function AccountsPage({
     setIsBalanceDialogOpen(false);
     setBalanceAccount(null);
     setBanner(null);
-    setPendingAdjustment({ account: balanceAccount, targetBalanceCents: values.balanceCents });
+    setPendingAdjustment({
+      account: balanceAccount,
+      targetBalanceCents: values.balanceCents,
+      idempotencyKey: crypto.randomUUID(),
+    });
   }
 
   async function applyAdjustment(account: DashboardAccount, targetBalanceCents: number) {
@@ -248,22 +260,16 @@ export function AccountsPage({
 
       if (error) throw new Error(error.message);
 
-      const [{ data: accountsData }, { data: transfersData }, { data: transactionsData }] = await Promise.all([
-        supabase
-          .from("accounts")
-          .select("*")
-          .or(`user_id.is.null,user_id.eq.${userId}`)
-          .order("name", { ascending: true }),
-        supabase.from("transfers").select("from_account_id, to_account_id, amount").eq("user_id", userId),
-        supabase.from("transactions").select("amount, transaction_type, account_id").eq("user_id", userId),
-      ]);
-
-      setAccounts((accountsData ?? []).map((row, index) => normalizeAccount(row as AccountRow, index)));
-      setTransfers((transfersData ?? []) as TransferSeed[]);
-      setTransactions((transactionsData ?? []) as TransactionRow[]);
-
-      setBanner({ kind: "success", message: "Account balance updated." });
       setPendingAdjustment(null);
+      try {
+        const data = await loadAccountFinancialData(userId);
+        setAccounts(data.accounts);
+        setTransfers(data.transfers);
+        setTransactions(data.transactions);
+        setBanner({ kind: "success", message: "Account balance updated." });
+      } catch {
+        setBanner({ kind: "error", message: "Account balance updated, but financial data could not be refreshed." });
+      }
     } catch (error) {
       redirectIfAuthError(error);
       setBanner({
@@ -278,7 +284,7 @@ export function AccountsPage({
   async function reflectInTransactions() {
     if (!pendingAdjustment) return;
 
-    const { account, targetBalanceCents } = pendingAdjustment;
+    const { account, targetBalanceCents, idempotencyKey } = pendingAdjustment;
     const currentCents = balanceCents.get(account.id) ?? 0;
     const deltaCents = targetBalanceCents - currentCents;
 
@@ -297,7 +303,6 @@ export function AccountsPage({
 
       const merchant = "Manual adjustment";
       const { error } = await supabase.rpc("create_transaction", {
-        p_user_id: userId,
         p_merchant: merchant,
         p_amount: Math.abs(deltaCents),
         p_date: getTodayInputValue(),
@@ -306,27 +311,21 @@ export function AccountsPage({
         p_category: "Adjustment",
         p_payment_method: account.name,
         p_account_id: account.dbId,
-        p_idempotency_key: crypto.randomUUID(),
+        p_idempotency_key: idempotencyKey,
       });
 
       if (error) throw new Error(error.message);
 
-      const [{ data: accountsData }, { data: transfersData }, { data: transactionsData }] = await Promise.all([
-        supabase
-          .from("accounts")
-          .select("*")
-          .or(`user_id.is.null,user_id.eq.${userId}`)
-          .order("name", { ascending: true }),
-        supabase.from("transfers").select("from_account_id, to_account_id, amount").eq("user_id", userId),
-        supabase.from("transactions").select("amount, transaction_type, account_id").eq("user_id", userId),
-      ]);
-
-      setAccounts((accountsData ?? []).map((row, index) => normalizeAccount(row as AccountRow, index)));
-      setTransfers((transfersData ?? []) as TransferSeed[]);
-      setTransactions((transactionsData ?? []) as TransactionRow[]);
-
-      setBanner({ kind: "success", message: "Manual adjustment added to transactions." });
       setPendingAdjustment(null);
+      try {
+        const data = await loadAccountFinancialData(userId);
+        setAccounts(data.accounts);
+        setTransfers(data.transfers);
+        setTransactions(data.transactions);
+        setBanner({ kind: "success", message: "Manual adjustment added to transactions." });
+      } catch {
+        setBanner({ kind: "error", message: "Manual adjustment saved, but financial data could not be refreshed." });
+      }
     } catch (error) {
       redirectIfAuthError(error);
       setBanner({
@@ -520,7 +519,7 @@ export function AccountsPage({
             <AlertDialogDescription>
               This will permanently delete{" "}
               <span className="font-medium text-foreground">{accountToDelete?.name ?? "this account"}</span>.
-              Transactions linked to it will keep their history but lose their account assignment.
+              Accounts with linked transactions or transfers cannot be deleted, preserving financial history.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

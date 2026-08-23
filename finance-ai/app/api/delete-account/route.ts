@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 
 import { checkRateLimit } from "@/lib/rate-limit";
-
-const RATE_LIMIT = 5;
-const RATE_LIMIT_WINDOW_MS = 60_000;
 
 export async function POST(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -29,8 +27,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!checkRateLimit(`delete-account:${user.id}`, RATE_LIMIT, RATE_LIMIT_WINDOW_MS)) {
-    return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
+  let rateLimit;
+  try {
+    rateLimit = await checkRateLimit(supabase, "delete-account");
+  } catch {
+    return NextResponse.json({ error: "Request protection is temporarily unavailable." }, { status: 503 });
+  }
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Try again later." },
+      { status: 429, headers: { "Retry-After": String(rateLimit.retryAfter) } }
+    );
   }
 
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -39,29 +46,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
   }
 
-  const adminClient = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    serviceKey,
-    {
-      cookies: {
-        getAll() { return []; },
-        setAll() {},
-      },
-    }
-  );
+  const adminClient = createClient(supabaseUrl, serviceKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 
-  const tables = ["transactions", "transfers", "categories", "accounts", "profiles"];
-  for (const table of tables) {
-    const { error: delError } = await adminClient.from(table).delete().eq("user_id", user.id);
-    if (delError) {
-      console.error(`Error deleting from ${table}:`, delError);
-    }
-  }
-
+  // Database foreign keys cascade from auth.users, making this single operation retry-safe.
   const { error: authDeleteError } = await adminClient.auth.admin.deleteUser(user.id);
 
   if (authDeleteError) {
-    return NextResponse.json({ error: authDeleteError.message }, { status: 500 });
+    console.error("Account deletion failed", { userId: user.id, code: authDeleteError.code });
+    return NextResponse.json({ error: "Could not delete the account. Please try again." }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });

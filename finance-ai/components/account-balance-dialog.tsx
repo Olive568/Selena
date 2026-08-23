@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { centsToPesos, formatCurrency, type DashboardAccount } from "@/lib/finance";
+import { centsToPesos, formatCurrency, pesosToCents, type DashboardAccount } from "@/lib/finance";
 
 export type BalanceFormValues = {
   balanceCents: number;
@@ -42,20 +42,26 @@ export function AccountBalanceDialog({
     event.preventDefault();
     setError(null);
 
-    const parsed = Number(amount);
-
-    if (!Number.isFinite(parsed) || parsed < 0) {
-      setError("Enter a valid balance amount.");
+    if (!amount.trim()) {
+      setError("Enter a balance amount.");
       return;
     }
 
-    if (Math.round(parsed * 100) === currentBalanceCents) {
+    let balanceCents: number;
+    try {
+      balanceCents = pesosToCents(amount);
+    } catch (parseError) {
+      setError(parseError instanceof Error ? parseError.message : "Enter a valid balance amount.");
+      return;
+    }
+
+    if (balanceCents === currentBalanceCents) {
       setError("The balance is already set to this amount.");
       return;
     }
 
     try {
-      await onSubmit({ balanceCents: Math.round(parsed * 100) });
+      await onSubmit({ balanceCents });
       onOpenChange(false);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Could not update the account balance.");

@@ -23,6 +23,7 @@ export type TransactionRow = {
   notes?: string | null;
   user_id?: string | null;
   account_id?: string | null;
+  transfer_id?: string | null;
 };
 
 export type CategoryRow = {
@@ -52,6 +53,9 @@ export type DashboardTransaction = {
   transactionType: TransactionType;
   paymentMethod: string;
   accountId: string;
+  transferId?: string;
+  sourceAccountId?: string;
+  destinationAccountId?: string;
 };
 
 export type DashboardCategory = {
@@ -132,6 +136,9 @@ export function normalizeTransaction(row: TransactionRow, fallbackIndex: number)
     transactionType,
     paymentMethod: row.payment_method?.trim() || "Not set",
     accountId: row.account_id?.trim() || "",
+    transferId: row.transfer_id?.trim() || "",
+    sourceAccountId: "",
+    destinationAccountId: "",
   };
 }
 
@@ -167,6 +174,25 @@ export function formatCurrency(value: number) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
+}
+
+export const MAX_MONEY_CENTS = 999_999_999_999;
+
+export function pesosToCents(value: string | number): number {
+  const normalized = typeof value === "number" ? String(value) : value.trim();
+
+  if (!/^(0|[1-9]\d*)(?:\.(\d{1,2}))?$/.test(normalized)) {
+    throw new Error("Enter an amount with no more than two decimal places.");
+  }
+
+  const [whole, fraction = ""] = normalized.split(".");
+  const cents = BigInt(whole) * BigInt(100) + BigInt(fraction.padEnd(2, "0"));
+
+  if (cents > BigInt(MAX_MONEY_CENTS)) {
+    throw new Error("Amount is too large.");
+  }
+
+  return Number(cents);
 }
 
 export function formatDashboardDate(value: string) {
@@ -207,7 +233,9 @@ export function computeAccountBalancesInCents(
   }
 
   for (const t of transfers) {
-    const amount = Math.round(Number(t.amount ?? 0));
+    const amount = Number(t.amount ?? 0);
+
+    if (!Number.isSafeInteger(amount) || amount <= 0) continue;
 
     if (t.to_account_id) {
       const key = String(t.to_account_id);
@@ -224,7 +252,9 @@ export function computeAccountBalancesInCents(
     const accountId = String(t.account_id ?? "").trim();
     if (!accountId) continue;
 
-    const amount = Math.round(Number(t.amount ?? 0));
+    const amount = Number(t.amount ?? 0);
+
+    if (!Number.isSafeInteger(amount) || amount <= 0) continue;
 
     if (t.transaction_type === "income") {
       balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) + amount);

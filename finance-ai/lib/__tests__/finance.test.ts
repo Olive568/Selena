@@ -9,6 +9,9 @@ import {
   buildMetrics,
   getDashboardDateRange,
   getMonthDateRange,
+  computeAccountBalancesInCents,
+  MAX_MONEY_CENTS,
+  pesosToCents,
   toDateInputValue,
   type TransactionRow,
   type DashboardTransaction,
@@ -393,80 +396,53 @@ describe("normalizeAccount", () => {
   });
 });
 
-describe("balance computation (account-cards logic)", () => {
-  it("correctly computes balance from transfers and transactions", () => {
-    const transfers = [
-      { from_account_id: "acc-1", to_account_id: "acc-2", amount: 50000 },
-      { from_account_id: "acc-2", to_account_id: "acc-1", amount: 20000 },
-    ];
-    const transactions = [
-      { amount: 100000, transaction_type: "income", account_id: "acc-1" },
-      { amount: 30000, transaction_type: "expense", account_id: "acc-1" },
-      { amount: 20000, transaction_type: "expense", account_id: "acc-2" },
-    ];
+describe("computeAccountBalancesInCents", () => {
+  const account = normalizeAccount({ id: "acc-1", user_id: "user-1", name: "Cash", opening_balance: 1_000_000 }, 0);
 
-    const balanceMap = new Map<string, number>();
-
-    for (const t of transfers) {
-      if (t.to_account_id) {
-        balanceMap.set(t.to_account_id, (balanceMap.get(t.to_account_id) ?? 0) + Number(t.amount));
-      }
-      if (t.from_account_id) {
-        balanceMap.set(t.from_account_id, (balanceMap.get(t.from_account_id) ?? 0) - Number(t.amount));
-      }
-    }
-
-    for (const t of transactions) {
-      const accountId = t.account_id?.trim();
-      if (!accountId) continue;
-      if (t.transaction_type === "income") {
-        balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) + Number(t.amount));
-      } else if (t.transaction_type === "expense") {
-        balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) - Number(t.amount));
-      }
-    }
-
-    expect(balanceMap.get("acc-1")).toBe(40000);
-    expect(balanceMap.get("acc-2")).toBe(10000);
+  it("applies an expense to the persisted opening balance exactly once", () => {
+    const balances = computeAccountBalancesInCents(
+      [account],
+      [],
+      [{ amount: 100_000, transaction_type: "expense", account_id: "acc-1" }]
+    );
+    expect(balances.get("acc-1")).toBe(900_000);
   });
 
-  it("handles empty transfers and transactions", () => {
-    const balanceMap = new Map<string, number>();
-    expect(balanceMap.get("acc-1") ?? 0).toBe(0);
+  it("applies income to the persisted opening balance exactly once", () => {
+    const balances = computeAccountBalancesInCents(
+      [account],
+      [],
+      [{ amount: 500_000, transaction_type: "income", account_id: "acc-1" }]
+    );
+    expect(balances.get("acc-1")).toBe(1_500_000);
   });
 
-  it("handles income-only transactions for an account", () => {
-    const transactions = [
-      { amount: 500000, transaction_type: "income", account_id: "acc-1" },
-      { amount: 300000, transaction_type: "income", account_id: "acc-1" },
-    ];
-    const balanceMap = new Map<string, number>();
+  it("moves centavos between accounts without changing the total", () => {
+    const destination = normalizeAccount({ id: "acc-2", user_id: "user-1", name: "Bank", opening_balance: 0 }, 1);
+    const balances = computeAccountBalancesInCents(
+      [account, destination],
+      [{ from_account_id: "acc-1", to_account_id: "acc-2", amount: 1 }],
+      []
+    );
+    expect(balances.get("acc-1")).toBe(999_999);
+    expect(balances.get("acc-2")).toBe(1);
+  });
+});
 
-    for (const t of transactions) {
-      const accountId = t.account_id?.trim();
-      if (!accountId) continue;
-      if (t.transaction_type === "income") {
-        balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) + Number(t.amount));
-      }
-    }
-
-    expect(balanceMap.get("acc-1")).toBe(800000);
+describe("pesosToCents", () => {
+  it.each([
+    ["0.01", 1],
+    ["123.45", 12_345],
+    ["10", 1_000],
+  ])("converts %s to integer cents", (input, expected) => {
+    expect(pesosToCents(input)).toBe(expected);
   });
 
-  it("handles skip when account_id is missing", () => {
-    const transactions = [
-      { amount: 50000, transaction_type: "expense", account_id: null as string | null },
-    ];
-    const balanceMap = new Map<string, number>();
+  it("accepts the largest supported value", () => {
+    expect(pesosToCents("9999999999.99")).toBe(MAX_MONEY_CENTS);
+  });
 
-    for (const t of transactions) {
-      const accountId = t.account_id?.trim();
-      if (!accountId) continue;
-      if (t.transaction_type === "expense") {
-        balanceMap.set(accountId, (balanceMap.get(accountId) ?? 0) - Number(t.amount));
-      }
-    }
-
-    expect(balanceMap.size).toBe(0);
+  it.each(["", "-1", "0.001", "NaN", "Infinity", "10000000000"])("rejects invalid amount %s", (input) => {
+    expect(() => pesosToCents(input)).toThrow();
   });
 });

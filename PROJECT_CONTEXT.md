@@ -131,7 +131,7 @@ name TEXT NOT NULL
 institution TEXT
 currency TEXT DEFAULT 'PHP'
 created_at TIMESTAMPTZ
-opening_balance NUMERIC  -- Added in later migration
+    opening_balance BIGINT NOT NULL DEFAULT 0  -- Integer cents
 ```
 
 **transactions**
@@ -148,6 +148,7 @@ notes TEXT
 receipt_url TEXT
 created_at TIMESTAMPTZ
 updated_at TIMESTAMPTZ
+transfer_id UUID REFERENCES transfers(id)  -- Explicit generated-transfer relationship
 ```
 
 **transfers**
@@ -278,7 +279,9 @@ CategoryBreakdownItem: { name, amount }
 | `create_transaction` | Insert transaction with idempotency |
 | `update_transaction` | Update transaction (owner check) |
 | `delete_transaction` | Delete transaction (owner check) |
-| `create_transfer` | Atomic transfer between accounts |
+| `create_transfer` | Atomic authenticated-user transfer between PHP accounts |
+| `update_transfer` | Atomically update a transfer and its display transaction |
+| `delete_transfer` | Atomically delete a transfer and its display transaction |
 | `create_category` | Insert category with idempotency |
 | `create_account` | Insert account with idempotency |
 
@@ -338,6 +341,7 @@ npm run test:watch # Watch mode tests
 
 ### Amount Storage
 - All amounts stored as **integer cents** in DB
+- New accounts and transfers are restricted to PHP until real FX support exists
 - `lib/finance.ts` normalizes: `amount / 100` for display
 - `formatCurrency()` uses PHP locale (en-PH)
 

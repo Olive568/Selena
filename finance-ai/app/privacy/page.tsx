@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "Your privacy matters to us. This Privacy Policy explains how Selena Finance processes information when you use our website and application.",
 };
 
-const LAST_UPDATED = "August 14, 2026";
+const LAST_UPDATED = "August 24, 2026";
 
 const tableOfContents = [
   { label: "Information We Process", href: "#information-we-process" },
@@ -36,7 +36,7 @@ export default function PrivacyPage() {
     <LegalDocument
       title="Privacy Policy"
       lastUpdated={LAST_UPDATED}
-      lastUpdatedIso="2026-08-14"
+      lastUpdatedIso="2026-08-24"
       intro={
         <>
           <p className="text-lg font-medium leading-9 text-foreground sm:text-xl sm:leading-10">
@@ -74,10 +74,10 @@ export default function PrivacyPage() {
             <LegalSubHeading>Account and Authentication Information</LegalSubHeading>
             <LegalParagraph>
               To create an account, you provide a display name, an email address, and a password. Sign-in is handled
-              by our authentication provider, Supabase, which manages your credentials and session and assigns each
-              account a unique account identifier. Selena does not store email addresses or passwords in its own
-              application database. We use your account identifier to associate the information you enter — such as
-              transactions, accounts, and categories — with your account.
+              by our authentication provider, Supabase, which processes your email address and authentication
+              information, manages your session, and assigns each account a unique account identifier. Selena does
+              not store or have access to your plaintext password. We use your account identifier to associate the
+              information you enter — such as transactions, accounts, and categories — with your account.
             </LegalParagraph>
           </div>
 
@@ -229,7 +229,9 @@ export default function PrivacyPage() {
               <LegalParagraph>
                 Supabase manages your sign-in and stores the information you enter, such as transactions, accounts,
                 categories, and transfers. Supabase also provides the database and the Row Level Security access
-                controls that keep your data available only to you.
+                controls that prevent other Selena users from accessing your records. Authorized Selena administrators
+                and infrastructure or service providers may have privileged technical access when necessary to
+                operate, maintain, secure, troubleshoot, or support the service.
               </LegalParagraph>
             </div>
             <div className="space-y-2">
@@ -304,6 +306,12 @@ export default function PrivacyPage() {
               information only for the purposes we describe.
             </li>
             <li>
+              <strong className="font-semibold text-foreground">Administrative access.</strong> Authorized Selena
+              administrators may technically access information stored in production, including financial information,
+              when necessary for legitimate operational, security, troubleshooting, support, abuse-prevention, or
+              legal purposes. Selena does not routinely review users&apos; personal financial activity.
+            </li>
+            <li>
               <strong className="font-semibold text-foreground">Legal requirements.</strong> We may disclose
               information where required by applicable law, legal process, or government request, or where we believe
               in good faith that disclosure is necessary to protect Selena, its users, or the public from fraud,
@@ -353,7 +361,10 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong className="font-semibold text-foreground">Database access controls.</strong> User-owned data is
-              protected by Row Level Security (RLS) policies, so users can only access their own records.
+              protected by Row Level Security (RLS) policies, so ordinary application users can only access their own
+              records and cannot access another user&apos;s records. RLS does not prevent authorized administrators or
+              service providers with privileged technical access from accessing production data for legitimate
+              operational purposes.
             </li>
             <li>
               <strong className="font-semibold text-foreground">
@@ -363,9 +374,8 @@ export default function PrivacyPage() {
               exposed to the browser.
             </li>
             <li>
-              <strong className="font-semibold text-foreground">Access controls and monitoring.</strong> Access to
-              production systems is limited, and the service is monitored and maintained to prevent abuse and
-              unauthorized access.
+              <strong className="font-semibold text-foreground">Access controls.</strong> Production and
+              administrative access is restricted to authorized persons and legitimate operational purposes.
             </li>
           </LegalList>
           <LegalParagraph>
@@ -526,7 +536,7 @@ export default function PrivacyPage() {
             We encourage you to review this page periodically to stay informed about how we process your information.
           </LegalParagraph>
           <p className="text-base text-muted-foreground sm:text-lg">
-            Last updated: <time dateTime="2026-08-14">{LAST_UPDATED}</time>
+            Last updated: <time dateTime="2026-08-24">{LAST_UPDATED}</time>
           </p>
         </div>
       </LegalSection>

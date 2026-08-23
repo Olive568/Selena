@@ -35,7 +35,7 @@ export default async function DashboardPage() {
     transactionsQuery.gte("date", start).lte("date", end);
   }
 
-  const [{ data: transactionsData }, { data: categoriesData }, { data: accountsData }] = await Promise.all([
+  const [transactionsResult, categoriesResult, accountsResult, profileResult] = await Promise.all([
     transactionsQuery,
     // Include shared category rows where user_id is NULL alongside the user's own rows.
     supabase
@@ -49,15 +49,25 @@ export default async function DashboardPage() {
       .select("*")
       .or(`user_id.is.null,user_id.eq.${userData.user.id}`)
       .order("name", { ascending: true }),
+    supabase
+      .from("profiles")
+      .select("onboarding_completed_at")
+      .eq("id", userData.user.id)
+      .maybeSingle(),
   ]);
+
+  if (transactionsResult.error || categoriesResult.error || accountsResult.error || profileResult.error) {
+    throw new Error("Unable to load financial data.");
+  }
 
   return (
     <TransactionManager
-      initialTransactions={(transactionsData ?? []) as TransactionRow[]}
-      initialCategories={(categoriesData ?? []) as CategoryRow[]}
-      initialAccounts={(accountsData ?? []) as AccountRow[]}
+      initialTransactions={(transactionsResult.data ?? []) as TransactionRow[]}
+      initialCategories={(categoriesResult.data ?? []) as CategoryRow[]}
+      initialAccounts={(accountsResult.data ?? []) as AccountRow[]}
       userId={userData.user.id}
       userEmail={userData.user.email}
+      onboardingCompleted={Boolean(profileResult.data?.onboarding_completed_at)}
     />
   );
 }

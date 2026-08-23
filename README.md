@@ -9,7 +9,7 @@ Selena is a mobile-first personal finance dashboard built with Next.js 16 and Su
 - Expense/income/transfer transaction management
 - Transaction list with filtering by month, type, category, and sort
 - Category breakdown pie chart (Recharts)
-- Shared and user-owned categories and accounts
+- Shared and user-owned categories and PHP accounts
 - AI chatbot powered by Groq and configurable Qwen — asks about your transactions within a date range
 - New user onboarding wizard with optional initial balance setup
 - Dark/light theme toggle
@@ -92,7 +92,9 @@ npm run lint       # Run ESLint
 
 - Transactions are scoped to the current user via RLS
 - Categories and accounts may be shared globally (`user_id IS NULL`) or owned by a specific user
-- Account balances are calculated from income/expense transactions (via `payment_method`) and transfers between accounts
+- Account balances use one persisted integer-cent opening balance, account-linked income/expenses, and atomic transfers
+- New accounting data is PHP-only until a real exchange-rate model exists; legacy non-PHP rows are not rewritten
+- Transfer display transactions are linked by `transfer_id` and updated/deleted atomically with their transfer
 - Dashboard totals are normalized in `lib/finance.ts` before rendering
 
 ## AI Chatbot
@@ -106,7 +108,7 @@ This app can be deployed on Vercel or any platform that supports Next.js.
 Before deploying, make sure:
 
 - Supabase environment variables, `GROQ_API_KEY`, and `GROQ_MODEL` are configured in your host's dashboard
-- The repository's Supabase migrations have been applied to your Supabase project
+- The repository's Supabase migrations, including `202608240001_secure_financial_contract.sql`, have been applied and verified in your Supabase project
 - Your Supabase project Auth settings include your deployment URL in the allowed redirect origins
 - Your Supabase project is not paused (free tier projects pause after 7 days of inactivity)
 

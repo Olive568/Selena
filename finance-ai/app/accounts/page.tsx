@@ -27,7 +27,7 @@ export default async function AccountsRoute() {
     .or(`user_id.is.null,user_id.eq.${userData.user.id}`)
     .order("name", { ascending: true });
 
-  const [{ data: accountsData }, { data: transfersData }, { data: transactionsData }] =
+  const [accountsResult, transfersResult, transactionsResult] =
     await Promise.all([
       accountsQuery,
       supabase.from("transfers").select("from_account_id, to_account_id, amount").eq("user_id", userData.user.id),
@@ -37,11 +37,15 @@ export default async function AccountsRoute() {
         .eq("user_id", userData.user.id),
     ]);
 
+  if (accountsResult.error || transfersResult.error || transactionsResult.error) {
+    throw new Error("Unable to load financial data.");
+  }
+
   return (
     <AccountsPage
-      initialAccounts={(accountsData ?? []).map((row, index) => normalizeAccount(row as AccountRow, index))}
-      initialTransfers={(transfersData ?? []) as { from_account_id: string | null; to_account_id: string | null; amount: number }[]}
-      initialTransactions={(transactionsData ?? []) as TransactionRow[]}
+      initialAccounts={(accountsResult.data ?? []).map((row, index) => normalizeAccount(row as AccountRow, index))}
+      initialTransfers={(transfersResult.data ?? []) as { from_account_id: string | null; to_account_id: string | null; amount: number }[]}
+      initialTransactions={(transactionsResult.data ?? []) as TransactionRow[]}
       userId={userData.user.id}
       userEmail={userData.user.email}
     />

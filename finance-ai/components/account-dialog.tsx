@@ -15,7 +15,7 @@ export type AccountFormValues = {
   currency: string;
 };
 
-const currencyOptions = ["PHP", "USD", "EUR", "GBP", "JPY", "AUD", "CAD", "SGD"];
+const currencyOptions = ["PHP"];
 
 type AccountDialogProps = {
   open: boolean;
@@ -29,7 +29,7 @@ function getInitialForm(account?: DashboardAccount | null): AccountFormValues {
   return {
     name: account?.name ?? "",
     institution: account?.institution ?? "",
-    currency: account?.currency ?? "PHP",
+    currency: "PHP",
   };
 }
 
@@ -75,7 +75,7 @@ export function AccountDialog({ open, account, onOpenChange, onSubmit, isSubmitt
             </p>
             <DialogTitle>{account ? "Update account details" : "Create a new account"}</DialogTitle>
             <DialogDescription>
-              Accounts hold your balances and are used when recording income, expenses, and transfers.
+              Accounts hold your balances and are used when recording income, expenses, and transfers. Selena currently supports PHP only.
             </DialogDescription>
           </div>
         </DialogHeader>

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Check, ChevronRight, Coins, Landmark, Loader2, Plus, Sparkles, Wallet } from "lucide-react";
 
 import { SelenaIcon } from "@/components/selena-icon";
-import type { DashboardAccount } from "@/lib/finance";
+import { pesosToCents, type DashboardAccount } from "@/lib/finance";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,6 @@ const ONBOARDING_KEY = "selena-onboarding-done";
 
 type NewUserOnboardingProps = {
   accounts: DashboardAccount[];
-  userId: string;
   onAddTransaction: (transactionType: "expense" | "income") => void;
   onDismiss: () => void;
 };
@@ -26,7 +25,7 @@ const steps = [
   { icon: Check, title: "Explore" },
 ];
 
-export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismiss }: NewUserOnboardingProps) {
+export function NewUserOnboarding({ accounts, onAddTransaction, onDismiss }: NewUserOnboardingProps) {
   const [step, setStep] = useState(0);
   const [balances, setBalances] = useState<Record<string, string>>({});
   const [isSavingBalances, setIsSavingBalances] = useState(false);
@@ -38,6 +37,7 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
+        void supabase.rpc("set_opening_balances", { p_balances: {} });
         localStorage.setItem(ONBOARDING_KEY, "true");
         onDismiss();
       }
@@ -51,52 +51,39 @@ export function NewUserOnboarding({ accounts, userId, onAddTransaction, onDismis
     if (currentStep < steps.length - 1) {
       setStep(currentStep + 1);
     } else {
+      void supabase.rpc("set_opening_balances", { p_balances: {} });
       localStorage.setItem(ONBOARDING_KEY, "true");
       onDismiss();
     }
   }
 
   function skip() {
+    void supabase.rpc("set_opening_balances", { p_balances: {} });
     localStorage.setItem(ONBOARDING_KEY, "true");
     onDismiss();
   }
 
   async function saveBalances() {
-    const entries = Object.entries(balances).filter(([, value]) => {
-      const num = Number(value);
-      return Number.isFinite(num) && num > 0;
-    });
+    let parsedBalances: Record<string, number>;
 
-    if (entries.length === 0) {
-      finish(1);
+    try {
+      parsedBalances = Object.fromEntries(
+        Object.entries(balances)
+          .filter(([, value]) => value.trim() !== "")
+          .map(([accountId, value]) => [accountId, pesosToCents(value)])
+      );
+    } catch (error) {
+      setBalanceError(error instanceof Error ? error.message : "Enter valid balances.");
       return;
     }
 
     setIsSavingBalances(true);
 
     try {
-      const today = new Date();
-      const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-      const { error } = await supabase.from("transactions").insert(
-        entries.map(([accountId, value]) => {
-          const account = accounts.find((a) => a.id === accountId);
-          return {
-            user_id: userId,
-            merchant: "Initial balance",
-            amount: Math.round(Number(value) * 100),
-            date: dateStr,
-            transaction_type: "income",
-            category: "Income",
-            payment_method: account?.name ?? null,
-            notes: "Starting balance set during onboarding",
-            idempotency_key: crypto.randomUUID(),
-          };
-        })
-      );
+      const { error } = await supabase.rpc("set_opening_balances", { p_balances: parsedBalances });
 
       if (error) {
-        if (error.code !== "23505") throw error;
+        throw error;
       }
     } catch (err) {
       setBalanceError(err instanceof Error ? err.message : "Failed to save balances");

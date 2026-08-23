@@ -174,7 +174,7 @@ Solution:
 FIX #5: GROQ_API_KEY rotation (Manual — no code change)
 ------------------------------------------------------------
 Action: Go to https://console.groq.com, revoke the exposed key
-gsk_0RhrJCTSYuBfywxwPngjWGdyb3FYjCNO5gBcL7TYlo7Rmyj4Hbszd,
+gsk_REDACTED,
 generate a new one, and update .env.local with the new key.
 Status: Manual operation — skipped during code pass.
 

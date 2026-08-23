@@ -28,6 +28,7 @@ import {
   normalizeAccount,
   normalizeCategory,
   normalizeTransaction,
+  pesosToCents,
   type AccountRow,
   type CategoryRow,
   type DashboardAccount,
@@ -46,6 +47,7 @@ type TransactionManagerProps = {
   initialAccounts: AccountRow[];
   userId: string;
   userEmail?: string | null;
+  onboardingCompleted: boolean;
 };
 
 type BannerState = {
@@ -57,25 +59,13 @@ function sameCategory(left: string, right: string) {
   return left.trim().toLowerCase() === right.trim().toLowerCase();
 }
 
-function isGeneratedTransferTransaction(transaction: DashboardTransaction) {
-  const merchant = transaction.merchant.trim().toLowerCase();
-  const category = transaction.category.trim().toLowerCase();
-
-  return (
-    transaction.transactionType === "transfer" ||
-    category === "transfer in" ||
-    category === "transfer out" ||
-    merchant.startsWith("transfer to:") ||
-    merchant.startsWith("transfer from:")
-  );
-}
-
 export function TransactionManager({
   initialTransactions,
   initialCategories,
   initialAccounts,
   userId,
   userEmail,
+  onboardingCompleted,
 }: TransactionManagerProps) {
   const [transactions, setTransactions] = useState<DashboardTransaction[]>(
     () => initialTransactions.map((row, index) => normalizeTransaction(row, index))
@@ -101,7 +91,7 @@ export function TransactionManager({
   const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [showOnboarding, setShowOnboarding] = useState(() => {
     if (typeof window === "undefined") return false;
-    return initialTransactions.length === 0 && !localStorage.getItem("selena-onboarding-done");
+    return !onboardingCompleted && initialTransactions.length === 0 && !localStorage.getItem("selena-onboarding-done");
   });
 
   const sortedTransactions = useMemo(
@@ -122,7 +112,7 @@ export function TransactionManager({
   const sortedAccounts = useMemo(() => [...accounts].sort((left, right) => left.name.localeCompare(right.name)), [accounts]);
   // Keep global defaults visible by preserving rows where userId is NULL.
   const visibleAccounts = useMemo(
-    () => sortedAccounts.filter((account) => account.userId === null || account.userId === userId),
+    () => sortedAccounts.filter((account) => account.userId === userId),
     [sortedAccounts, userId]
   );
   // Keep global defaults visible by preserving rows where userId is NULL.
@@ -187,12 +177,14 @@ export function TransactionManager({
       setCategories((categoriesResult.data ?? []).map((row, index) => normalizeCategory(row, index)));
       setAccounts((accountsResult.data ?? []).map((row, index) => normalizeAccount(row, index)));
       setDashboardRefreshKey((current) => current + 1);
+      return true;
     } catch (error) {
       redirectIfAuthError(error);
       setBanner({
         kind: "error",
         message: error instanceof Error ? sanitizeError(error.message) : "Could not refresh dashboard data.",
       });
+      return false;
     } finally {
       setIsDashboardLoading(false);
     }
@@ -213,7 +205,6 @@ export function TransactionManager({
     }
 
     const { data, error } = await supabase.rpc("create_category", {
-      p_user_id: userId,
       p_name: trimmedName,
       p_idempotency_key: crypto.randomUUID(),
     });
@@ -264,7 +255,6 @@ export function TransactionManager({
     }
 
     const { data, error } = await supabase.rpc("create_account", {
-      p_user_id: userId,
       p_name: trimmedName,
       p_idempotency_key: crypto.randomUUID(),
     });
@@ -345,18 +335,36 @@ export function TransactionManager({
     setDialogVersion((current) => current + 1);
   }
 
-  function openEditTransaction(transaction: DashboardTransaction) {
-    if (isGeneratedTransferTransaction(transaction)) {
+  async function openEditTransaction(transaction: DashboardTransaction) {
+    if (transaction.transactionType === "transfer" && !transaction.transferId) {
       setBanner({
         kind: "error",
-        message: "Part of transfer entries cannot be edited here. Edit from Transfers instead.",
+        message: "This legacy transfer is not linked and cannot be edited safely.",
       });
       return;
     }
 
+    let nextTransaction = transaction;
+    if (transaction.transferId) {
+      const { data, error } = await supabase
+        .from("transfers")
+        .select("from_account_id, to_account_id")
+        .eq("id", transaction.transferId)
+        .single();
+      if (error || !data) {
+        setBanner({ kind: "error", message: "Unable to load transfer details." });
+        return;
+      }
+      nextTransaction = {
+        ...transaction,
+        sourceAccountId: String(data.from_account_id),
+        destinationAccountId: String(data.to_account_id),
+      };
+    }
+
     setDialogMode("edit");
-    setDraftType(transaction.transactionType);
-    setEditingTransaction(transaction);
+    setDraftType(nextTransaction.transactionType);
+    setEditingTransaction(nextTransaction);
     setBanner(null);
     setIsDialogOpen(true);
     setDialogVersion((current) => current + 1);
@@ -391,33 +399,35 @@ export function TransactionManager({
         throw new Error("Amount must be greater than zero.");
       }
 
-      const amountInCents = Math.round(values.amount * 100);
+      const amountInCents = pesosToCents(values.amount);
 
       if (!isIncome && !isTransfer && !categoryName) {
         throw new Error("Category is required for expenses.");
       }
 
       if (isTransfer) {
-        const { error: rpcError } = await supabase.rpc("create_transfer", {
-          p_user_id: userId,
+        const transferRpc = editingTransaction?.transferId ? "update_transfer" : "create_transfer";
+        const transferPayload = {
           p_from_account_id: values.sourceAccountId,
           p_to_account_id: values.destinationAccountId,
           p_amount: amountInCents,
           p_date: values.date || getTodayInputValue(),
           p_notes: values.notes || null,
-          p_idempotency_key: crypto.randomUUID(),
-        });
+          ...(editingTransaction?.transferId
+            ? { p_id: editingTransaction.transferId }
+            : { p_idempotency_key: values.idempotencyKey }),
+        };
+        const { error: rpcError } = await supabase.rpc(transferRpc, transferPayload);
 
         if (rpcError) {
           throw new Error(rpcError.message);
         }
 
-        await loadDashboardData(activeFilter);
-        setBanner({
-          kind: "success",
-          message: "Transfer saved.",
-        });
         setEditingTransaction(null);
+        const refreshed = await loadDashboardData(activeFilter);
+        setBanner(refreshed
+          ? { kind: "success", message: "Transfer saved." }
+          : { kind: "error", message: "Transfer saved, but dashboard data could not be refreshed." });
         return;
       }
 
@@ -450,7 +460,6 @@ export function TransactionManager({
       if (editingTransaction) {
         const { error } = await supabase.rpc("update_transaction", {
           p_id: editingTransaction.dbId,
-          p_user_id: userId,
           p_merchant: payload.merchant,
           p_amount: payload.amount,
           p_date: payload.date,
@@ -466,7 +475,6 @@ export function TransactionManager({
         }
       } else {
         const { error } = await supabase.rpc("create_transaction", {
-          p_user_id: userId,
           p_merchant: payload.merchant,
           p_amount: payload.amount,
           p_date: payload.date,
@@ -475,7 +483,7 @@ export function TransactionManager({
           p_category: payload.category,
           p_payment_method: payload.payment_method,
           p_account_id: payload.account_id,
-          p_idempotency_key: crypto.randomUUID(),
+          p_idempotency_key: values.idempotencyKey,
         });
 
         if (error) {
@@ -484,12 +492,12 @@ export function TransactionManager({
         }
       }
 
-      await loadDashboardData(activeFilter);
-      setBanner({
-        kind: "success",
-        message: editingTransaction ? "Transaction updated." : "Transaction saved.",
-      });
+      const successMessage = editingTransaction ? "Transaction updated." : "Transaction saved.";
       setEditingTransaction(null);
+      const refreshed = await loadDashboardData(activeFilter);
+      setBanner(refreshed
+        ? { kind: "success", message: successMessage }
+        : { kind: "error", message: `${successMessage} Dashboard data could not be refreshed.` });
     } catch (error) {
       redirectIfAuthError(error);
       throw error instanceof Error ? error : new Error("Could not save the transaction.");
@@ -503,10 +511,10 @@ export function TransactionManager({
       return;
     }
 
-    if (isGeneratedTransferTransaction(transactionToDelete)) {
+    if (transactionToDelete.transactionType === "transfer" && !transactionToDelete.transferId) {
       setBanner({
         kind: "error",
-        message: "Part of transfer entries cannot be deleted here. Delete from Transfers instead.",
+        message: "This legacy transfer is not linked and cannot be deleted safely.",
       });
       setTransactionToDelete(null);
       return;
@@ -516,18 +524,19 @@ export function TransactionManager({
     setBanner(null);
 
     try {
-      const { error } = await supabase.rpc("delete_transaction", {
-        p_id: transactionToDelete.dbId,
-        p_user_id: userId,
-      });
+      const { error } = transactionToDelete.transferId
+        ? await supabase.rpc("delete_transfer", { p_id: transactionToDelete.transferId })
+        : await supabase.rpc("delete_transaction", { p_id: transactionToDelete.dbId });
 
       if (error) {
         throw new Error(error.message);
       }
 
-      await loadDashboardData(activeFilter);
-      setBanner({ kind: "success", message: "Transaction deleted." });
       setTransactionToDelete(null);
+      const refreshed = await loadDashboardData(activeFilter);
+      setBanner(refreshed
+        ? { kind: "success", message: "Transaction deleted." }
+        : { kind: "error", message: "Transaction deleted, but dashboard data could not be refreshed." });
     } catch (error) {
       redirectIfAuthError(error);
       setBanner({
@@ -648,8 +657,8 @@ export function TransactionManager({
                       transaction={transaction}
                       onEdit={openEditTransaction}
                       onDelete={setTransactionToDelete}
-                      disableActions={isGeneratedTransferTransaction(transaction)}
-                      showTransferNotice={isGeneratedTransferTransaction(transaction)}
+                      disableActions={transaction.transactionType === "transfer" && !transaction.transferId}
+                      showTransferNotice={transaction.transactionType === "transfer" && !transaction.transferId}
                     />
                   ))}
                 </div>
@@ -713,7 +722,6 @@ export function TransactionManager({
       {showOnboarding && (
         <NewUserOnboarding
           accounts={visibleAccounts.filter((a) => a.userId === userId)}
-          userId={userId}
           onAddTransaction={(transactionType) => {
             if (transactionType === "income") {
               openCreateIncome();

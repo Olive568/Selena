@@ -1,22 +1,26 @@
-type RateLimitEntry = {
-  count: number;
-  resetAt: number;
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+type RateLimitResult = {
+  allowed: boolean;
+  retryAfter: number;
 };
 
-const store = new Map<string, RateLimitEntry>();
+export async function checkRateLimit(
+  supabase: SupabaseClient,
+  bucket: "chat" | "delete-account"
+): Promise<RateLimitResult> {
+  const { data, error } = await supabase.rpc("check_rate_limit", {
+    p_bucket: bucket,
+  });
 
-export function checkRateLimit(key: string, limit: number, windowMs: number): boolean {
-  const now = Date.now();
-  const entry = store.get(key);
-
-  if (entry && now < entry.resetAt) {
-    if (entry.count >= limit) {
-      return false;
-    }
-    entry.count++;
-  } else {
-    store.set(key, { count: 1, resetAt: now + windowMs });
+  if (error || !data || typeof data !== "object") {
+    throw new Error("Shared rate limiter is unavailable.");
   }
 
-  return true;
+  const result = data as Partial<RateLimitResult>;
+  if (typeof result.allowed !== "boolean" || typeof result.retryAfter !== "number") {
+    throw new Error("Shared rate limiter returned an invalid response.");
+  }
+
+  return { allowed: result.allowed, retryAfter: Math.max(1, Math.ceil(result.retryAfter)) };
 }

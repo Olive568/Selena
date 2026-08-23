@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -28,6 +28,7 @@ export type TransactionFormValues = {
   transactionType: TransactionType;
   sourceAccountId: string;
   destinationAccountId: string;
+  idempotencyKey: string;
 };
 
 type TransactionDialogProps = {
@@ -58,8 +59,9 @@ function getInitialState(
       amount: initialTransaction.amount,
       date: initialTransaction.date,
       transactionType: initialTransaction.transactionType,
-      sourceAccountId: initialTransaction.accountId,
-      destinationAccountId: "",
+      sourceAccountId: initialTransaction.sourceAccountId ?? initialTransaction.accountId,
+      destinationAccountId: initialTransaction.destinationAccountId ?? "",
+      idempotencyKey: "",
     };
   }
 
@@ -72,6 +74,7 @@ function getInitialState(
     transactionType: defaultTransactionType,
     sourceAccountId: "",
     destinationAccountId: "",
+    idempotencyKey: "",
   };
 }
 
@@ -98,6 +101,7 @@ export function TransactionDialog({
   const [isManagingAccount, setIsManagingAccount] = useState(false);
   const [isManagingCategory, setIsManagingCategory] = useState(false);
   const [showTransferConfirm, setShowTransferConfirm] = useState(false);
+  const idempotencyKeyRef = useRef<string | null>(null);
 
   const isTransfer = form.transactionType === "transfer";
   const merchantLabel = form.transactionType === "income" ? "Income Source" : "Merchant";
@@ -196,6 +200,7 @@ export function TransactionDialog({
         transactionType: form.transactionType,
         sourceAccountId: form.sourceAccountId,
         destinationAccountId: form.destinationAccountId,
+        idempotencyKey: idempotencyKeyRef.current ?? (idempotencyKeyRef.current = crypto.randomUUID()),
       });
       onOpenChange(false);
     } catch (submitError) {
@@ -316,6 +321,7 @@ export function TransactionDialog({
               <Label htmlFor="transaction-type">Transaction Type</Label>
               <Select
                 value={form.transactionType}
+                disabled={Boolean(initialTransaction?.transferId)}
                 onValueChange={(value) =>
                   setForm((current) => ({
                     ...current,
@@ -330,7 +336,7 @@ export function TransactionDialog({
                 <SelectContent>
                   <SelectItem value="expense">Expense</SelectItem>
                   <SelectItem value="income">Income</SelectItem>
-                  <SelectItem value="transfer">Transfer</SelectItem>
+                  {initialTransaction?.transferId && <SelectItem value="transfer">Transfer</SelectItem>}
                 </SelectContent>
               </Select>
             </div>
