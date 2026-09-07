@@ -13,6 +13,7 @@ import {
   formatCurrency,
   getTodayInputValue,
   type DashboardAccount,
+  type CategoryType,
   type DashboardTransaction,
   type TransactionType,
 } from "@/lib/finance";
@@ -35,11 +36,11 @@ type TransactionDialogProps = {
   open: boolean;
   mode: "create" | "edit";
   defaultTransactionType: TransactionType;
-  categories: string[];
+  categories: Record<CategoryType, string[]>;
   accounts: DashboardAccount[];
   onAddAccount: (accountName: string) => Promise<string | null>;
-  onAddCategory: (categoryName: string) => Promise<string | null>;
-  onDeleteCategory: (categoryName: string) => Promise<boolean>;
+  onAddCategory: (categoryName: string, categoryType: CategoryType) => Promise<string | null>;
+  onDeleteCategory: (categoryName: string, categoryType: CategoryType) => Promise<boolean>;
   initialTransaction?: DashboardTransaction | null;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: TransactionFormValues) => Promise<void>;
@@ -104,12 +105,13 @@ export function TransactionDialog({
   const idempotencyKeyRef = useRef<string | null>(null);
 
   const isTransfer = form.transactionType === "transfer";
-  const merchantLabel = form.transactionType === "income" ? "Income Source" : "Merchant";
+  const merchantLabel = form.transactionType === "income" ? "Income description" : "Merchant";
   const merchantPlaceholder =
-    form.transactionType === "income" ? "e.g. Salary, Freelance, Refund" : "e.g. Metro Grocery";
+    form.transactionType === "income" ? "e.g. Employer, client, or refund details" : "e.g. Metro Grocery";
+  const categoryType: CategoryType = form.transactionType === "income" ? "income" : "expense";
   const categoryHelper =
     form.transactionType === "income"
-      ? "Optional for income. You can still choose a category from the list below."
+      ? "Required for income. Choose an existing source or add a new one below."
       : "Required for expenses. Pick an existing category or add a new one below.";
   const submitLabel =
     mode === "edit"
@@ -121,10 +123,10 @@ export function TransactionDialog({
           : "Save Expense";
 
   const categorySuggestions = useMemo(() => {
-    const values = new Set(categories.map((category) => category.trim()).filter(Boolean));
+    const values = new Set(categories[categoryType].map((category) => category.trim()).filter(Boolean));
 
     return Array.from(values).sort((left, right) => left.localeCompare(right));
-  }, [categories]);
+  }, [categories, categoryType]);
 
   const accountOptions = useMemo(() => {
     return [...accounts].sort((left, right) => left.name.localeCompare(right.name));
@@ -171,12 +173,12 @@ export function TransactionDialog({
       }
 
       if (!merchant) {
-        setError(form.transactionType === "income" ? "Income source is required." : "Merchant is required.");
+        setError(form.transactionType === "income" ? "Income description is required." : "Merchant is required.");
         return;
       }
 
-      if (form.transactionType === "expense" && !category) {
-        setError("Category is required for expenses.");
+      if (!category) {
+        setError(form.transactionType === "income" ? "Income source is required." : "Category is required for expenses.");
         return;
       }
     }
@@ -213,7 +215,7 @@ export function TransactionDialog({
     const trimmedName = newCategoryName.trim();
 
     if (!trimmedName) {
-      setError("Type a category name first.");
+      setError(form.transactionType === "income" ? "Type an income source first." : "Type a category name first.");
       return;
     }
 
@@ -222,7 +224,7 @@ export function TransactionDialog({
     setIsManagingCategory(true);
 
     try {
-      const createdName = await onAddCategory(trimmedName);
+      const createdName = await onAddCategory(trimmedName, categoryType);
       if (createdName) {
         setForm((current) => ({ ...current, category: createdName }));
         setNewCategoryName("");
@@ -262,7 +264,7 @@ export function TransactionDialog({
     const categoryName = form.category.trim();
 
     if (!categoryName) {
-      setError("Select a category first.");
+      setError(form.transactionType === "income" ? "Select an income source first." : "Select a category first.");
       return;
     }
 
@@ -276,7 +278,7 @@ export function TransactionDialog({
     setIsManagingCategory(true);
 
     try {
-      const deleted = await onDeleteCategory(categoryName);
+      const deleted = await onDeleteCategory(categoryName, categoryType);
 
       if (deleted) {
         setForm((current) => ({ ...current, category: "" }));
@@ -316,7 +318,7 @@ export function TransactionDialog({
         )}
 
         <form className="grid gap-4" onSubmit={handleSubmit}>
-          {mode === "edit" && (
+          {(mode === "edit" || !initialTransaction) && (
             <div className="grid gap-2">
               <Label htmlFor="transaction-type">Transaction Type</Label>
               <Select
@@ -326,7 +328,7 @@ export function TransactionDialog({
                   setForm((current) => ({
                     ...current,
                     transactionType: value as TransactionType,
-                    category: value === "expense" ? current.category : current.category,
+                    category: "",
                   }))
                 }
               >
@@ -464,7 +466,7 @@ export function TransactionDialog({
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category">{form.transactionType === "income" ? "Income Source" : "Category"}</Label>
                 <Select
                   value={form.category || undefined}
                   onValueChange={(value) =>
@@ -474,8 +476,8 @@ export function TransactionDialog({
                     }))
                   }
                 >
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder={form.transactionType === "income" ? "No category" : "Select category"} />
+                    <SelectTrigger id="category">
+                    <SelectValue placeholder={form.transactionType === "income" ? "Select income source" : "Select category"} />
                   </SelectTrigger>
                   <SelectContent viewportClassName="grid max-h-48 grid-cols-3 gap-1 overflow-y-auto">
                     {categorySuggestions.map((category) => (
@@ -491,13 +493,13 @@ export function TransactionDialog({
               <div className="rounded-2xl border border-dashed border-border bg-muted/40 p-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                   <div className="grid flex-1 gap-2">
-                    <Label htmlFor="new-category">Add category</Label>
+                    <Label htmlFor="new-category">Add {form.transactionType === "income" ? "income source" : "category"}</Label>
                     <Input
                       id="new-category"
                       maxLength={100}
                       value={newCategoryName}
                       onChange={(event) => setNewCategoryName(event.target.value)}
-                      placeholder="New category name"
+                      placeholder={form.transactionType === "income" ? "New income source" : "New category name"}
                     />
                   </div>
                   <div className="flex gap-2 sm:self-end">

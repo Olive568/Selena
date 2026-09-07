@@ -1,42 +1,40 @@
-# Graph Report - FinancialApp  (2026-08-24)
+# Graph Report - FinancialApp  (2026-08-14)
 
 ## Corpus Check
-- 104 files · ~129,422 words
+- 93 files · ~123,521 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 597 nodes · 1130 edges · 67 communities (32 shown, 35 thin omitted)
+- 572 nodes · 1100 edges · 64 communities (30 shown, 34 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a2577574`
+- Built from commit: `242fc081`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - app/page.tsx
-- sign-in/page.tsx
-- monthly-summary.tsx
+- transaction-manager.tsx
 - transactions-page.tsx
 - devDependencies
 - Pre-Launch Audit Fixes Documentation
-- button.tsx
-- cn
+- chatbot-launcher.tsx
+- account-dialog.tsx
 - dependencies
 - compilerOptions
 - components.json
 - Graphify Knowledge Graph
 - proxy.ts
-- 202608240001_secure_financial_contract.sql
-- chat-validation.ts
+- 20260728_full_schema.sql
+- rate-limit.ts
 - public.accounts
 - 20260617_create_profiles_trigger.sql
 - 20260729_integer_cents.sql
 - about/page.tsx
 - contact/page.tsx
 - legal-document.tsx
-- public.accounts
 - next.config.ts
 - create_transfer
 - eslint.config.mjs
@@ -65,10 +63,10 @@
 - public.transactions
 - public.transfers
 - public.transactions
+- formatCurrency
 - public.accounts
 - public.profiles
 - Selena — Personal Finance AI
-- public.categories
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 47 edges
@@ -78,8 +76,8 @@
 5. `compilerOptions` - 16 edges
 6. `Card()` - 14 edges
 7. `CardContent()` - 13 edges
-8. `normalizeAccount()` - 11 edges
-9. `SelenaIcon()` - 11 edges
+8. `SelenaIcon()` - 11 edges
+9. `DashboardAccount` - 11 edges
 10. `CardHeader()` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
@@ -91,8 +89,8 @@
   finance-ai/PLAYBOOK.md → README.md
 - `Groq AI Chatbot (Llama 3.3 70B)` --conceptually_related_to--> `/api/chat In-Memory Rate Limiter`  [INFERRED]
   README.md → finance-ai/CHANGES_DOCUMENTATION.txt
-- `loadAccountFinancialData()` --calls--> `normalizeAccount()`  [EXTRACTED]
-  finance-ai/components/accounts-page.tsx → finance-ai/lib/finance.ts
+- `DialogOverlay()` --calls--> `cn()`  [EXTRACTED]
+  finance-ai/components/ui/dialog.tsx → finance-ai/lib/utils.ts
 
 ## Import Cycles
 - None detected.
@@ -103,23 +101,19 @@
 - **Money Write Integrity Reforms** — finance_ai_changes_documentation_integer_cents, finance_ai_changes_documentation_server_validation, finance_ai_changes_documentation_idempotency, finance_ai_changes_documentation_create_transfer_rpc, finance_ai_changes_documentation_account_id_fk [INFERRED 0.85]
 - **Pre-Launch Audit Fix Program** — finance_ai_fixes, finance_ai_changes_documentation, finance_ai_changes_documentation_test_suite, finance_ai_fixes_priority_order [EXTRACTED 1.00]
 
-## Communities (67 total, 35 thin omitted)
+## Communities (64 total, 34 thin omitted)
 
 ### Community 0 - "app/page.tsx"
-Cohesion: 0.12
-Nodes (18): AiPreview(), categories, DashboardPreview(), incomeExpense, monthlySpending, transactions, FadeIn(), FadeInProps (+10 more)
+Cohesion: 0.13
+Nodes (16): AiPreview(), categories, DashboardPreview(), incomeExpense, monthlySpending, transactions, FadeIn(), FadeInProps (+8 more)
 
-### Community 1 - "sign-in/page.tsx"
-Cohesion: 0.29
-Nodes (6): metadata, SignInPage(), metadata, SignUpPage(), AuthForm(), AuthShell()
-
-### Community 2 - "monthly-summary.tsx"
-Cohesion: 0.11
-Nodes (31): AccountBalanceDialog(), AccountBalance, AccountCards(), AccountCardsProps, fetchAccountBalances(), AccountsPage(), AuthFormProps, AuthMode (+23 more)
+### Community 2 - "transaction-manager.tsx"
+Cohesion: 0.09
+Nodes (48): AccountBalance, AccountCards(), AccountCardsProps, AccountsPageProps, BannerState, PendingAdjustment, AuthFormProps, AuthMode (+40 more)
 
 ### Community 3 - "transactions-page.tsx"
-Cohesion: 0.07
-Nodes (60): AccountsRoute(), metadata, DashboardPage(), metadata, getSingleValue(), getTransactionType(), SearchParamValue, TransactionsPageSearchParams (+52 more)
+Cohesion: 0.08
+Nodes (51): AccountsRoute(), metadata, DashboardPage(), metadata, metadata, SignInPage(), metadata, SignUpPage() (+43 more)
 
 ### Community 4 - "devDependencies"
 Cohesion: 0.06
@@ -129,13 +123,13 @@ Nodes (35): eslint, eslint-config-next, devDependencies, eslint, eslint-config-n
 Cohesion: 0.08
 Nodes (31): Pre-Launch Audit Fixes Documentation, account_id FK for Balance Computation, Atomic Transfer RPC (create_transfer), Write Idempotency via idempotency_key, Integer Cents Money Storage, /api/chat In-Memory Rate Limiter, Sanitized Supabase Error Messages, Server-Side Money Validation (CHECK Constraints + RPCs) (+23 more)
 
-### Community 6 - "button.tsx"
+### Community 6 - "chatbot-launcher.tsx"
 Cohesion: 0.07
-Nodes (35): metadata, AppHeader(), isActive(), navLinks, ChatbotLauncher(), formatDateLabel(), getMonthStart(), getToday() (+27 more)
+Nodes (32): metadata, AppHeader(), isActive(), navLinks, ChatbotLauncher(), formatDateLabel(), getMonthStart(), getToday() (+24 more)
 
-### Community 7 - "cn"
-Cohesion: 0.09
-Nodes (42): BalanceDialogProps, BalanceFormValues, AccountDialog(), AccountDialogProps, AccountFormValues, currencyOptions, getInitialForm(), AccountsPageProps (+34 more)
+### Community 7 - "account-dialog.tsx"
+Cohesion: 0.11
+Nodes (21): BalanceDialogProps, BalanceFormValues, AccountDialog(), AccountDialogProps, AccountFormValues, currencyOptions, getInitialForm(), Dialog() (+13 more)
 
 ### Community 8 - "dependencies"
 Cohesion: 0.07
@@ -157,13 +151,13 @@ Nodes (9): Custom Next.js Version (Breaking Changes), AGENTS.md (Agent Rules), g
 Cohesion: 0.31
 Nodes (7): createSupabaseMiddlewareClient(), authPages, cloneCookies(), config, matches(), protectedPaths, proxy()
 
-### Community 13 - "202608240001_secure_financial_contract.sql"
-Cohesion: 0.13
-Nodes (7): auth.users, public.accounts, public.categories, public.profiles, public.transactions, public.transfers, public.api_rate_limits
+### Community 13 - "20260728_full_schema.sql"
+Cohesion: 0.43
+Nodes (6): auth.users, public.accounts, public.categories, public.profiles, public.transactions, public.transfers
 
-### Community 14 - "chat-validation.ts"
-Cohesion: 0.21
-Nodes (10): POST(), POST(), ChatRequest, MAX_CHAT_DATE_SPAN_DAYS, MAX_CHAT_MESSAGE_LENGTH, parseDate(), validateChatRequest(), ValidationResult (+2 more)
+### Community 14 - "rate-limit.ts"
+Cohesion: 0.39
+Nodes (5): POST(), POST(), checkRateLimit(), RateLimitEntry, store
 
 ### Community 17 - "20260617_create_profiles_trigger.sql"
 Cohesion: 0.40
@@ -173,9 +167,9 @@ Nodes (4): on_auth_user_created, public.handle_new_user(), public.accounts, publ
 Cohesion: 0.21
 Nodes (12): metadata, tableOfContents, metadata, tableOfContents, LegalDocument(), LegalHeading(), LegalList(), LegalParagraph() (+4 more)
 
-### Community 23 - "public.accounts"
-Cohesion: 0.67
-Nodes (3): public.accounts, public.transactions, public.transfers
+### Community 61 - "formatCurrency"
+Cohesion: 0.11
+Nodes (23): AccountBalanceDialog(), fetchAccountBalances(), AccountsPage(), ChartTooltip(), DashboardCharts(), DashboardChartsProps, pieColors, DashboardCharts (+15 more)
 
 ### Community 65 - "Selena — Personal Finance AI"
 Cohesion: 0.06
@@ -186,24 +180,24 @@ Nodes (33): 1. Transaction Management, 2. Account Balances, 3. Dashboard, 4. Tra
   finance-ai/CHANGES_DOCUMENTATION.txt · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **206 isolated node(s):** `Project Overview`, `Tech Stack`, `Project Structure`, `Tables`, `Row Level Security (RLS)` (+201 more)
+- **203 isolated node(s):** `metadata`, `tableOfContents`, `metadata`, `tableOfContents`, `AuthMode` (+198 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **35 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **34 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **What is the exact relationship between `Soft Delete with Undo (deleted_at)` and `Soft Delete Reverted (Hard Delete Restored)`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `cn()` connect `cn` to `monthly-summary.tsx`, `button.tsx`, `legal-document.tsx`?**
-  _High betweenness centrality (0.038) - this node is a cross-community bridge._
-- **Why does `Button()` connect `button.tsx` to `app/page.tsx`, `monthly-summary.tsx`, `transactions-page.tsx`, `cn`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Why does `formatCurrency()` connect `monthly-summary.tsx` to `app/page.tsx`, `transactions-page.tsx`, `button.tsx`, `cn`?**
-  _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **What connects `Project Overview`, `Tech Stack`, `Project Structure` to the rest of the system?**
-  _206 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `cn()` connect `transaction-manager.tsx` to `account-dialog.tsx`, `formatCurrency`, `chatbot-launcher.tsx`, `legal-document.tsx`?**
+  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+- **Why does `Button()` connect `transaction-manager.tsx` to `app/page.tsx`, `transactions-page.tsx`, `chatbot-launcher.tsx`, `account-dialog.tsx`, `formatCurrency`?**
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
+- **Why does `formatCurrency()` connect `formatCurrency` to `app/page.tsx`, `transaction-manager.tsx`, `transactions-page.tsx`, `chatbot-launcher.tsx`, `account-dialog.tsx`?**
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **What connects `metadata`, `tableOfContents`, `metadata` to the rest of the system?**
+  _203 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `app/page.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.1164021164021164 - nodes in this community are weakly interconnected._
-- **Should `monthly-summary.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.10570824524312897 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12923076923076923 - nodes in this community are weakly interconnected._
+- **Should `transaction-manager.tsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.09360730593607305 - nodes in this community are weakly interconnected._

@@ -4,6 +4,7 @@ import { TransactionsPage } from "@/components/transactions-page";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import {
   getCurrentMonthValue,
+  getDashboardDateRange,
   getMonthDateRange,
   normalizeAccount,
   normalizeCategory,
@@ -11,6 +12,7 @@ import {
   parseMonthValue,
   type AccountRow,
   type CategoryRow,
+  type DashboardRange,
   type DashboardAccount,
   type DashboardCategory,
   type DashboardTransaction,
@@ -24,6 +26,7 @@ type TransactionsPageSearchParams = {
   month?: SearchParamValue;
   type?: SearchParamValue;
   category?: SearchParamValue;
+  range?: SearchParamValue;
 };
 
 function getSingleValue(value: SearchParamValue) {
@@ -44,6 +47,16 @@ function getTransactionType(value: SearchParamValue): TransactionType | "all" {
   return "all";
 }
 
+function getDashboardRange(value: SearchParamValue): DashboardRange | null {
+  const range = getSingleValue(value);
+
+  if (range === "this_month" || range === "last_month" || range === "last_3_months" || range === "this_year" || range === "all_time") {
+    return range;
+  }
+
+  return null;
+}
+
 export default async function TransactionsRoute({
   searchParams,
 }: {
@@ -58,10 +71,11 @@ export default async function TransactionsRoute({
 
   const resolvedSearchParams = searchParams ? await searchParams : undefined;
   const month = getSingleValue(resolvedSearchParams?.month) || getCurrentMonthValue();
+  const dashboardRange = getDashboardRange(resolvedSearchParams?.range);
   const transactionType = getTransactionType(resolvedSearchParams?.type);
   const category = getSingleValue(resolvedSearchParams?.category) || "all";
   const monthDate = parseMonthValue(month);
-  const { start, end } = getMonthDateRange(monthDate);
+  const dateRange = dashboardRange ? getDashboardDateRange(dashboardRange) : getMonthDateRange(monthDate);
 
   const transactionsQuery = supabase
     .from("transactions")
@@ -70,7 +84,9 @@ export default async function TransactionsRoute({
     .order("date", { ascending: false })
     .order("created_at", { ascending: false });
 
-  transactionsQuery.gte("date", start).lte("date", end);
+  if (dateRange.start && dateRange.end) {
+    transactionsQuery.gte("date", dateRange.start).lte("date", dateRange.end);
+  }
 
   if (transactionType !== "all") {
     transactionsQuery.eq("transaction_type", transactionType);
@@ -112,11 +128,11 @@ export default async function TransactionsRoute({
 
   return (
     <TransactionsPage
-      key={`${month}-${transactionType}-${category}`}
+      key={`${month}-${dashboardRange ?? "month"}-${transactionType}-${category}`}
       initialTransactions={transactions as DashboardTransaction[]}
       initialCategories={categories as DashboardCategory[]}
       initialAccounts={accounts as DashboardAccount[]}
-      initialFilters={{ month, type: transactionType, category }}
+      initialFilters={{ month, range: dashboardRange, type: transactionType, category }}
       userId={userData.user.id}
       userEmail={userData.user.email}
     />

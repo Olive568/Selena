@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Info, LogOut, Plus } from "lucide-react";
+import { LogOut, Plus } from "lucide-react";
 
 import { AccountCards } from "@/components/account-cards";
 import { DashboardChartsShell } from "@/components/dashboard-charts-shell";
@@ -20,9 +20,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TransactionRowItem } from "@/components/transaction-row-item";
 import {
   buildCategoryBreakdown,
+  dashboardRangeOptions,
   getDashboardDateRange,
   getTodayInputValue,
   normalizeAccount,
@@ -77,7 +79,7 @@ export function TransactionManager({
     // Reserved for future transfer UI that will surface source/destination accounts.
     () => initialAccounts.map((row, index) => normalizeAccount(row, index))
   );
-  const activeFilter: DashboardRange = "this_month";
+  const [activeFilter, setActiveFilter] = useState<DashboardRange>("this_month");
   const [isDashboardLoading, setIsDashboardLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -121,10 +123,14 @@ export function TransactionManager({
     [sortedCategories, userId]
   );
 
-  const categoryData = useMemo(() => buildCategoryBreakdown(sortedTransactions), [sortedTransactions]);
+  const expenseData = useMemo(() => buildCategoryBreakdown(sortedTransactions, "expense"), [sortedTransactions]);
+  const incomeData = useMemo(() => buildCategoryBreakdown(sortedTransactions, "income"), [sortedTransactions]);
   const recentTransactions = useMemo(() => sortedTransactions.slice(0, 5), [sortedTransactions]);
-  const categoryNames = useMemo(
-    () => Array.from(new Set(visibleCategories.map((category) => category.name))).filter(Boolean),
+  const categoryOptions = useMemo(
+    () => ({
+      expense: Array.from(new Set(visibleCategories.filter((category) => category.categoryType === "expense").map((category) => category.name))).filter(Boolean),
+      income: Array.from(new Set(visibleCategories.filter((category) => category.categoryType === "income").map((category) => category.name))).filter(Boolean),
+    }),
     [visibleCategories]
   );
 
@@ -190,7 +196,12 @@ export function TransactionManager({
     }
   }
 
-  async function createCategoryRecord(name: string) {
+  async function handleDashboardRangeChange(nextFilter: DashboardRange) {
+    setActiveFilter(nextFilter);
+    await loadDashboardData(nextFilter);
+  }
+
+  async function createCategoryRecord(name: string, categoryType: "expense" | "income") {
     const trimmedName = name.trim();
 
     if (!trimmedName) {
@@ -198,7 +209,8 @@ export function TransactionManager({
     }
 
     const existing = sortedCategories.find(
-      (category) => sameCategory(category.name, trimmedName) && category.userId === userId
+      (category) =>
+        sameCategory(category.name, trimmedName) && category.userId === userId && category.categoryType === categoryType
     );
     if (existing) {
       return existing;
@@ -206,6 +218,7 @@ export function TransactionManager({
 
     const { data, error } = await supabase.rpc("create_category", {
       p_name: trimmedName,
+      p_category_type: categoryType,
       p_idempotency_key: crypto.randomUUID(),
     });
 
@@ -223,19 +236,24 @@ export function TransactionManager({
     return created;
   }
 
-  async function resolveCategoryRecord(name: string) {
+  async function resolveCategoryRecord(name: string, categoryType: "expense" | "income") {
     const trimmedName = name.trim();
 
     if (!trimmedName) {
       return null;
     }
 
-    const existing = sortedCategories.find((category) => sameCategory(category.name, trimmedName));
+    const existing = sortedCategories.find(
+      (category) =>
+        sameCategory(category.name, trimmedName) &&
+        (category.userId === null || category.userId === userId) &&
+        category.categoryType === categoryType
+    );
     if (existing) {
       return existing;
     }
 
-    return createCategoryRecord(trimmedName);
+    return createCategoryRecord(trimmedName, categoryType);
   }
 
   async function createAccountRecord(name: string) {
@@ -273,8 +291,8 @@ export function TransactionManager({
     return created;
   }
 
-  async function handleAddCategory(categoryName: string) {
-    const created = await createCategoryRecord(categoryName);
+  async function handleAddCategory(categoryName: string, categoryType: "expense" | "income") {
+    const created = await createCategoryRecord(categoryName, categoryType);
     await loadDashboardData(activeFilter);
 
     return created?.name ?? null;
@@ -287,8 +305,13 @@ export function TransactionManager({
     return created?.id ?? null;
   }
 
-  async function handleDeleteCategory(categoryName: string) {
-    const target = sortedCategories.find((category) => sameCategory(category.name, categoryName));
+  async function handleDeleteCategory(categoryName: string, categoryType: "expense" | "income") {
+    const target = sortedCategories.find(
+      (category) =>
+        sameCategory(category.name, categoryName) &&
+        category.categoryType === categoryType &&
+        category.userId === userId
+    );
 
     if (!target) {
       return false;
@@ -378,7 +401,7 @@ export function TransactionManager({
       const isIncome = values.transactionType === "income";
       const isTransfer = values.transactionType === "transfer";
       const merchant = values.merchant.trim();
-      const categoryName = values.category.trim() || (isIncome ? "Income" : "");
+      const categoryName = values.category.trim();
       const notes = values.notes.trim();
       const sourceAccount = sortedAccounts.find((account) => account.id === values.sourceAccountId);
       const destinationAccount = sortedAccounts.find((account) => account.id === values.destinationAccountId);
@@ -401,8 +424,8 @@ export function TransactionManager({
 
       const amountInCents = pesosToCents(values.amount);
 
-      if (!isIncome && !isTransfer && !categoryName) {
-        throw new Error("Category is required for expenses.");
+      if (!isTransfer && !categoryName) {
+        throw new Error(isIncome ? "Income source is required." : "Category is required for expenses.");
       }
 
       if (isTransfer) {
@@ -431,7 +454,9 @@ export function TransactionManager({
         return;
       }
 
-      const category = isIncome || isTransfer ? null : await resolveCategoryRecord(categoryName);
+      const category = isTransfer
+        ? null
+        : await resolveCategoryRecord(categoryName, isIncome ? "income" : "expense");
       const transferMerchant = isTransfer
         ? `Transfer: ${sourceAccount?.name ?? "Source"} → ${destinationAccount?.name ?? "Destination"}`
         : merchant;
@@ -573,11 +598,33 @@ export function TransactionManager({
             {userEmail && <p className="text-sm text-muted-foreground">Signed in as {userEmail}</p>}
           </div>
 
-          <div className="flex flex-wrap gap-2">
-              <Button onClick={openCreateExpense} className="h-11 rounded-full px-5">
-                <Plus className="mr-2 size-4" />
-                Add Expense
-              </Button>
+           <div className="flex flex-col items-stretch gap-3 sm:items-end">
+             <div className="grid gap-1.5 sm:w-52">
+               <label htmlFor="dashboard-range" className="text-xs font-medium text-muted-foreground">
+                 Dashboard period
+               </label>
+               <Select
+                 value={activeFilter}
+                 onValueChange={(value) => void handleDashboardRangeChange(value as DashboardRange)}
+                 disabled={isDashboardLoading}
+               >
+                 <SelectTrigger id="dashboard-range" className="h-11 rounded-full bg-background/70 px-4">
+                   <SelectValue />
+                 </SelectTrigger>
+                 <SelectContent>
+                   {dashboardRangeOptions.map((option) => (
+                     <SelectItem key={option.value} value={option.value}>
+                       {option.label}
+                     </SelectItem>
+                   ))}
+                 </SelectContent>
+               </Select>
+             </div>
+             <div className="flex flex-wrap justify-end gap-2">
+               <Button onClick={openCreateExpense} className="h-11 rounded-full px-5">
+                 <Plus className="mr-2 size-4" />
+                 Add Expense
+               </Button>
               <Button onClick={openCreateIncome} variant="outline" className="h-11 rounded-full px-5">
                 <Plus className="mr-2 size-4" />
                 Add Income
@@ -586,11 +633,12 @@ export function TransactionManager({
                 <Plus className="mr-2 size-4" />
                 Transfer
               </Button>
-              <Button variant="ghost" className="h-11 rounded-full px-4 text-muted-foreground" onClick={handleLogout}>
-                <LogOut className="mr-2 size-4" />
-                Logout
-              </Button>
-          </div>
+               <Button variant="ghost" className="h-11 rounded-full px-4 text-muted-foreground" onClick={handleLogout}>
+                 <LogOut className="mr-2 size-4" />
+                  Logout
+                </Button>
+             </div>
+           </div>
         </section>
 
         {banner && (
@@ -615,33 +663,13 @@ export function TransactionManager({
 
         <MonthlySummary userId={userId} refreshKey={dashboardRefreshKey} />
 
-        <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-          <Card className="border-border bg-card">
-            <CardHeader className="border-b border-border">
-              <CardTitle>Category breakdown</CardTitle>
-              <CardDescription className="flex items-start gap-2 text-sm leading-6 text-foreground/80">
-                <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Info className="size-3.5" />
-                </span>
-                <span>Only expense transactions are included in the chart.</span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 sm:p-6">
-              {categoryData.length > 0 ? (
-                <DashboardChartsShell categoryData={categoryData} />
-              ) : (
-                <div className="flex min-h-[320px] flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-muted/40 px-4 text-center">
-                  <p className="text-base font-medium text-foreground">No spending data available</p>
-                  <p className="max-w-sm text-sm text-muted-foreground">
-                    Add expense transactions to surface category trends here.
-                  </p>
-                  <Button onClick={openCreateExpense} className="rounded-full">
-                    + Add Expense
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+         <section className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+           <DashboardChartsShell
+             expenseData={expenseData}
+             incomeData={incomeData}
+             range={activeFilter}
+             onAddTransaction={(type) => (type === "income" ? openCreateIncome() : openCreateExpense())}
+           />
 
           <Card className="border-border bg-card">
             <CardHeader className="border-b border-border">
@@ -689,8 +717,8 @@ export function TransactionManager({
         key={dialogVersion}
         open={isDialogOpen}
         mode={dialogMode}
-        defaultTransactionType={draftType}
-        categories={categoryNames}
+         defaultTransactionType={draftType}
+         categories={categoryOptions}
         accounts={visibleAccounts}
         onAddAccount={handleAddAccount}
         onAddCategory={handleAddCategory}

@@ -1,4 +1,5 @@
 export type TransactionType = "income" | "expense" | "transfer";
+export type CategoryType = "income" | "expense";
 
 export type DashboardRange = "this_month" | "last_month" | "last_3_months" | "this_year" | "all_time";
 
@@ -30,6 +31,7 @@ export type CategoryRow = {
   id: string | number;
   name?: string | null;
   user_id?: string | null;
+  category_type?: string | null;
 };
 
 export type AccountRow = {
@@ -63,6 +65,7 @@ export type DashboardCategory = {
   dbId: string | number;
   name: string;
   userId: string | null;
+  categoryType: CategoryType;
 };
 
 export type DashboardAccount = {
@@ -144,12 +147,14 @@ export function normalizeTransaction(row: TransactionRow, fallbackIndex: number)
 
 export function normalizeCategory(row: CategoryRow, fallbackIndex: number): DashboardCategory {
   const dbId = row.id ?? `category-${fallbackIndex}`;
+  const categoryType = row.category_type === "income" ? "income" : "expense";
 
   return {
     id: String(dbId),
     dbId,
     name: row.name?.trim() || "Uncategorized",
     userId: row.user_id ?? null,
+    categoryType,
   };
 }
 
@@ -270,11 +275,14 @@ export function centsToPesos(cents: number | string | null) {
   return Math.round(Number(cents ?? 0)) / 100;
 }
 
-export function buildCategoryBreakdown(transactions: DashboardTransaction[]) {
+export function buildCategoryBreakdown(
+  transactions: DashboardTransaction[],
+  transactionType: CategoryType = "expense"
+) {
   const totals = new Map<string, number>();
 
   for (const transaction of transactions) {
-    if (transaction.transactionType !== "expense") {
+    if (transaction.transactionType !== transactionType || !Number.isFinite(transaction.amount) || transaction.amount <= 0) {
       continue;
     }
 

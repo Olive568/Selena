@@ -14,7 +14,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TransactionDialog, type TransactionFormValues } from "@/components/transaction-dialog";
 import { TransactionRowItem } from "@/components/transaction-row-item";
 import {
+  dashboardRangeOptions,
   formatMonthYear,
+  getDashboardDateRange,
   getCurrentMonthValue,
   getMonthDateRange,
   getTodayInputValue,
@@ -24,9 +26,11 @@ import {
   parseMonthValue,
   pesosToCents,
   type AccountRow,
+  type CategoryType,
   type CategoryRow,
   type DashboardAccount,
   type DashboardCategory,
+  type DashboardRange,
   type DashboardTransaction,
   type TransactionRow,
   type TransactionType,
@@ -40,6 +44,7 @@ type BannerState = {
 
 type TransactionFilters = {
   month: string;
+  range: DashboardRange | null;
   type: TransactionType | "all";
   category: string;
 };
@@ -92,6 +97,10 @@ function buildSearchParams(filters: TransactionFilters, sort: TransactionSort) {
 
   params.set("month", filters.month);
 
+  if (filters.range) {
+    params.set("range", filters.range);
+  }
+
   if (filters.type !== "all") {
     params.set("type", filters.type);
   }
@@ -108,6 +117,10 @@ function buildSearchParams(filters: TransactionFilters, sort: TransactionSort) {
 }
 
 function buildFilterLabel(filters: TransactionFilters) {
+  if (filters.range) {
+    return dashboardRangeOptions.find((option) => option.value === filters.range)?.label ?? "Selected period";
+  }
+
   return formatMonthYear(parseMonthValue(filters.month));
 }
 
@@ -164,7 +177,6 @@ export function TransactionsPage({
 
   const sortedCategories = useMemo(() => [...categories].sort((left, right) => left.name.localeCompare(right.name)), [categories]);
   const sortedAccounts = useMemo(() => [...accounts].sort((left, right) => left.name.localeCompare(right.name)), [accounts]);
-  const categoryNames = useMemo(() => sortedCategories.map((category) => category.name).filter(Boolean), [sortedCategories]);
   const visibleAccounts = useMemo(
     () => sortedAccounts.filter((account) => account.userId === userId),
     [sortedAccounts, userId]
@@ -173,6 +185,13 @@ export function TransactionsPage({
     () => sortedCategories.filter((category) => category.userId === null || category.userId === userId),
     [sortedCategories, userId]
   );
+  const categoryOptions = useMemo(() => {
+    const filtered = filters.type === "all"
+      ? visibleCategories
+      : visibleCategories.filter((category) => category.categoryType === filters.type);
+
+    return Array.from(new Set(filtered.map((category) => category.name))).filter(Boolean);
+  }, [filters.type, visibleCategories]);
 
   const hasActiveFilters = filters.type !== "all" || filters.category !== "all";
   const isCurrentMonth = filters.month === currentMonthValue;
@@ -196,7 +215,9 @@ export function TransactionsPage({
   }
 
   async function reloadTransactions(nextFilters: TransactionFilters = filters) {
-    const { start, end } = getMonthDateRange(parseMonthValue(nextFilters.month));
+    const range = nextFilters.range
+      ? getDashboardDateRange(nextFilters.range)
+      : getMonthDateRange(parseMonthValue(nextFilters.month));
     const transactionsQuery = supabase
       .from("transactions")
       .select("*")
@@ -204,7 +225,9 @@ export function TransactionsPage({
       .order("date", { ascending: false })
       .order("created_at", { ascending: false });
 
-    transactionsQuery.gte("date", start).lte("date", end);
+    if (range.start && range.end) {
+      transactionsQuery.gte("date", range.start).lte("date", range.end);
+    }
 
     if (nextFilters.type !== "all") {
       transactionsQuery.eq("transaction_type", nextFilters.type);
@@ -224,18 +247,22 @@ export function TransactionsPage({
   }
 
   function setFilterMonth(month: string) {
-    syncFilters({ ...filters, month: month || currentMonthValue });
+    syncFilters({ ...filters, month: month || currentMonthValue, range: null });
   }
 
   function setFilterType(type: TransactionFilters["type"]) {
-    syncFilters({ ...filters, type });
+    const categoryIsCompatible = type === "all" || filters.category === "all" || visibleCategories.some(
+      (category) => category.categoryType === type && sameCategory(category.name, filters.category)
+    );
+
+    syncFilters({ ...filters, type, category: categoryIsCompatible ? filters.category : "all" });
   }
 
   function setFilterCategory(category: string) {
     syncFilters({ ...filters, category });
   }
 
-  async function createCategoryRecord(name: string) {
+  async function createCategoryRecord(name: string, categoryType: CategoryType) {
     const trimmedName = name.trim();
 
     if (!trimmedName) {
@@ -243,7 +270,8 @@ export function TransactionsPage({
     }
 
     const existing = sortedCategories.find(
-      (category) => sameCategory(category.name, trimmedName) && category.userId === userId
+      (category) =>
+        sameCategory(category.name, trimmedName) && category.userId === userId && category.categoryType === categoryType
     );
 
     if (existing) {
@@ -252,6 +280,7 @@ export function TransactionsPage({
 
     const { data, error } = await supabase.rpc("create_category", {
       p_name: trimmedName,
+      p_category_type: categoryType,
       p_idempotency_key: crypto.randomUUID(),
     });
 
@@ -269,20 +298,25 @@ export function TransactionsPage({
     return created;
   }
 
-  async function resolveCategoryRecord(name: string) {
+  async function resolveCategoryRecord(name: string, categoryType: CategoryType) {
     const trimmedName = name.trim();
 
     if (!trimmedName) {
       return null;
     }
 
-    const existing = sortedCategories.find((category) => sameCategory(category.name, trimmedName));
+    const existing = sortedCategories.find(
+      (category) =>
+        sameCategory(category.name, trimmedName) &&
+        (category.userId === null || category.userId === userId) &&
+        category.categoryType === categoryType
+    );
 
     if (existing) {
       return existing;
     }
 
-    return createCategoryRecord(trimmedName);
+    return createCategoryRecord(trimmedName, categoryType);
   }
 
   async function createAccountRecord(name: string) {
@@ -321,8 +355,8 @@ export function TransactionsPage({
     return created;
   }
 
-  async function handleAddCategory(categoryName: string) {
-    const created = await createCategoryRecord(categoryName);
+  async function handleAddCategory(categoryName: string, categoryType: CategoryType) {
+    const created = await createCategoryRecord(categoryName, categoryType);
 
     return created?.name ?? null;
   }
@@ -333,8 +367,13 @@ export function TransactionsPage({
     return created?.id ?? null;
   }
 
-  async function handleDeleteCategory(categoryName: string) {
-    const target = sortedCategories.find((category) => sameCategory(category.name, categoryName));
+  async function handleDeleteCategory(categoryName: string, categoryType: CategoryType) {
+    const target = sortedCategories.find(
+      (category) =>
+        sameCategory(category.name, categoryName) &&
+        category.categoryType === categoryType &&
+        category.userId === userId
+    );
 
     if (!target || target.userId === null) {
       return false;
@@ -394,7 +433,7 @@ export function TransactionsPage({
       const isIncome = values.transactionType === "income";
       const isTransfer = values.transactionType === "transfer";
       const merchant = values.merchant.trim();
-      const categoryName = values.category.trim() || (isIncome ? "Income" : "");
+      const categoryName = values.category.trim();
       const notes = values.notes.trim();
       const sourceAccount = sortedAccounts.find((account) => account.id === values.sourceAccountId);
       const destinationAccount = sortedAccounts.find((account) => account.id === values.destinationAccountId);
@@ -417,8 +456,8 @@ export function TransactionsPage({
 
       const amountInCents = pesosToCents(values.amount);
 
-      if (!isIncome && !isTransfer && !categoryName) {
-        throw new Error("Category is required for expenses.");
+      if (!isTransfer && !categoryName) {
+        throw new Error(isIncome ? "Income source is required." : "Category is required for expenses.");
       }
 
       if (isTransfer) {
@@ -449,7 +488,9 @@ export function TransactionsPage({
         return;
       }
 
-      const category = isIncome || isTransfer ? null : await resolveCategoryRecord(categoryName);
+      const category = isTransfer
+        ? null
+        : await resolveCategoryRecord(categoryName, isIncome ? "income" : "expense");
       const transferMerchant = isTransfer
         ? `Transfer: ${sourceAccount?.name ?? "Source"} → ${destinationAccount?.name ?? "Destination"}`
         : merchant;
@@ -648,9 +689,9 @@ export function TransactionsPage({
                 </SelectTrigger>
                 <SelectContent viewportClassName="grid max-h-48 grid-cols-3 gap-1 overflow-y-auto">
                   <SelectItem value="all">All categories</SelectItem>
-                  {visibleCategories.map((category) => (
-                    <SelectItem key={category.id} value={category.name}>
-                      {category.name}
+                  {categoryOptions.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -710,8 +751,11 @@ export function TransactionsPage({
         key={dialogVersion}
         open={isDialogOpen}
         mode={dialogMode}
-        defaultTransactionType={draftType}
-        categories={categoryNames}
+         defaultTransactionType={draftType}
+         categories={{
+           expense: visibleCategories.filter((category) => category.categoryType === "expense").map((category) => category.name),
+           income: visibleCategories.filter((category) => category.categoryType === "income").map((category) => category.name),
+         }}
         accounts={visibleAccounts}
         onAddAccount={handleAddAccount}
         onAddCategory={handleAddCategory}

@@ -2,10 +2,13 @@
 
 import dynamic from "next/dynamic";
 
-import type { CategoryBreakdownItem } from "@/lib/finance";
+import type { CategoryBreakdownItem, CategoryType, DashboardRange } from "@/lib/finance";
 
 type DashboardChartsShellProps = {
-  categoryData: CategoryBreakdownItem[];
+  expenseData: CategoryBreakdownItem[];
+  incomeData: CategoryBreakdownItem[];
+  range: DashboardRange;
+  onAddTransaction?: (type: CategoryType) => void;
 };
 
 const DashboardCharts = dynamic(

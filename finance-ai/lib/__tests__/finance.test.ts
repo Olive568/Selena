@@ -170,12 +170,43 @@ describe("buildCategoryBreakdown", () => {
     expect(result[1].amount).toBe(150);
   });
 
+  it("supports expense and income percentage totals", () => {
+    const txns: DashboardTransaction[] = [
+      { id: "1", dbId: "1", merchant: "Market", category: "Food", notes: "", amount: 500, date: "2024-01-01", transactionType: "expense", paymentMethod: "Cash", accountId: "" },
+      { id: "2", dbId: "2", merchant: "Cafe", category: "Food", notes: "", amount: 200, date: "2024-01-02", transactionType: "expense", paymentMethod: "Cash", accountId: "" },
+      { id: "3", dbId: "3", merchant: "Ride", category: "Transport", notes: "", amount: 300, date: "2024-01-03", transactionType: "expense", paymentMethod: "Cash", accountId: "" },
+      { id: "4", dbId: "4", merchant: "Employer", category: "Salary", notes: "", amount: 30000, date: "2024-01-04", transactionType: "income", paymentMethod: "Bank", accountId: "" },
+      { id: "5", dbId: "5", merchant: "Client", category: "Freelance", notes: "", amount: 10000, date: "2024-01-05", transactionType: "income", paymentMethod: "Bank", accountId: "" },
+    ];
+
+    const expenses = buildCategoryBreakdown(txns, "expense");
+    const income = buildCategoryBreakdown(txns, "income");
+
+    expect(expenses.map((item) => Math.round((item.amount / 1000) * 100))).toEqual([70, 30]);
+    expect(income.map((item) => Math.round((item.amount / 40000) * 100))).toEqual([75, 25]);
+  });
+
   it("returns empty array for no expense transactions", () => {
     const txns: DashboardTransaction[] = [
       { id: "1", dbId: "1", merchant: "Salary", category: "Income", notes: "", amount: 50000, date: "2024-01-01", transactionType: "income", paymentMethod: "GCash", accountId: "" },
     ];
     const result = buildCategoryBreakdown(txns);
     expect(result).toHaveLength(0);
+  });
+
+  it("groups income transactions when requested", () => {
+    const txns: DashboardTransaction[] = [
+      { id: "1", dbId: "1", merchant: "Salary", category: "Salary", notes: "", amount: 30000, date: "2024-01-01", transactionType: "income", paymentMethod: "Bank", accountId: "" },
+      { id: "2", dbId: "2", merchant: "Freelance", category: "Freelance", notes: "", amount: 10000, date: "2024-01-02", transactionType: "income", paymentMethod: "Bank", accountId: "" },
+      { id: "3", dbId: "3", merchant: "Food", category: "Food", notes: "", amount: 500, date: "2024-01-03", transactionType: "expense", paymentMethod: "Cash", accountId: "" },
+      { id: "4", dbId: "4", merchant: "Transfer", category: "Transfer", notes: "", amount: 1000, date: "2024-01-04", transactionType: "transfer", paymentMethod: "Bank", accountId: "" },
+    ];
+
+    expect(buildCategoryBreakdown(txns, "income")).toEqual([
+      { name: "Salary", amount: 30000 },
+      { name: "Freelance", amount: 10000 },
+    ]);
+    expect(buildCategoryBreakdown(txns, "expense")).toEqual([{ name: "Food", amount: 500 }]);
   });
 
   it("returns empty array for empty input", () => {
@@ -336,6 +367,12 @@ describe("normalizeCategory", () => {
     const result = normalizeCategory(row, 0);
     expect(result.userId).toBeNull();
     expect(result.name).toBe("Food");
+    expect(result.categoryType).toBe("expense");
+  });
+
+  it("preserves income category types", () => {
+    const result = normalizeCategory({ id: "income-1", name: "Salary", category_type: "income" }, 0);
+    expect(result.categoryType).toBe("income");
   });
 
   it("handles missing name", () => {
